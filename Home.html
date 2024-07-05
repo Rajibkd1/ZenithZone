@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Anon - eCommerce Website</title>
+
+    <!--
+    - favicon
+  -->
+    <link
+      rel="shortcut icon"
+      href="./assets/images/logo/favicon.ico"
+      type="image/x-icon"
+    />
+
+    <!--
+    - custom css link
+  -->
+    <link rel="stylesheet" href="./assets/css/style-prefix.css" />
+
+    <!--
+    - google font link
+  -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@^2.0/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link
+    href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css"
+    rel="stylesheet"
+    type="text/css"
+  />
+  <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+<body>
+    <div class="carousel w-full overflow-hidden relative">
+        <!-- Slides -->
+        <div id="slide1" class="carousel-item">
+          <img src="https://img.daisyui.com/images/stock/photo-1625726411847-8cbb60cc71e6.jpg" class="w-full">
+        </div>
+        <div id="slide2" class="carousel-item">
+          <img src="https://img.daisyui.com/images/stock/photo-1609621838510-5ad474b7d25d.jpg" class="w-full">
+        </div>
+        <div id="slide3" class="carousel-item">
+          <img src="https://img.daisyui.com/images/stock/photo-1414694762283-acccc27bca85.jpg" class="w-full">
+        </div>
+        <div id="slide4" class="carousel-item">
+          <img src="https://img.daisyui.com/images/stock/photo-1665553365602-b2fb8e5d1707.jpg" class="w-full">
+        </div>
+      </div>
+      
+      <style>
+        .carousel {
+          position: relative;
+          width: 100%;
+          overflow: hidden;
+        }
+        .carousel-item {
+          position: absolute;
+          width: 100%;
+          opacity: 0;
+          transition: opacity 1s ease-in-out;
+          animation: slide-in 3s infinite;
+        }
+        @keyframes slide-in {
+          0% { transform: translateX(100%); }
+          100% { transform: translateX(0%); }
+        }
+        .active {
+          opacity: 1;
+        }
+      </style>
+      
+      <script>
+        let slideIndex = 0; // start at the first slide
+        const slides = document.querySelectorAll('.carousel-item');
+        const totalSlides = slides.length;
+      
+        function showSlide() {
+          // Set all slides to inactive
+          slides.forEach(slide => {
+            slide.style.opacity = '0';
+          });
+      
+          // Increment the slide index
+          slideIndex++;
+          if (slideIndex >= totalSlides) slideIndex = 0; // Loop back to the first slide
+      
+          // Set the current slide to active
+          slides[slideIndex].style.opacity = '1';
+        }
+      
+        // Initially set the first slide to active
+        slides[0].style.opacity = '1';
+      
+        // Change slide every 3 seconds
+        setInterval(showSlide, 3000);
+      </script>
+      
+</body>
+</html>

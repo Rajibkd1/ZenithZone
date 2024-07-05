@@ -1,0 +1,155 @@
+<?php
+session_start();
+
+$host = 'localhost'; // Host name
+$dbname = 'ZenithZone'; // Database name
+$username = 'root'; // Database username
+$password = ''; // Database password
+
+// Create connection
+$conn = new mysqli($host, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+$login_error = '';
+$login_success = false;
+$first_name = '';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email_mobile = $_POST['email_mobile'];
+    $password = $_POST['password'];
+
+    // Check user credentials across three tables
+    $tables = [
+        ['name' => 'artist_info', 'id_column' => 'artist_id', 'email_column' => 'email', 'password_column' => 'password_hash', 'first_name_column' => 'first_name'],
+        ['name' => 'customer', 'id_column' => 'id', 'email_column' => 'email', 'password_column' => 'password', 'first_name_column' => 'first_name'],
+        ['name' => 'sellersinfo', 'id_column' => 'id', 'email_column' => 'email', 'password_column' => 'password_hash', 'first_name_column' => 'first_name']
+    ];
+
+    $found = false;
+    foreach ($tables as $table) {
+        $stmt = $conn->prepare("SELECT {$table['id_column']}, {$table['password_column']}, {$table['first_name_column']} FROM {$table['name']} WHERE ({$table['email_column']} = ? OR mobile_number = ?)");
+        $stmt->bind_param("ss", $email_mobile, $email_mobile);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0) {
+            $user = $result->fetch_assoc();
+            if (password_verify($password, $user[$table['password_column']])) {
+                $found = true;
+                $login_success = true;
+                $first_name = $user[$table['first_name_column']];
+                $_SESSION['loggedin'] = true;
+                $_SESSION['email_mobile'] = $email_mobile;
+                $_SESSION['user_type'] = $table['name'];  // Identifying the type of user
+                break;
+            }
+        }
+        $stmt->close();
+    }
+
+    if (!$found) {
+        $login_error = "Invalid credentials!";
+    }
+}
+
+$conn->close();
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Particle Background</title>
+    
+    <!--
+    - favicon
+  -->
+  <link
+  rel="shortcut icon"
+  href="../assets/images/logo/ZentihZone.png"
+  type="image/x-icon"
+/>
+    <link
+      href="https://fonts.googleapis.com/css?family=Varela&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@^2.0/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <!-- Login css link -->
+     <link rel="stylesheet" href="./LoginStyle.css">
+  </head>
+
+<body>
+<div id="particles-js"></div>
+    
+<div class="login-box">
+    <div class="flex justify-center mb-1">
+        <img src="../assets/images/logo/ZentihZone.png" alt="ZenithZone logo" class="w-20" />
+    </div>
+    <h2 class="text-white text-2xl text-center">Welcome to ZenithZone</h2>
+    <form method="POST">
+        <div class="user-box">
+            <input type="text" name="email_mobile" required />
+            <label>Email/Mobile no.</label>
+        </div>
+        <div class="user-box">
+            <input type="password" name="password" required />
+            <label>Password</label>
+        </div>
+        <div class="flex justify-center mb-3">
+            <button type="submit" class="btn">Login</button>
+        </div>
+        <div class="flex justify-between items-center mb-4">
+            <a href="#" class="text-teal-400 hover:underline">Forgot your password?</a>
+        </div>
+        <p class="text-white text-center">
+            Don't have an account? 
+            <a href="#" class="text-teal-400 hover:underline text-blue-400">Sign up now</a>
+        </p>
+    </form>
+</div>
+
+<!-- Success Modal -->
+<dialog id="successModal" class="bg-white rounded-lg p-5 shadow text-center">
+    <h3 class="text-lg font-bold flex justify-center items-center gap-2">
+        <i class="fa-solid fa-circle-check" style="color: #3feeba;"></i> Login Successful!
+    </h3>
+    <p class="mt-2">Hi <?php echo htmlspecialchars($first_name); ?>, welcome to ZenithZone.</p>
+    <div class="flex justify-center mt-4">
+        <button onclick="window.location='../HomePage/InitialPage.html';" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Proceed</button>
+    </div>
+</dialog>
+
+<!-- Error Modal -->
+<dialog id="errorModal" class="bg-white rounded-lg p-5 shadow text-center">
+    <h3 class="text-lg font-bold flex justify-center items-center gap-2">
+        <i class="fa-solid fa-circle-xmark" style="color: #ff4b0f;"></i> Login Error
+    </h3>
+    <p>Invalid login credentials. Please try again.</p>
+    <div class="flex justify-center mt-4">
+        <button onclick="this.parentNode.parentNode.close();" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Close</button>
+    </div>
+</dialog>
+
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<script src="./LoginScript.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const loginSuccess = <?php echo json_encode($login_success); ?>;
+    const loginError = <?php echo json_encode($login_error); ?>;
+
+    if (loginSuccess) {
+        document.getElementById('successModal').showModal();
+    } else if (loginError) {
+        document.getElementById('errorModal').showModal();
+    }
+});
+</script>
+</body>
+</html>
