@@ -7,22 +7,17 @@
     <title>ZentihZone - eCommerce Website</title>
 
     <!--
-        - favicon
-      -->
+    - favicon
+  -->
     <link
       rel="shortcut icon"
-      href="./assets/images/logo/ZentihZone.png"
+      href="../assets/images/logo/ZentihZone.png"
       type="image/x-icon"
     />
 
     <!--
-        - custom css link
-      -->
-    <!-- <link rel="stylesheet" href="./assets/css/style-prefix.css" /> -->
-
-    <!--
-        - google font link
-      -->
+    - google font link
+  -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -43,21 +38,29 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     />
+    <!-- This style for the background -->
     <style>
-      /* Custom CSS for unique skew and hover animations */
-      .form-entrance {
-        transform: skewY(-5deg);
-        transition: transform 0.3s cubic-bezier(0.075, 0.82, 0.165, 1),
-          box-shadow 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+      body {
+        margin: 0;
       }
-      .form-entrance:hover {
-        transform: skewY(0deg) scale(1.01);
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      .background-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+      }
+      .content {
+        position: relative;
+        z-index: 1;
       }
     </style>
   </head>
 
-  <body class="">
+  <body>
+    <!-- This is for Background -->
+    <canvas class="background-canvas" id="backgroundCanvas"></canvas>
     <!--
     - HEADER
   -->
@@ -117,12 +120,12 @@
               <div class="flex items-center space-x-4 mt-2 sm:mt-0">
                 <!-- Authentication Links -->
                 <a
-                  href="/login"
+                  href="../Login/Login.php"
                   class="text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out"
                   >Login</a
                 >
                 <a
-                  href="/register"
+                  href="../Registration/Who.php"
                   class="text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out"
                   >Register</a
                 >
@@ -516,58 +519,391 @@
         </button>
       </div>
     </header>
-    <div class="w-full h-screen flex items-center justify-center">
-      <div class="py-10 px-4 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold mb-8 text-center text-indigo-500">
-          I am a ...
-        </h1>
-        <div class="flex justify-center">
-          <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            <!-- Customer Card -->
-            <div
-              class="bg-white shadow-lg rounded-lg overflow-hidden relative group hover:border-green-500 hover:border-2 transition duration-300 w-48"
-            >
-              <a href="./customerreg.php" class="">
-                <img
-                  src="../assets/images/logo/customer.svg"
-                  alt="Customer"
-                  class="w-full object-scale-down h-48 transition duration-300 ease-in-out"
-                />
-                <div class="text-center py-2 font-semibold">Customer</div>
-              </a>
-            </div>
 
-            <!-- Seller Card -->
-            <div
-              class="bg-white shadow-lg rounded-lg overflow-hidden relative group hover:border-green-500 hover:border-2 transition duration-300 w-48"
-            >
-              <a href="./sellereg.php" class="">
-                <img
-                  src="../assets/images/logo/Seller.png"
-                  alt="Seller"
-                  class="w-full object-scale-down h-48 transition duration-300 ease-in-out"
-                />
-                <div class="text-center py-2 font-semibold">Seller</div>
-              </a>
-            </div>
+    <!--
+    - MAIN
+  -->
 
-            <!-- Artist Card -->
+    <main>
+      <!--
+      - BANNER
+    -->
+      <div
+        class="carousel w-10/12 mx-auto overflow-hidden rounded-lg mt-2 flex mt-48"
+      >
+        <!-- Slide 1 -->
+        <div
+          id="slide1"
+          class="carousel-item relative w-full h-72 transition duration-3000"
+        >
+          <img
+            src="../assets/images/Art.jpg"
+            alt="Art and Craft"
+            class="w-full"
+          />
+          <div
+            class="banner-content absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between items-center"
+          >
+            <a href="#slide3" class="btn btn-circle">❮</a>
+            <div class="text-center">
+              <h2 class="banner-title text-white text-xl md:text-3xl">
+                See All Creative Art Works
+              </h2>
+            </div>
+            <a href="#slide2" class="btn btn-circle">❯</a>
+          </div>
+          <div class="absolute bottom-5 left-1/2 transform -translate-x-1/2">
+            <a href="#" class="btn btn-primary">Explore</a>
+          </div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div
+          id="slide2"
+          class="carousel-item relative w-full h-72 transition duration-3000"
+        >
+          <img
+            src="../assets/images/OldMobile.jpg"
+            alt="Second hand Product"
+            class="w-full"
+          />
+          <div
+            class="banner-content absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between items-center"
+          >
+            <a href="#slide1" class="btn btn-circle">❮</a>
+            <div class="text-center">
+              <h2 class="banner-title text-white text-xl md:text-3xl">
+                Buy Second Hand Products
+              </h2>
+            </div>
+            <a href="#slide3" class="btn btn-circle">❯</a>
+          </div>
+          <div class="absolute bottom-5 left-1/2 transform -translate-x-1/2">
+            <a href="#" class="btn btn-primary">Explore</a>
+          </div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div
+          id="slide3"
+          class="carousel-item relative w-full h-72 transition duration-3000"
+        >
+          <img
+            src="../assets/images/banner-3.jpg"
+            alt="new fashion summer sale"
+            class="w-full"
+          />
+          <div
+            class="banner-content absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between items-center"
+          >
+            <a href="#slide2" class="btn btn-circle">❮</a>
+            <div class="text-center">
+              <h2 class="banner-title text-white text-xl md:text-3xl">
+                New fashion summer
+              </h2>
+            </div>
+            <a href="#slide1" class="btn btn-circle">❯</a>
+          </div>
+          <div class="absolute bottom-5 left-1/2 transform -translate-x-1/2">
+            <a href="#" class="btn btn-primary">Explore</a>
+          </div>
+        </div>
+      </div>
+      <!--
+      - CATEGORY
+    -->
+
+      <!--
+      - PRODUCT
+    -->
+
+      <!-- This Product container  -->
+      <div class="container mx-auto px-4">
+        <div class="flex flex-col">
+          <!-- Product Main -->
+          <div class="text-center py-6">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">New Products</h2>
             <div
-              class="bg-white shadow-lg rounded-lg overflow-hidden relative group hover:border-green-500 hover:border-2 transition duration-300 w-48"
+              class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
             >
-              <a href="./artistreg.php" class="">
+              <!-- Product Showcase -->
+
+              <!-- 1st Product -->
+              <div
+                class="bg-white shadow-lg rounded-lg overflow-hidden relative group hover:border-red-500 hover:border-2 transition duration-300 w-48"
+              >
                 <img
-                  src="../assets/images/logo/Artist.svg"
-                  alt="Artist"
-                  class="w-full object-scale-down h-48 transition duration-300 ease-in-out"
+                  src="../assets/images/products/jacket-1.jpg"
+                  alt="Mens Jacket"
+                  class="w-full h-32 object-cover transition duration-300 ease-in-out"
                 />
-                <div class="text-center py-2 font-semibold">Artist</div>
-              </a>
+                <div
+                  class="absolute inset-y-0 right-0 flex flex-col items-center justify-center gap-2 transform translate-x-full transition-transform duration-300 ease-in-out group-hover:translate-x-0 bg-black bg-opacity-0 p-2"
+                >
+                  <button class="text-blue-500 text-md p-0.5 rounded">
+                    <i class="far fa-heart"></i>
+                  </button>
+                  <button class="text-blue-500 text-md p-0.5 rounded">
+                    <i class="far fa-eye"></i>
+                  </button>
+                  <button class="text-blue-500 text-md p-0.5 rounded">
+                    <i class="fas fa-shopping-bag"></i>
+                  </button>
+                </div>
+
+                <div class="p-2">
+                  <a
+                    href="#"
+                    class="inline-block text-blue-500 hover:text-blue-600 text-sm"
+                    >JACKET</a
+                  >
+                  <h3 class="text-sm font-medium text-gray-800 mb-1">
+                    <a href="#">Mens Jacket</a>
+                  </h3>
+                  <div class="flex items-center mb-1">
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="far fa-star text-yellow-400"></i>
+                    <i class="fas fa-star-half-alt text-yellow-400"></i>
+                  </div>
+                  <div class="flex items-baseline space-x-1 font-bold">
+                    <p class="text-sm text-blue-500">$25.00</p>
+                    <del class="text-xs text-gray-400">$35.00</del>
+                  </div>
+                </div>
+              </div>
+              <!-- 2nd Product -->
+              <div
+                class="bg-white shadow-lg rounded-lg overflow-hidden relative group hover:border-red-500 hover:border-2 transition duration-300 w-48"
+              >
+                <img
+                  src="../assets/images/products/clothes-1.jpg"
+                  alt="Mens Jacket"
+                  class="w-full h-32 object-cover transition duration-300 ease-in-out"
+                />
+                <div
+                  class="absolute inset-y-0 right-0 flex flex-col items-center justify-center gap-2 transform translate-x-full transition-transform duration-300 ease-in-out group-hover:translate-x-0 bg-black bg-opacity-0 p-2"
+                >
+                  <button class="text-blue-500 text-md p-0.5 rounded">
+                    <i class="far fa-heart"></i>
+                  </button>
+                  <button class="text-blue-500 text-md p-0.5 rounded">
+                    <i class="far fa-eye"></i>
+                  </button>
+                  <button class="text-blue-500 text-md p-0.5 rounded">
+                    <i class="fas fa-shopping-bag"></i>
+                  </button>
+                </div>
+
+                <div class="p-2">
+                  <a
+                    href="#"
+                    class="inline-block text-blue-500 hover:text-blue-600 text-sm"
+                    >JACKET</a
+                  >
+                  <h3 class="text-sm font-medium text-gray-800 mb-1">
+                    <a href="#">Mens Jacket</a>
+                  </h3>
+                  <div class="flex items-center mb-1">
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="far fa-star text-yellow-400"></i>
+                    <i class="fas fa-star-half-alt text-yellow-400"></i>
+                  </div>
+                  <div class="flex items-baseline space-x-1 font-bold">
+                    <p class="text-sm text-blue-500">$25.00</p>
+                    <del class="text-xs text-gray-400">$35.00</del>
+                  </div>
+                </div>
+              </div>
+              <!-- 3rdd Product -->
+              <div
+                class="bg-white shadow-lg rounded-lg overflow-hidden relative group hover:border-red-500 hover:border-2 transition duration-300 w-48"
+              >
+                <img
+                  src="../assets/images/products/watch-2.jpg"
+                  alt="Mens Watch"
+                  class="w-full h-32 object-cover transition duration-300 ease-in-out"
+                />
+                <div
+                  class="absolute inset-y-0 right-0 flex flex-col items-center justify-center gap-2 transform translate-x-full transition-transform duration-300 ease-in-out group-hover:translate-x-0 bg-black bg-opacity-0 p-2"
+                >
+                  <button class="text-blue-500 text-md p-0.5 rounded">
+                    <i class="far fa-heart"></i>
+                  </button>
+                  <button class="text-blue-500 text-md p-0.5 rounded">
+                    <i class="far fa-eye"></i>
+                  </button>
+                  <button class="text-blue-500 text-md p-0.5 rounded">
+                    <i class="fas fa-shopping-bag"></i>
+                  </button>
+                </div>
+
+                <div class="p-2">
+                  <a
+                    href="#"
+                    class="inline-block text-blue-500 hover:text-blue-600 text-sm"
+                    >JACKET</a
+                  >
+                  <h3 class="text-sm font-medium text-gray-800 mb-1">
+                    <a href="#">Mens Jacket</a>
+                  </h3>
+                  <div class="flex items-center mb-1">
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="far fa-star text-yellow-400"></i>
+                    <i class="fas fa-star-half-alt text-yellow-400"></i>
+                  </div>
+                  <div class="flex items-baseline space-x-1 font-bold">
+                    <p class="text-sm text-blue-500">$25.00</p>
+                    <del class="text-xs text-gray-400">$35.00</del>
+                  </div>
+                </div>
+              </div>
+              <!-- 4th Product -->
+              <div
+                class="bg-white shadow-lg rounded-lg overflow-hidden relative group hover:border-red-500 hover:border-2 transition duration-300 w-48"
+              >
+                <img
+                  src="../assets/images/products/jewellery-2.jpg"
+                  alt="Beautiful Jewellery"
+                  class="w-full h-32 object-cover transition duration-300 ease-in-out"
+                />
+                <div
+                  class="absolute inset-y-0 right-0 flex flex-col items-center justify-center gap-2 transform translate-x-full transition-transform duration-300 ease-in-out group-hover:translate-x-0 bg-black bg-opacity-0 p-2"
+                >
+                  <button class="text-blue-500 text-md p-0.5 rounded">
+                    <i class="far fa-heart"></i>
+                  </button>
+                  <button class="text-blue-500 text-md p-0.5 rounded">
+                    <i class="far fa-eye"></i>
+                  </button>
+                  <button class="text-blue-500 text-md p-0.5 rounded">
+                    <i class="fas fa-shopping-bag"></i>
+                  </button>
+                </div>
+
+                <div class="p-2">
+                  <a
+                    href="#"
+                    class="inline-block text-blue-500 hover:text-blue-600 text-sm"
+                    >Jewellery</a
+                  >
+                  <h3 class="text-sm font-medium text-gray-800 mb-1">
+                    <a href="#">Beautiful Jewellery</a>
+                  </h3>
+                  <div class="flex items-center mb-1">
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star-half-alt text-yellow-400"></i>
+                    <i class="far fa-star text-yellow-400"></i>
+                  </div>
+                  <div class="flex items-baseline space-x-1 font-bold">
+                    <p class="text-sm text-blue-500">$25.00</p>
+                    <del class="text-xs text-gray-400">$35.00</del>
+                  </div>
+                </div>
+              </div>
+              <!-- 5th Product -->
+              <div
+                class="bg-white shadow-lg rounded-lg overflow-hidden relative group hover:border-red-500 hover:border-2 transition duration-300 w-48"
+              >
+                <img
+                  src="../assets/images/products/shoe-3.jpg"
+                  alt="Beautiful Jewellery"
+                  class="w-full h-32 object-cover transition duration-300 ease-in-out"
+                />
+                <div
+                  class="absolute inset-y-0 right-0 flex flex-col items-center justify-center gap-2 transform translate-x-full transition-transform duration-300 ease-in-out group-hover:translate-x-0 bg-black bg-opacity-0 p-2"
+                >
+                  <button class="text-blue-500 text-md p-0.5 rounded">
+                    <i class="far fa-heart"></i>
+                  </button>
+                  <button class="text-blue-500 text-md p-0.5 rounded">
+                    <i class="far fa-eye"></i>
+                  </button>
+                  <button class="text-blue-500 text-md p-0.5 rounded">
+                    <i class="fas fa-shopping-bag"></i>
+                  </button>
+                </div>
+
+                <div class="p-2">
+                  <a
+                    href="#"
+                    class="inline-block text-blue-500 hover:text-blue-600 text-sm"
+                    >MAN SHOES</a
+                  >
+                  <h3 class="text-sm font-medium text-gray-800 mb-1">
+                    <a href="#">Man Formal shoes</a>
+                  </h3>
+                  <div class="flex items-center mb-1">
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star-half-alt text-yellow-400"></i>
+                    <i class="far fa-star text-yellow-400"></i>
+                  </div>
+                  <div class="flex items-baseline space-x-1 font-bold">
+                    <p class="text-sm text-blue-500">$25.00</p>
+                    <del class="text-xs text-gray-400">$35.00</del>
+                  </div>
+                </div>
+              </div>
+              <!--  6th Product -->
+              <div
+                class="bg-white shadow-lg rounded-lg overflow-hidden relative group hover:border-red-500 hover:border-2 transition duration-300 w-48"
+              >
+                <img
+                  src="../assets/images/products/clothes-1.jpg"
+                  alt="Mens Jacket"
+                  class="w-full h-32 object-cover transition duration-300 ease-in-out"
+                />
+                <div
+                  class="absolute inset-y-0 right-0 flex flex-col items-center justify-center gap-2 transform translate-x-full transition-transform duration-300 ease-in-out group-hover:translate-x-0 bg-black bg-opacity-0 p-2"
+                >
+                  <button class="text-blue-500 text-md p-0.5 rounded">
+                    <i class="far fa-heart"></i>
+                  </button>
+                  <button class="text-blue-500 text-md p-0.5 rounded">
+                    <i class="far fa-eye"></i>
+                  </button>
+                  <button class="text-blue-500 text-md p-0.5 rounded">
+                    <i class="fas fa-shopping-bag"></i>
+                  </button>
+                </div>
+
+                <div class="p-2">
+                  <a
+                    href="#"
+                    class="inline-block text-blue-500 hover:text-blue-600 text-sm"
+                    >JACKET</a
+                  >
+                  <h3 class="text-sm font-medium text-gray-800 mb-1">
+                    <a href="#">Mens Jacket</a>
+                  </h3>
+                  <div class="flex items-center mb-1">
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="far fa-star text-yellow-400"></i>
+                    <i class="fas fa-star-half-alt text-yellow-400"></i>
+                  </div>
+                  <div class="flex items-baseline space-x-1 font-bold">
+                    <p class="text-sm text-blue-500">$25.00</p>
+                    <del class="text-xs text-gray-400">$35.00</del>
+                  </div>
+                </div>
+              </div>
+              <!-- Repeat for other products with respective details -->
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </main>
 
     <!--
     - FOOTER
@@ -584,9 +920,15 @@
         </p>
       </div>
     </footer>
+
     <!--
-  - ionicon link
--->
+    - custom js link
+  -->
+    <script src="./background.js"></script>
+
+    <!--
+    - ionicon link
+  -->
     <script
       type="module"
       src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"

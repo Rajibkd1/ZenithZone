@@ -38,24 +38,24 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     />
-<!-- This style for the background -->
-<style>
-  body {
-    margin: 0;
-  }
-  .background-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-  }
-  .content {
-      position: relative;
-      z-index: 1;
-    }
-</style>
+    <!-- This style for the background -->
+    <style>
+      body {
+        margin: 0;
+      }
+      .background-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+      }
+      .content {
+        position: relative;
+        z-index: 1;
+      }
+    </style>
   </head>
 
   <body>
@@ -120,12 +120,12 @@
               <div class="flex items-center space-x-4 mt-2 sm:mt-0">
                 <!-- Authentication Links -->
                 <a
-                  href="/login"
+                  href="../Login/Login.php"
                   class="text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out"
                   >Login</a
                 >
                 <a
-                  href="/register"
+                  href="../Registration/Who.php"
                   class="text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out"
                   >Register</a
                 >
@@ -187,34 +187,57 @@
       </div>
 
       <!-- Second nav -->
-      <nav class="bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% hidden fixed top-[120px] sm:block w-full z-40">
+      <nav
+        class="bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% hidden fixed top-[120px] sm:block w-full z-40"
+      >
         <div class="container mx-auto px-4 py-3">
-          <ul class="flex flex-wrap justify-center items-center gap-6 lg:gap-8 xl:gap-10">
+          <ul
+            class="flex flex-wrap justify-center items-center gap-6 lg:gap-8 xl:gap-10"
+          >
             <li>
-              <a href="#" class="text-slate-50 font-bold hover:text-indigo-500">Home</a>
+              <a href="#" class="text-slate-50 font-bold hover:text-indigo-500"
+                >Home</a
+              >
             </li>
             <li class="dropdown dropdown-hover">
-              <div tabindex="0" role="button" class="text-slate-50 font-bold hover:text-indigo-500">
+              <div
+                tabindex="0"
+                role="button"
+                class="text-slate-50 font-bold hover:text-indigo-500"
+              >
                 Categories
               </div>
-              <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-50 min-w-96 p-4 shadow grid grid-cols-2 md:grid-cols-4 gap-4">
+              <ul
+                tabindex="0"
+                class="dropdown-content menu bg-base-100 rounded-box z-50 min-w-96 p-4 shadow grid grid-cols-2 md:grid-cols-4 gap-4"
+              >
                 <div>
                   <h3 class="font-semibold mb-2">Electronics</h3>
                   <ul class="space-y-1">
                     <li>
-                      <a href="#" class="text-gray-600 hover:text-indigo-500">Desktop</a>
+                      <a href="#" class="text-gray-600 hover:text-indigo-500"
+                        >Desktop</a
+                      >
                     </li>
                     <li>
-                      <a href="#" class="text-gray-600 hover:text-indigo-500">Laptop</a>
+                      <a href="#" class="text-gray-600 hover:text-indigo-500"
+                        >Laptop</a
+                      >
                     </li>
                     <li>
-                      <a href="#" class="text-gray-600 hover:text-indigo-500">Camera</a>
+                      <a href="#" class="text-gray-600 hover:text-indigo-500"
+                        >Camera</a
+                      >
                     </li>
                     <li>
-                      <a href="#" class="text-gray-600 hover:text-indigo-500">Tablet</a>
+                      <a href="#" class="text-gray-600 hover:text-indigo-500"
+                        >Tablet</a
+                      >
                     </li>
                     <li>
-                      <a href="#" class="text-gray-600 hover:text-indigo-500">Headphone</a>
+                      <a href="#" class="text-gray-600 hover:text-indigo-500"
+                        >Headphone</a
+                      >
                     </li>
                   </ul>
                 </div>
@@ -222,19 +245,29 @@
                   <h3 class="font-semibold mb-2">Men's</h3>
                   <ul class="space-y-1">
                     <li>
-                      <a href="#" class="text-gray-600 hover:text-indigo-500">Formal</a>
+                      <a href="#" class="text-gray-600 hover:text-indigo-500"
+                        >Formal</a
+                      >
                     </li>
                     <li>
-                      <a href="#" class="text-gray-600 hover:text-indigo-500">Casual</a>
+                      <a href="#" class="text-gray-600 hover:text-indigo-500"
+                        >Casual</a
+                      >
                     </li>
                     <li>
-                      <a href="#" class="text-gray-600 hover:text-indigo-500">Sports</a>
+                      <a href="#" class="text-gray-600 hover:text-indigo-500"
+                        >Sports</a
+                      >
                     </li>
                     <li>
-                      <a href="#" class="text-gray-600 hover:text-indigo-500">Jacket</a>
+                      <a href="#" class="text-gray-600 hover:text-indigo-500"
+                        >Jacket</a
+                      >
                     </li>
                     <li>
-                      <a href="#" class="text-gray-600 hover:text-indigo-500">Sunglasses</a>
+                      <a href="#" class="text-gray-600 hover:text-indigo-500"
+                        >Sunglasses</a
+                      >
                     </li>
                   </ul>
                 </div>
@@ -242,19 +275,29 @@
                   <h3 class="font-semibold mb-2">Women's</h3>
                   <ul class="space-y-1">
                     <li>
-                      <a href="#" class="text-gray-600 hover:text-indigo-500">Formal</a>
+                      <a href="#" class="text-gray-600 hover:text-indigo-500"
+                        >Formal</a
+                      >
                     </li>
                     <li>
-                      <a href="#" class="text-gray-600 hover:text-indigo-500">Casual</a>
+                      <a href="#" class="text-gray-600 hover:text-indigo-500"
+                        >Casual</a
+                      >
                     </li>
                     <li>
-                      <a href="#" class="text-gray-600 hover:text-indigo-500">Perfume</a>
+                      <a href="#" class="text-gray-600 hover:text-indigo-500"
+                        >Perfume</a
+                      >
                     </li>
                     <li>
-                      <a href="#" class="text-gray-600 hover:text-indigo-500">Cosmetics</a>
+                      <a href="#" class="text-gray-600 hover:text-indigo-500"
+                        >Cosmetics</a
+                      >
                     </li>
                     <li>
-                      <a href="#" class="text-gray-600 hover:text-indigo-500">Bags</a>
+                      <a href="#" class="text-gray-600 hover:text-indigo-500"
+                        >Bags</a
+                      >
                     </li>
                   </ul>
                 </div>
@@ -262,97 +305,167 @@
                   <h3 class="font-semibold mb-2">Accessories</h3>
                   <ul class="space-y-1">
                     <li>
-                      <a href="#" class="text-gray-600 hover:text-indigo-500">Smart Watch</a>
+                      <a href="#" class="text-gray-600 hover:text-indigo-500"
+                        >Smart Watch</a
+                      >
                     </li>
                     <li>
-                      <a href="#" class="text-gray-600 hover:text-indigo-500">Smart TV</a>
+                      <a href="#" class="text-gray-600 hover:text-indigo-500"
+                        >Smart TV</a
+                      >
                     </li>
                     <li>
-                      <a href="#" class="text-gray-600 hover:text-indigo-500">Keyboard</a>
+                      <a href="#" class="text-gray-600 hover:text-indigo-500"
+                        >Keyboard</a
+                      >
                     </li>
                     <li>
-                      <a href="#" class="text-gray-600 hover:text-indigo-500">Mouse</a>
+                      <a href="#" class="text-gray-600 hover:text-indigo-500"
+                        >Mouse</a
+                      >
                     </li>
                     <li>
-                      <a href="#" class="text-gray-600 hover:text-indigo-500">Microphone</a>
+                      <a href="#" class="text-gray-600 hover:text-indigo-500"
+                        >Microphone</a
+                      >
                     </li>
                   </ul>
                 </div>
               </ul>
             </li>
             <li class="dropdown dropdown-hover">
-              <div tabindex="0" role="button" class="text-slate-50 font-bold hover:text-indigo-500">
+              <div
+                tabindex="0"
+                role="button"
+                class="text-slate-50 font-bold hover:text-indigo-500"
+              >
                 Art or Craft
               </div>
-              <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+              <ul
+                tabindex="0"
+                class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+              >
                 <li>
-                  <a href="#" class="text-gray-600 hover:text-indigo-500">Shirt</a>
+                  <a href="#" class="text-gray-600 hover:text-indigo-500"
+                    >Shirt</a
+                  >
                 </li>
                 <li>
-                  <a href="#" class="text-gray-600 hover:text-indigo-500">Shorts & Jeans</a>
+                  <a href="#" class="text-gray-600 hover:text-indigo-500"
+                    >Shorts & Jeans</a
+                  >
                 </li>
                 <li>
-                  <a href="#" class="text-gray-600 hover:text-indigo-500">Safety Shoes</a>
+                  <a href="#" class="text-gray-600 hover:text-indigo-500"
+                    >Safety Shoes</a
+                  >
                 </li>
                 <li>
-                  <a href="#" class="text-gray-600 hover:text-indigo-500">Wallet</a>
+                  <a href="#" class="text-gray-600 hover:text-indigo-500"
+                    >Wallet</a
+                  >
                 </li>
               </ul>
             </li>
             <li class="dropdown dropdown-hover">
-              <div tabindex="0" role="button" class="text-slate-50 font-bold hover:text-indigo-500">
+              <div
+                tabindex="0"
+                role="button"
+                class="text-slate-50 font-bold hover:text-indigo-500"
+              >
                 Second Hand Products
               </div>
-              <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+              <ul
+                tabindex="0"
+                class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+              >
                 <li>
-                  <a href="#" class="text-gray-600 hover:text-indigo-500">Shirt</a>
+                  <a href="#" class="text-gray-600 hover:text-indigo-500"
+                    >Shirt</a
+                  >
                 </li>
                 <li>
-                  <a href="#" class="text-gray-600 hover:text-indigo-500">Shorts & Jeans</a>
+                  <a href="#" class="text-gray-600 hover:text-indigo-500"
+                    >Shorts & Jeans</a
+                  >
                 </li>
                 <li>
-                  <a href="#" class="text-gray-600 hover:text-indigo-500">Safety Shoes</a>
+                  <a href="#" class="text-gray-600 hover:text-indigo-500"
+                    >Safety Shoes</a
+                  >
                 </li>
                 <li>
-                  <a href="#" class="text-gray-600 hover:text-indigo-500">Wallet</a>
+                  <a href="#" class="text-gray-600 hover:text-indigo-500"
+                    >Wallet</a
+                  >
                 </li>
               </ul>
             </li>
             <li class="dropdown dropdown-hover">
-              <div tabindex="0" role="button" class="text-slate-50 font-bold hover:text-indigo-500">
+              <div
+                tabindex="0"
+                role="button"
+                class="text-slate-50 font-bold hover:text-indigo-500"
+              >
                 Men's
               </div>
-              <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+              <ul
+                tabindex="0"
+                class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+              >
                 <li>
-                  <a href="#" class="text-gray-600 hover:text-indigo-500">Shirt</a>
+                  <a href="#" class="text-gray-600 hover:text-indigo-500"
+                    >Shirt</a
+                  >
                 </li>
                 <li>
-                  <a href="#" class="text-gray-600 hover:text-indigo-500">Shorts & Jeans</a>
+                  <a href="#" class="text-gray-600 hover:text-indigo-500"
+                    >Shorts & Jeans</a
+                  >
                 </li>
                 <li>
-                  <a href="#" class="text-gray-600 hover:text-indigo-500">Safety Shoes</a>
+                  <a href="#" class="text-gray-600 hover:text-indigo-500"
+                    >Safety Shoes</a
+                  >
                 </li>
                 <li>
-                  <a href="#" class="text-gray-600 hover:text-indigo-500">Wallet</a>
+                  <a href="#" class="text-gray-600 hover:text-indigo-500"
+                    >Wallet</a
+                  >
                 </li>
               </ul>
             </li>
             <li class="dropdown dropdown-hover">
-              <div tabindex="0" role="button" class="text-slate-50 font-bold hover:text-indigo-500">
+              <div
+                tabindex="0"
+                role="button"
+                class="text-slate-50 font-bold hover:text-indigo-500"
+              >
                 Women's
               </div>
-              <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+              <ul
+                tabindex="0"
+                class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+              >
                 <li>
-                  <a href="#" class="text-gray-600 hover:text-indigo-500">Dress & Frock</a>
+                  <a href="#" class="text-gray-600 hover:text-indigo-500"
+                    >Dress & Frock</a
+                  >
                 </li>
                 <li>
-                  <a href="#" class="text-gray-600 hover:text-indigo-500">Earrings</a>
+                  <a href="#" class="text-gray-600 hover:text-indigo-500"
+                    >Earrings</a
+                  >
                 </li>
                 <li>
-                  <a href="#" class="text-gray-600 hover:text-indigo-500">Necklace</a>
+                  <a href="#" class="text-gray-600 hover:text-indigo-500"
+                    >Necklace</a
+                  >
                 </li>
                 <li>
-                  <a href="#" class="text-gray-600 hover:text-indigo-500">Makeup Kit</a>
+                  <a href="#" class="text-gray-600 hover:text-indigo-500"
+                    >Makeup Kit</a
+                  >
                 </li>
               </ul>
             </li>
