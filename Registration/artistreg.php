@@ -24,22 +24,22 @@
 </head>
 
 <body>
-<?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "ZenithZone";
-$conn = new mysqli($servername, $username, $password, $dbname);
+  <?php
+  $servername = "localhost";
+  $username = "root";
+  $password = "";
+  $dbname = "ZenithZone";
+  $conn = new mysqli($servername, $username, $password, $dbname);
 
-if ($conn->connect_error) {
+  if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
-}
+  }
 
-$email_error = $number_error = $nid_error = '';
-$registration_success = false;
-$upload_error = '';
+  $email_error = $number_error = $nid_error = '';
+  $registration_success = false;
+  $upload_error = '';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
+  if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     $first_name = $_POST['fname'];
     $last_name = $_POST['lname'];
     $email = $_POST['email'];
@@ -47,6 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     $gender = $_POST['gender'];
     $nid_number = $_POST['nid'];
     $date_of_birth = $_POST['dob'];
+    $address = trim($_POST['address']); // Capture the address field
     $postal_code = $_POST['postal'];
     $password_hash = password_hash($_POST['password'], PASSWORD_BCRYPT);
 
@@ -56,82 +57,82 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     $stmt->execute();
     $result = $stmt->get_result();
     if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            if ($row['email'] === $email) {
-                $email_error = "Email already registered. Please try another.";
-            }
-            if ($row['mobile_number'] === $mobile_number) {
-                $number_error = "Mobile number already registered. Please try another.";
-            }
-            if ($row['nid_number'] === $nid_number) {
-                $nid_error = "NID number already registered. Please try another.";
-            }
+      while ($row = $result->fetch_assoc()) {
+        if ($row['email'] === $email) {
+          $email_error = "Email already registered. Please try another.";
         }
+        if ($row['mobile_number'] === $mobile_number) {
+          $number_error = "Mobile number already registered. Please try another.";
+        }
+        if ($row['nid_number'] === $nid_number) {
+          $nid_error = "NID number already registered. Please try another.";
+        }
+      }
     } else {
-        // File upload handling
-        if ($_FILES['own_picture']['error'] === UPLOAD_ERR_OK && $_FILES['nid_picture']['error'] === UPLOAD_ERR_OK) {
-            $artist_picture_extension = pathinfo($_FILES['own_picture']['name'], PATHINFO_EXTENSION);
-            $nid_picture_extension = pathinfo($_FILES['nid_picture']['name'], PATHINFO_EXTENSION);
-            $artist_picture_newname = "artistpic/" . $mobile_number . "." . $artist_picture_extension;
-            $nid_picture_newname = "artistnid/" . $mobile_number . "." . $nid_picture_extension;
+      // File upload handling
+      if ($_FILES['own_picture']['error'] === UPLOAD_ERR_OK && $_FILES['nid_picture']['error'] === UPLOAD_ERR_OK) {
+        $artist_picture_extension = pathinfo($_FILES['own_picture']['name'], PATHINFO_EXTENSION);
+        $nid_picture_extension = pathinfo($_FILES['nid_picture']['name'], PATHINFO_EXTENSION);
+        $artist_picture_newname = "artistpic/" . $mobile_number . "." . $artist_picture_extension;
+        $nid_picture_newname = "artistnid/" . $mobile_number . "." . $nid_picture_extension;
 
-            // Ensure directories exist
-            if (!file_exists("artistpic/")) {
-                mkdir("artistpic/", 0777, true);
-            }
-            if (!file_exists("artistnid/")) {
-                mkdir("artistnid/", 0777, true);
-            }
-
-            // Move files
-            move_uploaded_file($_FILES["own_picture"]["tmp_name"], $artist_picture_newname);
-            move_uploaded_file($_FILES["nid_picture"]["tmp_name"], $nid_picture_newname);
-
-            // Insert into database
-            $insert_stmt = $conn->prepare("INSERT INTO artist_info (first_name, last_name, email, mobile_number, gender, nid_number, date_of_birth, postal_code, artist_picture, nid_picture, password_hash) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $insert_stmt->bind_param("sssssssssss", $first_name, $last_name, $email, $mobile_number, $gender, $nid_number, $date_of_birth, $postal_code, $artist_picture_newname, $nid_picture_newname, $password_hash);
-
-            if ($insert_stmt->execute()) {
-                $registration_success = true;
-            }
-            $insert_stmt->close();
-        } else {
-            $upload_error = "Error uploading files. Please check file size and format.";
+        // Ensure directories exist
+        if (!file_exists("artistpic/")) {
+          mkdir("artistpic/", 0777, true);
         }
+        if (!file_exists("artistnid/")) {
+          mkdir("artistnid/", 0777, true);
+        }
+
+        // Move files
+        move_uploaded_file($_FILES["own_picture"]["tmp_name"], $artist_picture_newname);
+        move_uploaded_file($_FILES["nid_picture"]["tmp_name"], $nid_picture_newname);
+
+        // Insert into database
+        $insert_stmt = $conn->prepare("INSERT INTO artist_info (first_name, last_name, email, mobile_number, gender, nid_number, date_of_birth, address, postal_code, artist_picture, nid_picture, password_hash) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $insert_stmt->bind_param("ssssssssssss", $first_name, $last_name, $email, $mobile_number, $gender, $nid_number, $date_of_birth, $address, $postal_code, $artist_picture_newname, $nid_picture_newname, $password_hash);
+
+        if ($insert_stmt->execute()) {
+          $registration_success = true;
+        }
+        $insert_stmt->close();
+      } else {
+        $upload_error = "Error uploading files. Please check file size and format.";
+      }
     }
     $stmt->close();
-}
+  }
 
-$conn->close();
+  $conn->close();
 
-// Modals for feedback
-if ($registration_success) {
-  echo '<dialog id="successModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">';
-  echo '<div class="bg-white rounded-lg p-5 shadow text-center">';
-  echo '<i class="fa-solid fa-circle-check fa-5x" style="color: #3feeba;"></i>';
-  echo '<h3 class="text-lg font-bold mt-4">Registration Successful!</h3>';
-  echo '<p class="mt-2 text-green-700">You have successfully registered.</p>';
-  echo '<div class="flex justify-center mt-4">';
-  echo '<button onclick="window.location=\'../HomePage/InitialPage.html\';" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Close</button>';
-  echo '</div>';
-  echo '</div>';
-  echo '</dialog>';
-  echo "<script>document.getElementById('successModal').showModal();</script>";
-} elseif (!empty($email_error) || !empty($number_error) || !empty($nid_error) || !empty($upload_error)) {
+  // Modals for feedback
+  if ($registration_success) {
+    echo '<dialog id="successModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">';
+    echo '<div class="bg-white rounded-lg p-5 shadow text-center">';
+    echo '<i class="fa-solid fa-circle-check fa-5x" style="color: #3feeba;"></i>';
+    echo '<h3 class="text-lg font-bold mt-4">Registration Successful!</h3>';
+    echo '<p class="mt-2 text-green-700">You have successfully registered.</p>';
+    echo '<div class="flex justify-center mt-4">';
+    echo '<button onclick="window.location=\'../HomePage/InitialPage.php\';" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Close</button>';
+    echo '</div>';
+    echo '</div>';
+    echo '</dialog>';
+    echo "<script>document.getElementById('successModal').showModal();</script>";
+  } elseif (!empty($email_error) || !empty($number_error) || !empty($nid_error) || !empty($upload_error)) {
     $error_message = !empty($email_error) ? $email_error : (!empty($number_error) ? $number_error : (!empty($nid_error) ? $nid_error : $upload_error));
     echo '<dialog id="errorModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">';
-        echo '<div class="bg-white rounded-lg p-5 shadow text-center">';
-        echo '<i class="fa-solid fa-circle-xmark fa-5x" style="color: #ff4b0f;"></i>';
-        echo '<h3 class="text-lg font-bold text-red-700 mt-4">Registration Error</h3>';
-        echo "<p class='mt-2'>$error_message</p>";
-        echo '<div class="flex justify-center mt-4">';
-        echo '<button onclick="window.location=\'./artistreg.php\';" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Close</button>';
-        echo '</div>';
-        echo '</div>';
-        echo '</dialog>';
-        echo "<script>document.getElementById('errorModal').showModal();</script>";
-}
-?>
+    echo '<div class="bg-white rounded-lg p-5 shadow text-center">';
+    echo '<i class="fa-solid fa-circle-xmark fa-5x" style="color: #ff4b0f;"></i>';
+    echo '<h3 class="text-lg font-bold text-red-700 mt-4">Registration Error</h3>';
+    echo "<p class='mt-2'>$error_message</p>";
+    echo '<div class="flex justify-center mt-4">';
+    echo '<button onclick="window.location=\'./artistreg.php\';" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Close</button>';
+    echo '</div>';
+    echo '</div>';
+    echo '</dialog>';
+    echo "<script>document.getElementById('errorModal').showModal();</script>";
+  }
+  ?>
 
 
   <header>
@@ -140,9 +141,8 @@ if ($registration_success) {
       <div class="absolute -inset-1 bg-gradient-to-r from-red-600 to-violet-600 rounded-lg blur opacity-25 group-hover:opacity-100 transition duration-1000 group-hover:duration-200">
       </div>
       <!-- Your nav content goes here -->
-      <div class="relative bg-neutral-300 py-5 w-full z-50">
+      <div class="relative bg-[#363b41] py-5 w-full">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <!-- Container to adjust visibility -->
           <div class="flex flex-col sm:flex-row justify-between items-center">
             <!-- Logo -->
             <a href="#" class="flex-shrink-0">
@@ -167,18 +167,18 @@ if ($registration_success) {
             <!-- User Actions and Authentication -->
             <div class="flex items-center space-x-4 mt-2 sm:mt-0">
               <!-- Authentication Links -->
-              <a href="/login" class="text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out">Login</a>
-              <a href="/register" class="text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out">Register</a>
+              <a href="../Login/Login.php" class="text-[#fbad62] hover:text-white transition duration-150 ease-in-out">Login</a>
+              <a href="../Registration/Who.php" class="text-[#fbad62] hover:text-white transition duration-150 ease-in-out">Signup</a>
 
               <!-- User Actions -->
-              <button class="text-gray-500 hover:text-gray-700">
+              <button class="text-[#fbad62] hover:text-white">
                 <ion-icon name="person-outline" class="h-6 w-6"></ion-icon>
               </button>
-              <button class="relative text-gray-500 hover:text-gray-700">
+              <button class="relative text-[#fbad62] hover:text-white">
                 <ion-icon name="heart-outline" class="h-6 w-6"></ion-icon>
                 <span class="absolute -top-2 -right-2 rounded-full bg-red-500 text-white text-xs px-2 py-1">0</span>
               </button>
-              <button class="relative text-gray-500 hover:text-gray-700">
+              <button class="relative text-[#fbad62] hover:text-white">
                 <ion-icon name="bag-handle-outline" class="h-6 w-6"></ion-icon>
                 <span class="absolute -top-2 -right-2 rounded-full bg-red-500 text-white text-xs px-2 py-1">0</span>
               </button>
@@ -199,6 +199,7 @@ if ($registration_success) {
             </div>
           </div>
         </div>
+
       </div>
 
     </div>
@@ -400,7 +401,7 @@ if ($registration_success) {
         <span class="badge badge-sm badge-error absolute -top-1 -right-1">0</span>
       </button>
 
-      <button class="btn btn-ghost">
+      <button class="btn btn-ghost" onclick="window.location= '../HomePage/InitialPage.php'">
         <ion-icon name="home-outline" class="text-2xl"></ion-icon>
       </button>
 
@@ -419,6 +420,7 @@ if ($registration_success) {
     <!-- This Div for form of the registration -->
     <div class="mt-4 mb-5 max-w-4xl mx-auto font-[sans-serif] p-6 bg-gray-100  rounded-lg">
       <form id="signupForm" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST" enctype="multipart/form-data">
+        <h1 class="text-center font-bold text-black text-xl">Create your ZenithZone Account</h1>
         <div class="grid sm:grid-cols-2 gap-8">
           <div class="mt-8">
             <label class="text-gray-800 text-xs block mb-2">First Name</label>
@@ -539,6 +541,12 @@ if ($registration_success) {
             </div>
             <div id="dob-error" class="error-message">
               Please enter a valid date of birth.
+            </div>
+          </div>
+          <div class="mt-8">
+            <label class="text-gray-800 text-xs block mb-2">Address</label>
+            <div class="relative flex items-center">
+              <textarea id="address" name="address" required class="w-full bg-transparent text-sm text-gray-800 border-b border-gray-300 focus:border-blue-500 px-2 py-3 outline-none" placeholder="Enter your address"></textarea>
             </div>
           </div>
 

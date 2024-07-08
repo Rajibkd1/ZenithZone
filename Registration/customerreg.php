@@ -83,7 +83,7 @@
         echo '<h3 class="text-lg font-bold mt-4">Registration Successful!</h3>';
         echo '<p class="mt-2 text-green-700">You have successfully registered.</p>';
         echo '<div class="flex justify-center mt-4">';
-        echo '<button onclick="window.location=\'../HomePage/InitialPage.html\';" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Close</button>';
+        echo '<button onclick="window.location=\'../HomePage/InitialPage.php\';" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Close</button>';
         echo '</div>';
         echo '</div>';
         echo '</dialog>';
@@ -110,66 +110,66 @@
             <div class="absolute -inset-1 bg-gradient-to-r from-red-600 to-violet-600 rounded-lg blur opacity-25 group-hover:opacity-100 transition duration-1000 group-hover:duration-200">
             </div>
             <!-- Your nav content goes here -->
-            <div class="relative bg-neutral-300 py-5 w-full z-50">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <!-- Container to adjust visibility -->
-                    <div class="flex flex-col sm:flex-row justify-between items-center">
-                        <!-- Logo -->
-                        <a href="#" class="flex-shrink-0">
-                            <img src="../assets/images/logo/ZentihZone.png" alt="ZenithZone logo" class="h-16 sm:h-20" />
-                        </a>
+            <div class="relative bg-[#363b41] py-5 w-full">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex flex-col sm:flex-row justify-between items-center">
+            <!-- Logo -->
+            <a href="#" class="flex-shrink-0">
+              <img src="../assets/images/logo/ZentihZone.png" alt="ZenithZone logo" class="h-16 sm:h-20" />
+            </a>
 
-                        <!-- Search Field For Large Device -->
-                        <div class="flex-grow mx-10 my-2 sm:my-0 hidden md:block">
-                            <div class="relative">
-                                <input type="search" name="search" class="w-full pl-4 pr-20 py-2 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border rounded-md" placeholder="Enter your product name..." />
-                                <!-- Search Button -->
-                                <button class="absolute inset-y-0 right-10 px-3 flex items-center">
-                                    <ion-icon name="search-outline" class="h-5 w-5 text-gray-500"></ion-icon>
-                                </button>
-                                <!-- Voice Search Button -->
-                                <button class="absolute inset-y-0 right-0 px-3 flex items-center">
-                                    <ion-icon name="mic-outline" class="h-5 w-5 text-gray-500"></ion-icon>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- User Actions and Authentication -->
-                        <div class="flex items-center space-x-4 mt-2 sm:mt-0">
-                            <!-- Authentication Links -->
-                            <a href="/login" class="text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out">Login</a>
-                            <a href="/register" class="text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out">Register</a>
-
-                            <!-- User Actions -->
-                            <button class="text-gray-500 hover:text-gray-700">
-                                <ion-icon name="person-outline" class="h-6 w-6"></ion-icon>
-                            </button>
-                            <button class="relative text-gray-500 hover:text-gray-700">
-                                <ion-icon name="heart-outline" class="h-6 w-6"></ion-icon>
-                                <span class="absolute -top-2 -right-2 rounded-full bg-red-500 text-white text-xs px-2 py-1">0</span>
-                            </button>
-                            <button class="relative text-gray-500 hover:text-gray-700">
-                                <ion-icon name="bag-handle-outline" class="h-6 w-6"></ion-icon>
-                                <span class="absolute -top-2 -right-2 rounded-full bg-red-500 text-white text-xs px-2 py-1">0</span>
-                            </button>
-                        </div>
-                        <!-- Search Field for Small device  -->
-                        <div class="flex-grow mx-10 my-2 sm:my-0 block sm:hidden">
-                            <div class="relative">
-                                <input type="search" name="search" class="w-full pl-4 pr-20 py-2 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border rounded-md" placeholder="Enter your product name..." />
-                                <!-- Search Button -->
-                                <button class="absolute inset-y-0 right-10 px-3 flex items-center">
-                                    <ion-icon name="search-outline" class="h-5 w-5 text-gray-500"></ion-icon>
-                                </button>
-                                <!-- Voice Search Button -->
-                                <button class="absolute inset-y-0 right-0 px-3 flex items-center">
-                                    <ion-icon name="mic-outline" class="h-5 w-5 text-gray-500"></ion-icon>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <!-- Search Field For Large Device -->
+            <div class="flex-grow mx-10 my-2 sm:my-0 hidden md:block">
+              <div class="relative">
+                <input type="search" name="search" class="w-full pl-4 pr-20 py-2 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border rounded-md" placeholder="Enter your product name..." />
+                <!-- Search Button -->
+                <button class="absolute inset-y-0 right-10 px-3 flex items-center">
+                  <ion-icon name="search-outline" class="h-5 w-5 text-gray-500"></ion-icon>
+                </button>
+                <!-- Voice Search Button -->
+                <button class="absolute inset-y-0 right-0 px-3 flex items-center">
+                  <ion-icon name="mic-outline" class="h-5 w-5 text-gray-500"></ion-icon>
+                </button>
+              </div>
             </div>
+
+            <!-- User Actions and Authentication -->
+            <div class="flex items-center space-x-4 mt-2 sm:mt-0">
+              <!-- Authentication Links -->
+              <a href="../Login/Login.php" class="text-[#fbad62] hover:text-white transition duration-150 ease-in-out">Login</a>
+              <a href="../Registration/Who.php" class="text-[#fbad62] hover:text-white transition duration-150 ease-in-out">Signup</a>
+
+              <!-- User Actions -->
+              <button class="text-[#fbad62] hover:text-white">
+                <ion-icon name="person-outline" class="h-6 w-6"></ion-icon>
+              </button>
+              <button class="relative text-[#fbad62] hover:text-white">
+                <ion-icon name="heart-outline" class="h-6 w-6"></ion-icon>
+                <span class="absolute -top-2 -right-2 rounded-full bg-red-500 text-white text-xs px-2 py-1">0</span>
+              </button>
+              <button class="relative text-[#fbad62] hover:text-white">
+                <ion-icon name="bag-handle-outline" class="h-6 w-6"></ion-icon>
+                <span class="absolute -top-2 -right-2 rounded-full bg-red-500 text-white text-xs px-2 py-1">0</span>
+              </button>
+            </div>
+            <!-- Search Field for Small device  -->
+            <div class="flex-grow mx-10 my-2 sm:my-0 block sm:hidden">
+              <div class="relative">
+                <input type="search" name="search" class="w-full pl-4 pr-20 py-2 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border rounded-md" placeholder="Enter your product name..." />
+                <!-- Search Button -->
+                <button class="absolute inset-y-0 right-10 px-3 flex items-center">
+                  <ion-icon name="search-outline" class="h-5 w-5 text-gray-500"></ion-icon>
+                </button>
+                <!-- Voice Search Button -->
+                <button class="absolute inset-y-0 right-0 px-3 flex items-center">
+                  <ion-icon name="mic-outline" class="h-5 w-5 text-gray-500"></ion-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
 
         </div>
         <!-- Second nav -->
@@ -370,9 +370,9 @@
                 <span class="badge badge-sm badge-error absolute -top-1 -right-1">0</span>
             </button>
 
-            <button class="btn btn-ghost">
-                <ion-icon name="home-outline" class="text-2xl"></ion-icon>
-            </button>
+            <button class="btn btn-ghost" onclick="window.location= '../HomePage/InitialPage.php'">
+  <ion-icon name="home-outline" class="text-2xl"></ion-icon>
+</button>
 
             <button class="btn btn-ghost relative">
                 <ion-icon name="heart-outline" class="text-2xl"></ion-icon>
@@ -388,7 +388,8 @@
 
     <div class="mt-5 mb-5 max-w-4xl mx-auto font-[sans-serif] p-6 bg-gray-100 rounded-lg">
         <form id="signupForm" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
-            <div class="grid sm:grid-cols-2 gap-8">
+        <h1 class="text-center font-bold text-black text-xl">Create your ZenithZone Account</h1>    
+        <div class="grid sm:grid-cols-2 gap-8">
                 <div class="mt-8">
                     <label class="text-gray-800 text-xs block mb-2">First Name</label>
                     <div class="relative flex items-center">

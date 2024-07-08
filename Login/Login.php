@@ -60,96 +60,88 @@ $conn->close();
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Particle Background</title>
-    
+
     <!--
     - favicon
   -->
-  <link
-  rel="shortcut icon"
-  href="../assets/images/logo/ZentihZone.png"
-  type="image/x-icon"
-/>
-    <link
-      href="https://fonts.googleapis.com/css?family=Varela&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@^2.0/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
+    <link rel="shortcut icon" href="../assets/images/logo/ZentihZone.png" type="image/x-icon" />
+    <link href="https://fonts.googleapis.com/css?family=Varela&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@^2.0/dist/tailwind.min.css" rel="stylesheet" />
     <!-- Login css link -->
-     <link rel="stylesheet" href="./LoginStyle.css">
-  </head>
+    <link rel="stylesheet" href="./LoginStyle.css">
+</head>
 
 <body>
-<div id="particles-js"></div>
-    
-<div class="login-box">
-    <div class="flex justify-center mb-1">
-        <img src="../assets/images/logo/ZentihZone.png" alt="ZenithZone logo" class="w-20" />
+    <div id="particles-js"></div>
+
+    <div class="login-box">
+        <div class="flex justify-center mb-1">
+            <img src="../assets/images/logo/ZentihZone.png" alt="ZenithZone logo" class="w-20" />
+        </div>
+        <h2 class="text-white text-2xl text-center">Welcome to ZenithZone</h2>
+        <form method="POST">
+            <div class="user-box">
+                <input type="text" name="email_mobile" required />
+                <label>Email/Mobile no.</label>
+            </div>
+            <div class="user-box">
+                <input type="password" name="password" required />
+                <label>Password</label>
+            </div>
+            <div class="flex justify-center mb-3">
+                <button type="submit" class="btn">Login</button>
+            </div>
+            <div class="flex justify-between items-center mb-4">
+                <a href="#" class="text-teal-400 hover:underline">Forgot your password?</a>
+            </div>
+            <p class="text-white text-center">
+                Don't have an account?
+                <a href="#" class="text-teal-400 hover:underline text-blue-400">Sign up now</a>
+            </p>
+        </form>
     </div>
-    <h2 class="text-white text-2xl text-center">Welcome to ZenithZone</h2>
-    <form method="POST">
-        <div class="user-box">
-            <input type="text" name="email_mobile" required />
-            <label>Email/Mobile no.</label>
-        </div>
-        <div class="user-box">
-            <input type="password" name="password" required />
-            <label>Password</label>
-        </div>
-        <div class="flex justify-center mb-3">
-            <button type="submit" class="btn">Login</button>
-        </div>
-        <div class="flex justify-between items-center mb-4">
-            <a href="#" class="text-teal-400 hover:underline">Forgot your password?</a>
-        </div>
-        <p class="text-white text-center">
-            Don't have an account? 
-            <a href="#" class="text-teal-400 hover:underline text-blue-400">Sign up now</a>
-        </p>
-    </form>
-</div>
 
-<!-- Success Modal -->
-<dialog id="successModal" class="bg-white rounded-lg p-5 shadow text-center">
-    <h3 class="text-lg font-bold flex justify-center items-center gap-2">
-        <i class="fa-solid fa-circle-check" style="color: #3feeba;"></i> Login Successful!
-    </h3>
-    <p class="mt-2">Hi <?php echo htmlspecialchars($first_name); ?>, welcome to ZenithZone.</p>
-    <div class="flex justify-center mt-4">
-        <button onclick="window.location='../HomePage/InitialPage.html';" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Proceed</button>
-    </div>
-</dialog>
+    <!-- Success Modal -->
+    <dialog id="successModal" class="bg-white rounded-lg p-5 shadow text-center">
+        <h3 class="text-lg font-bold flex justify-center items-center gap-2">
+            <i class="fa-solid fa-circle-check" style="color: #3feeba;"></i> Login Successful!
+        </h3>
+        <p class="mt-2">Hi <?php echo htmlspecialchars($first_name); ?>, welcome to ZenithZone.</p>
+        <div class="flex justify-center mt-4">
+            <button onclick="window.location='../HomePage/InitialPage.php';" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Proceed</button>
+        </div>
+    </dialog>
 
-<!-- Error Modal -->
-<dialog id="errorModal" class="bg-white rounded-lg p-5 shadow text-center">
-    <h3 class="text-lg font-bold flex justify-center items-center gap-2">
-        <i class="fa-solid fa-circle-xmark" style="color: #ff4b0f;"></i> Login Error
-    </h3>
-    <p>Invalid login credentials. Please try again.</p>
-    <div class="flex justify-center mt-4">
-        <button onclick="this.parentNode.parentNode.close();" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Close</button>
-    </div>
-</dialog>
+    <!-- Error Modal -->
+    <dialog id="errorModal" class="bg-white rounded-lg p-5 shadow text-center">
+        <h3 class="text-lg font-bold flex justify-center items-center gap-2">
+            <i class="fa-solid fa-circle-xmark" style="color: #ff4b0f;"></i> Login Error
+        </h3>
+        <p>Invalid login credentials. Please try again.</p>
+        <div class="flex justify-center mt-4">
+            <button onclick="this.parentNode.parentNode.close();" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Close</button>
+        </div>
+    </dialog>
 
-<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-<script src="./LoginScript.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const loginSuccess = <?php echo json_encode($login_success); ?>;
-    const loginError = <?php echo json_encode($login_error); ?>;
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script src="./LoginScript.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginSuccess = <?php echo json_encode($login_success); ?>;
+            const loginError = <?php echo json_encode($login_error); ?>;
 
-    if (loginSuccess) {
-        document.getElementById('successModal').showModal();
-    } else if (loginError) {
-        document.getElementById('errorModal').showModal();
-    }
-});
-</script>
+            if (loginSuccess) {
+                document.getElementById('successModal').showModal();
+            } else if (loginError) {
+                document.getElementById('errorModal').showModal();
+            }
+        });
+    </script>
 </body>
+
 </html>

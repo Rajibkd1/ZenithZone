@@ -47,6 +47,7 @@
     $gender = $_POST['gender'];
     $nid_number = $_POST['nid'];
     $date_of_birth = $_POST['dob'];
+    $address = trim($_POST['address']); // Capture the address field
     $postal_code = $_POST['postal'];
     $password_hash = password_hash($_POST['password'], PASSWORD_BCRYPT);
 
@@ -88,8 +89,8 @@
         move_uploaded_file($_FILES["nid_picture"]["tmp_name"], $nid_picture_newname);
 
         // Insert into database
-        $insert_stmt = $conn->prepare("INSERT INTO sellersinfo (first_name, last_name, email, mobile_number, gender, nid_number, date_of_birth, postal_code, seller_picture, nid_picture, password_hash) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $insert_stmt->bind_param("sssssssssss", $first_name, $last_name, $email, $mobile_number, $gender, $nid_number, $date_of_birth, $postal_code, $seller_picture_newname, $nid_picture_newname, $password_hash);
+        $insert_stmt = $conn->prepare("INSERT INTO sellersinfo (first_name, last_name, email, mobile_number, gender, nid_number, date_of_birth, address, postal_code, seller_picture, nid_picture, password_hash) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $insert_stmt->bind_param("ssssssssssss", $first_name, $last_name, $email, $mobile_number, $gender, $nid_number, $date_of_birth, $address, $postal_code, $seller_picture_newname, $nid_picture_newname, $password_hash);
 
         if ($insert_stmt->execute()) {
           $registration_success = true;
@@ -112,7 +113,7 @@
     echo '<h3 class="text-lg font-bold mt-4">Registration Successful!</h3>';
     echo '<p class="mt-2 text-green-700">You have successfully registered.</p>';
     echo '<div class="flex justify-center mt-4">';
-    echo '<button onclick="window.location=\'../HomePage/InitialPage.html\';" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Close</button>';
+    echo '<button onclick="window.location=\'../HomePage/InitialPage.php\';" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Close</button>';
     echo '</div>';
     echo '</div>';
     echo '</dialog>';
@@ -139,9 +140,8 @@
       <div class="absolute -inset-1 bg-gradient-to-r from-red-600 to-violet-600 rounded-lg blur opacity-25 group-hover:opacity-100 transition duration-1000 group-hover:duration-200">
       </div>
       <!-- Your nav content goes here -->
-      <div class="relative bg-neutral-300 py-5 w-full z-50">
+      <div class="relative bg-[#363b41] py-5 w-full">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <!-- Container to adjust visibility -->
           <div class="flex flex-col sm:flex-row justify-between items-center">
             <!-- Logo -->
             <a href="#" class="flex-shrink-0">
@@ -166,18 +166,18 @@
             <!-- User Actions and Authentication -->
             <div class="flex items-center space-x-4 mt-2 sm:mt-0">
               <!-- Authentication Links -->
-              <a href="/login" class="text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out">Login</a>
-              <a href="/register" class="text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out">Register</a>
+              <a href="../Login/Login.php" class="text-[#fbad62] hover:text-white transition duration-150 ease-in-out">Login</a>
+              <a href="../Registration/Who.php" class="text-[#fbad62] hover:text-white transition duration-150 ease-in-out">Signup</a>
 
               <!-- User Actions -->
-              <button class="text-gray-500 hover:text-gray-700">
+              <button class="text-[#fbad62] hover:text-white">
                 <ion-icon name="person-outline" class="h-6 w-6"></ion-icon>
               </button>
-              <button class="relative text-gray-500 hover:text-gray-700">
+              <button class="relative text-[#fbad62] hover:text-white">
                 <ion-icon name="heart-outline" class="h-6 w-6"></ion-icon>
                 <span class="absolute -top-2 -right-2 rounded-full bg-red-500 text-white text-xs px-2 py-1">0</span>
               </button>
-              <button class="relative text-gray-500 hover:text-gray-700">
+              <button class="relative text-[#fbad62] hover:text-white">
                 <ion-icon name="bag-handle-outline" class="h-6 w-6"></ion-icon>
                 <span class="absolute -top-2 -right-2 rounded-full bg-red-500 text-white text-xs px-2 py-1">0</span>
               </button>
@@ -198,6 +198,7 @@
             </div>
           </div>
         </div>
+
       </div>
 
     </div>
@@ -399,9 +400,9 @@
         <span class="badge badge-sm badge-error absolute -top-1 -right-1">0</span>
       </button>
 
-      <button class="btn btn-ghost">
-        <ion-icon name="home-outline" class="text-2xl"></ion-icon>
-      </button>
+      <button class="btn btn-ghost" onclick="window.location= '../HomePage/InitialPage.php'">
+  <ion-icon name="home-outline" class="text-2xl"></ion-icon>
+</button>
 
       <button class="btn btn-ghost relative">
         <ion-icon name="heart-outline" class="text-2xl"></ion-icon>
@@ -417,6 +418,7 @@
   <div class="bg-[url('./RegBG.jpg')] min-h-screen flex items-center justify-center">
     <!-- This Div for form of the registration -->
     <div class="mt-4 mb-5 max-w-4xl mx-auto font-[sans-serif] p-6 bg-gray-100  rounded-lg">
+    <h1 class="text-center font-bold text-black text-xl">Create your ZenithZone Account</h1>
       <form id="signupForm" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST" enctype="multipart/form-data">
         <div class="grid sm:grid-cols-2 gap-8">
           <div class="mt-8">
@@ -540,7 +542,12 @@
               Please enter a valid date of birth.
             </div>
           </div>
-
+          <div class="mt-8">
+            <label class="text-gray-800 text-xs block mb-2">Address</label>
+            <div class="relative flex items-center">
+              <textarea id="address" name="address" required class="w-full bg-transparent text-sm text-gray-800 border-b border-gray-300 focus:border-blue-500 px-2 py-3 outline-none" placeholder="Enter your address"></textarea>
+            </div>
+          </div>
           <div class="mt-8">
             <label class="text-gray-800 text-xs block mb-2">Postal Code</label>
             <div class="relative flex items-center">
@@ -583,7 +590,7 @@
       </form>
     </div>
   </div>
-  </div>
+
 
 
   <footer class="bg-gray-800 py-6">
