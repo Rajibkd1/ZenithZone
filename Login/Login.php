@@ -44,6 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['loggedin'] = true;
                 $_SESSION['email_mobile'] = $email_mobile;
                 $_SESSION['user_type'] = $table['name'];  // Identifying the type of user
+                $_SESSION['first_name'] = $first_name;
                 break;
             }
         }
@@ -101,7 +102,7 @@ $conn->close();
             </div>
             <p class="text-white text-center">
                 Don't have an account?
-                <a href="#" class="text-teal-400 hover:underline text-blue-400">Sign up now</a>
+                <a href="../Registration/Who.php" class="text-teal-400 hover:underline text-blue-400">Sign up now</a>
             </p>
         </form>
     </div>
@@ -113,7 +114,7 @@ $conn->close();
         </h3>
         <p class="mt-2">Hi <?php echo htmlspecialchars($first_name); ?>, welcome to ZenithZone.</p>
         <div class="flex justify-center mt-4">
-            <button onclick="window.location='../HomePage/InitialPage.php';" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Proceed</button>
+            <button onclick="window.location='../HomePage/Homepage.php';" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Proceed</button>
         </div>
     </dialog>
 

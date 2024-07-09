@@ -55,6 +55,34 @@
         position: relative;
         z-index: 1;
       }
+      .autobox {
+  max-height: 280px;
+  overflow-y: auto;
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+}
+
+.autobox li {
+  list-style-type: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #ddd;
+  font-family: "Poppins", sans-serif;
+}
+
+.autobox li:hover {
+  background-color: #efefef;
+}
+
+.search-wrapper.active .autobox {
+  display: block;
+}
+
+
+
     </style>
   </head>
 
@@ -83,19 +111,21 @@
             </a>
 
             <!-- Search Field For Large Device -->
-            <div class="flex-grow mx-10 my-2 sm:my-0 hidden md:block">
-              <div class="relative">
-                <input type="search" name="search" class="w-full pl-4 pr-20 py-2 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border rounded-md" placeholder="Enter your product name..." />
-                <!-- Search Button -->
-                <button class="absolute inset-y-0 right-10 px-3 flex items-center">
-                  <ion-icon name="search-outline" class="h-5 w-5 text-gray-500"></ion-icon>
-                </button>
-                <!-- Voice Search Button -->
-                <button class="absolute inset-y-0 right-0 px-3 flex items-center">
-                  <ion-icon name="mic-outline" class="h-5 w-5 text-gray-500"></ion-icon>
-                </button>
-              </div>
-            </div>
+<div class="flex-grow mx-10 my-2 sm:my-0 hidden md:block">
+  <div class="relative">
+    <input type="search" name="search" class="w-full pl-4 pr-20 py-2 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border rounded-md" placeholder="Enter your product name..." />
+    <!-- Autocomplete Suggestions Box -->
+    <ul class="autobox absolute z-10 bg-white w-full shadow-lg max-h-60 overflow-y-auto"></ul>
+    <!-- Search Button -->
+    <button class="absolute inset-y-0 right-10 px-3 flex items-center">
+      <ion-icon name="search-outline" class="h-5 w-5 text-gray-500"></ion-icon>
+    </button>
+    <!-- Voice Search Button -->
+    <button class="absolute inset-y-0 right-0 px-3 flex items-center">
+      <ion-icon name="mic-outline" class="h-5 w-5 text-gray-500"></ion-icon>
+    </button>
+  </div>
+</div>
 
             <!-- User Actions and Authentication -->
             <div class="flex items-center space-x-4 mt-2 sm:mt-0">
@@ -940,6 +970,7 @@
     <!--
     - custom js link
   -->
+    <script src="./auto.js"></script>
     <script src="./background.js"></script>
 
     <!--
