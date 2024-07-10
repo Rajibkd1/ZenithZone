@@ -348,7 +348,7 @@ if (isset($_GET['term'])) {
                 <span class="badge badge-sm badge-error absolute -top-1 -right-1">0</span>
             </button>
 
-            <button class="btn btn-ghost" onclick="window.location.href = './InitialPage.php'">
+            <button class="btn btn-ghost" onclick="window.location.href = './Homepage.php'">
                 <ion-icon name="home-outline" class="text-2xl"></ion-icon>
             </button>>
 
