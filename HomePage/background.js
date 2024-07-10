@@ -8,7 +8,7 @@
 
   const particles = [];
   const colors = ["#3CC157", "#2AA7FF", "#1B1B1B", "#FCBC0F", "#F85F36"];
-  const numParticles = 100;
+  let numParticles = window.innerWidth < 640 ? 25 : 100;
 
   class Particle {
     constructor(x, y) {

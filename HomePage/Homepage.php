@@ -1,44 +1,3 @@
-
-<?php
-if (isset($_GET['term'])) {
-    // Database configuration
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "ZenithZone";
-
-    // Create connection
-    $conn = new mysqli($servername, $username, $password, $dbname);
-
-    // Check connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-
-    $searchTerm = $_GET['term'] ?? '';
-
-// Fetching data from database, limiting results to 5
-$query = $conn->prepare("SELECT products FROM autocom WHERE products LIKE ? LIMIT 5");
-$searchTerm = $searchTerm . '%';  // Adjusted to match starting characters
-$query->bind_param("s", $searchTerm);
-$query->execute();
-$result = $query->get_result();
-
-$suggestions = [];
-while ($row = $result->fetch_assoc()) {
-    $suggestions[] = $row['products'];
-}
-
-echo json_encode($suggestions);
-
-// Close connection
-$query->close();
-$conn->close();
-exit;
-}
-?>
-
-
 <?php
 session_start();
 
@@ -48,9 +7,43 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     exit;
 }
 
+// Check if the first_name session variable is set and assign it or use 'User' as a default
 $first_name = $_SESSION['first_name'] ?? 'User';
-?>_name = $_SESSION['first_name'] ?? 'User';
+
+
+// Check if the term is present in the GET request
+if (isset($_GET['term'])) {
+    $servername = "localhost";
+    $username = "id22413670_root";  // Update to your username
+    $password = "R@jib2589";  // Update to your password
+    $dbname = "id22413670_zenithzone";  // Update to your database name
+
+    // Create connection
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    // Check connection
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+
+    $searchTerm = $_GET['term'] . '%';
+    $query = $conn->prepare("SELECT products FROM autocom WHERE products LIKE ?");
+    $query->bind_param("s", $searchTerm);
+    $query->execute();
+    $result = $query->get_result();
+
+    $suggestions = [];
+    while ($row = $result->fetch_assoc()) {
+        $suggestions[] = $row['products'];
+    }
+
+    echo json_encode($suggestions);
+    $query->close();
+    $conn->close();
+    exit;
+}
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -444,218 +437,11 @@ $first_name = $_SESSION['first_name'] ?? 'User';
       - PRODUCT
     -->
 
-        <!-- This Product container  -->
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col">
-                <!-- Product Main -->
-                <div class="text-center py-6">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-6">New Products</h2>
-                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                        <!-- Product Showcase -->
+    <h1 class="text-4xl font-bold text-center mt-10 text-indigo-600 drop-shadow-lg h-56">
+            Hi <strong class="text-5xl text-purple-600"><?php echo htmlspecialchars($first_name); ?></strong>, Welcome to ZenithZone
+        </h1>
 
-                        <!-- 1st Product -->
-                        <div class="bg-white shadow-lg rounded-lg overflow-hidden relative group hover:border-red-500 hover:border-2 transition duration-300 w-48">
-                            <img src="../assets/images/products/jacket-1.jpg" alt="Mens Jacket" class="w-full h-32 object-cover transition duration-300 ease-in-out" />
-                            <div class="absolute inset-y-0 right-0 flex flex-col items-center justify-center gap-2 transform translate-x-full transition-transform duration-300 ease-in-out group-hover:translate-x-0 bg-black bg-opacity-0 p-2">
-                                <button class="text-blue-500 text-md p-0.5 rounded">
-                                    <i class="far fa-heart"></i>
-                                </button>
-                                <button class="text-blue-500 text-md p-0.5 rounded">
-                                    <i class="far fa-eye"></i>
-                                </button>
-                                <button class="text-blue-500 text-md p-0.5 rounded">
-                                    <i class="fas fa-shopping-bag"></i>
-                                </button>
-                            </div>
-
-                            <div class="p-2">
-                                <a href="#" class="inline-block text-blue-500 hover:text-blue-600 text-sm">JACKET</a>
-                                <h3 class="text-sm font-medium text-gray-800 mb-1">
-                                    <a href="#">Mens Jacket</a>
-                                </h3>
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="far fa-star text-yellow-400"></i>
-                                    <i class="fas fa-star-half-alt text-yellow-400"></i>
-                                </div>
-                                <div class="flex items-baseline space-x-1 font-bold">
-                                    <p class="text-sm text-blue-500">$25.00</p>
-                                    <del class="text-xs text-gray-400">$35.00</del>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- 2nd Product -->
-                        <div class="bg-white shadow-lg rounded-lg overflow-hidden relative group hover:border-red-500 hover:border-2 transition duration-300 w-48">
-                            <img src="../assets/images/products/clothes-1.jpg" alt="Mens Jacket" class="w-full h-32 object-cover transition duration-300 ease-in-out" />
-                            <div class="absolute inset-y-0 right-0 flex flex-col items-center justify-center gap-2 transform translate-x-full transition-transform duration-300 ease-in-out group-hover:translate-x-0 bg-black bg-opacity-0 p-2">
-                                <button class="text-blue-500 text-md p-0.5 rounded">
-                                    <i class="far fa-heart"></i>
-                                </button>
-                                <button class="text-blue-500 text-md p-0.5 rounded">
-                                    <i class="far fa-eye"></i>
-                                </button>
-                                <button class="text-blue-500 text-md p-0.5 rounded">
-                                    <i class="fas fa-shopping-bag"></i>
-                                </button>
-                            </div>
-
-                            <div class="p-2">
-                                <a href="#" class="inline-block text-blue-500 hover:text-blue-600 text-sm">JACKET</a>
-                                <h3 class="text-sm font-medium text-gray-800 mb-1">
-                                    <a href="#">Mens Jacket</a>
-                                </h3>
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="far fa-star text-yellow-400"></i>
-                                    <i class="fas fa-star-half-alt text-yellow-400"></i>
-                                </div>
-                                <div class="flex items-baseline space-x-1 font-bold">
-                                    <p class="text-sm text-blue-500">$25.00</p>
-                                    <del class="text-xs text-gray-400">$35.00</del>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- 3rdd Product -->
-                        <div class="bg-white shadow-lg rounded-lg overflow-hidden relative group hover:border-red-500 hover:border-2 transition duration-300 w-48">
-                            <img src="../assets/images/products/watch-2.jpg" alt="Mens Watch" class="w-full h-32 object-cover transition duration-300 ease-in-out" />
-                            <div class="absolute inset-y-0 right-0 flex flex-col items-center justify-center gap-2 transform translate-x-full transition-transform duration-300 ease-in-out group-hover:translate-x-0 bg-black bg-opacity-0 p-2">
-                                <button class="text-blue-500 text-md p-0.5 rounded">
-                                    <i class="far fa-heart"></i>
-                                </button>
-                                <button class="text-blue-500 text-md p-0.5 rounded">
-                                    <i class="far fa-eye"></i>
-                                </button>
-                                <button class="text-blue-500 text-md p-0.5 rounded">
-                                    <i class="fas fa-shopping-bag"></i>
-                                </button>
-                            </div>
-
-                            <div class="p-2">
-                                <a href="#" class="inline-block text-blue-500 hover:text-blue-600 text-sm">JACKET</a>
-                                <h3 class="text-sm font-medium text-gray-800 mb-1">
-                                    <a href="#">Mens Jacket</a>
-                                </h3>
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="far fa-star text-yellow-400"></i>
-                                    <i class="fas fa-star-half-alt text-yellow-400"></i>
-                                </div>
-                                <div class="flex items-baseline space-x-1 font-bold">
-                                    <p class="text-sm text-blue-500">$25.00</p>
-                                    <del class="text-xs text-gray-400">$35.00</del>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- 4th Product -->
-                        <div class="bg-white shadow-lg rounded-lg overflow-hidden relative group hover:border-red-500 hover:border-2 transition duration-300 w-48">
-                            <img src="../assets/images/products/jewellery-2.jpg" alt="Beautiful Jewellery" class="w-full h-32 object-cover transition duration-300 ease-in-out" />
-                            <div class="absolute inset-y-0 right-0 flex flex-col items-center justify-center gap-2 transform translate-x-full transition-transform duration-300 ease-in-out group-hover:translate-x-0 bg-black bg-opacity-0 p-2">
-                                <button class="text-blue-500 text-md p-0.5 rounded">
-                                    <i class="far fa-heart"></i>
-                                </button>
-                                <button class="text-blue-500 text-md p-0.5 rounded">
-                                    <i class="far fa-eye"></i>
-                                </button>
-                                <button class="text-blue-500 text-md p-0.5 rounded">
-                                    <i class="fas fa-shopping-bag"></i>
-                                </button>
-                            </div>
-
-                            <div class="p-2">
-                                <a href="#" class="inline-block text-blue-500 hover:text-blue-600 text-sm">Jewellery</a>
-                                <h3 class="text-sm font-medium text-gray-800 mb-1">
-                                    <a href="#">Beautiful Jewellery</a>
-                                </h3>
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="fas fa-star-half-alt text-yellow-400"></i>
-                                    <i class="far fa-star text-yellow-400"></i>
-                                </div>
-                                <div class="flex items-baseline space-x-1 font-bold">
-                                    <p class="text-sm text-blue-500">$25.00</p>
-                                    <del class="text-xs text-gray-400">$35.00</del>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- 5th Product -->
-                        <div class="bg-white shadow-lg rounded-lg overflow-hidden relative group hover:border-red-500 hover:border-2 transition duration-300 w-48">
-                            <img src="../assets/images/products/shoe-3.jpg" alt="Beautiful Jewellery" class="w-full h-32 object-cover transition duration-300 ease-in-out" />
-                            <div class="absolute inset-y-0 right-0 flex flex-col items-center justify-center gap-2 transform translate-x-full transition-transform duration-300 ease-in-out group-hover:translate-x-0 bg-black bg-opacity-0 p-2">
-                                <button class="text-blue-500 text-md p-0.5 rounded">
-                                    <i class="far fa-heart"></i>
-                                </button>
-                                <button class="text-blue-500 text-md p-0.5 rounded">
-                                    <i class="far fa-eye"></i>
-                                </button>
-                                <button class="text-blue-500 text-md p-0.5 rounded">
-                                    <i class="fas fa-shopping-bag"></i>
-                                </button>
-                            </div>
-
-                            <div class="p-2">
-                                <a href="#" class="inline-block text-blue-500 hover:text-blue-600 text-sm">MAN SHOES</a>
-                                <h3 class="text-sm font-medium text-gray-800 mb-1">
-                                    <a href="#">Man Formal shoes</a>
-                                </h3>
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="fas fa-star-half-alt text-yellow-400"></i>
-                                    <i class="far fa-star text-yellow-400"></i>
-                                </div>
-                                <div class="flex items-baseline space-x-1 font-bold">
-                                    <p class="text-sm text-blue-500">$25.00</p>
-                                    <del class="text-xs text-gray-400">$35.00</del>
-                                </div>
-                            </div>
-                        </div>
-                        <!--  6th Product -->
-                        <div class="bg-white shadow-lg rounded-lg overflow-hidden relative group hover:border-red-500 hover:border-2 transition duration-300 w-48">
-                            <img src="../assets/images/products/clothes-1.jpg" alt="Mens Jacket" class="w-full h-32 object-cover transition duration-300 ease-in-out" />
-                            <div class="absolute inset-y-0 right-0 flex flex-col items-center justify-center gap-2 transform translate-x-full transition-transform duration-300 ease-in-out group-hover:translate-x-0 bg-black bg-opacity-0 p-2">
-                                <button class="text-blue-500 text-md p-0.5 rounded">
-                                    <i class="far fa-heart"></i>
-                                </button>
-                                <button class="text-blue-500 text-md p-0.5 rounded">
-                                    <i class="far fa-eye"></i>
-                                </button>
-                                <button class="text-blue-500 text-md p-0.5 rounded">
-                                    <i class="fas fa-shopping-bag"></i>
-                                </button>
-                            </div>
-
-                            <div class="p-2">
-                                <a href="#" class="inline-block text-blue-500 hover:text-blue-600 text-sm">JACKET</a>
-                                <h3 class="text-sm font-medium text-gray-800 mb-1">
-                                    <a href="#">Mens Jacket</a>
-                                </h3>
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="far fa-star text-yellow-400"></i>
-                                    <i class="fas fa-star-half-alt text-yellow-400"></i>
-                                </div>
-                                <div class="flex items-baseline space-x-1 font-bold">
-                                    <p class="text-sm text-blue-500">$25.00</p>
-                                    <del class="text-xs text-gray-400">$35.00</del>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Repeat for other products with respective details -->
-                    </div>
-                </div>
-            </div>
-        </div>
+        
     </main>
 
 
