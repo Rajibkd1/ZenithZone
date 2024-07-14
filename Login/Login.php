@@ -65,7 +65,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Particle Background</title>
+    <title>ZenithZone - eCommerce Website</title>
 
     <!--
     - favicon
@@ -82,7 +82,7 @@ $conn->close();
 
     <div class="login-box">
         <div class="flex justify-center mb-1">
-            <img src="../assets/images/logo/ZentihZone.png" alt="ZenithZone logo" class="w-20" />
+            <img src="../assets/images/logo/ZenithZone.png" alt="ZenithZone logo" class="w-20" />
         </div>
         <h2 class="text-white text-2xl text-center">Welcome to ZenithZone</h2>
         <form method="POST">

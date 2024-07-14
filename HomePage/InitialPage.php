@@ -84,7 +84,7 @@ if (isset($_GET['term'])) {
           <div class="flex flex-col sm:flex-row justify-between items-center">
             <!-- Logo -->
             <a href="#" class="flex-shrink-0">
-              <img src="../assets/images/logo/ZentihZone.png" alt="ZenithZone logo" class="h-16 sm:h-20" />
+              <img src="../assets/images/logo/ZenithZone.png" alt="ZenithZone logo" class="h-16 sm:h-20" />
             </a>
 
             <!-- Search Field For Large Device -->

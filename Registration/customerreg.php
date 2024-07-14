@@ -39,7 +39,7 @@
     $registration_success = false;
     $error_message = '';
 
-    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit']) && $_POST['otpVerified'] === "true") {
         $first_name = $_POST['fname'];
         $last_name = $_POST['lname'];
         $email = $_POST['email'];
@@ -71,6 +71,8 @@
         }
 
         $stmt->close();
+    } else {
+        $error_message = "OTP verification failed. Please verify your OTP before submitting the form.";
     }
 
     $conn->close();
@@ -111,65 +113,65 @@
             </div>
             <!-- Your nav content goes here -->
             <div class="relative bg-[#363b41] py-5 w-full">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="flex flex-col sm:flex-row justify-between items-center">
-            <!-- Logo -->
-            <a href="#" class="flex-shrink-0">
-              <img src="../assets/images/logo/ZentihZone.png" alt="ZenithZone logo" class="h-16 sm:h-20" />
-            </a>
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex flex-col sm:flex-row justify-between items-center">
+                        <!-- Logo -->
+                        <a href="#" class="flex-shrink-0">
+                            <img src="../assets/images/logo/ZenithZone.png" alt="ZenithZone logo" class="h-16 sm:h-20" />
+                        </a>
 
-            <!-- Search Field For Large Device -->
-            <div class="flex-grow mx-10 my-2 sm:my-0 hidden md:block">
-              <div class="relative">
-                <input type="search" name="search" class="w-full pl-4 pr-20 py-2 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border rounded-md" placeholder="Enter your product name..." />
-                <!-- Search Button -->
-                <button class="absolute inset-y-0 right-10 px-3 flex items-center">
-                  <ion-icon name="search-outline" class="h-5 w-5 text-gray-500"></ion-icon>
-                </button>
-                <!-- Voice Search Button -->
-                <button class="absolute inset-y-0 right-0 px-3 flex items-center">
-                  <ion-icon name="mic-outline" class="h-5 w-5 text-gray-500"></ion-icon>
-                </button>
-              </div>
+                        <!-- Search Field For Large Device -->
+                        <div class="flex-grow mx-10 my-2 sm:my-0 hidden md:block">
+                            <div class="relative">
+                                <input type="search" name="search" class="w-full pl-4 pr-20 py-2 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border rounded-md" placeholder="Enter your product name..." />
+                                <!-- Search Button -->
+                                <button class="absolute inset-y-0 right-10 px-3 flex items-center">
+                                    <ion-icon name="search-outline" class="h-5 w-5 text-gray-500"></ion-icon>
+                                </button>
+                                <!-- Voice Search Button -->
+                                <button class="absolute inset-y-0 right-0 px-3 flex items-center">
+                                    <ion-icon name="mic-outline" class="h-5 w-5 text-gray-500"></ion-icon>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- User Actions and Authentication -->
+                        <div class="flex items-center space-x-4 mt-2 sm:mt-0">
+                            <!-- Authentication Links -->
+                            <a href="../Login/Login.php" class="text-[#fbad62] hover:text-white transition duration-150 ease-in-out">Login</a>
+                            <a href="../Registration/Who.php" class="text-[#fbad62] hover:text-white transition duration-150 ease-in-out">Signup</a>
+
+                            <!-- User Actions -->
+                            <button class="text-[#fbad62] hover:text-white">
+                                <ion-icon name="person-outline" class="h-6 w-6"></ion-icon>
+                            </button>
+                            <button class="relative text-[#fbad62] hover:text-white">
+                                <ion-icon name="heart-outline" class="h-6 w-6"></ion-icon>
+                                <span class="absolute -top-2 -right-2 rounded-full bg-red-500 text-white text-xs px-2 py-1">0</span>
+                            </button>
+                            <button class="relative text-[#fbad62] hover:text-white">
+                                <ion-icon name="bag-handle-outline" class="h-6 w-6"></ion-icon>
+                                <span class="absolute -top-2 -right-2 rounded-full bg-red-500 text-white text-xs px-2 py-1">0</span>
+                            </button>
+                        </div>
+                        <!-- Search Field for Small device  -->
+                        <div class="flex-grow mx-10 my-2 sm:my-0 block sm:hidden">
+                            <div class="relative">
+                                <input type="search" name="search" class="w-full pl-4 pr-20 py-2 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border rounded-md" placeholder="Enter your product name..." />
+                                <!-- Search Button -->
+                                <button class="absolute inset-y-0 right-10 px-3 flex items-center">
+                                    <ion-icon name="search-outline" class="h-5 w-5 text-gray-500"></ion-icon>
+                                </button>
+                                <!-- Voice Search Button -->
+                                <button class="absolute inset-y-0 right-0 px-3 flex items-center">
+                                    <ion-icon name="mic-outline" class="h-5 w-5 text-gray-500"></ion-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-
-            <!-- User Actions and Authentication -->
-            <div class="flex items-center space-x-4 mt-2 sm:mt-0">
-              <!-- Authentication Links -->
-              <a href="../Login/Login.php" class="text-[#fbad62] hover:text-white transition duration-150 ease-in-out">Login</a>
-              <a href="../Registration/Who.php" class="text-[#fbad62] hover:text-white transition duration-150 ease-in-out">Signup</a>
-
-              <!-- User Actions -->
-              <button class="text-[#fbad62] hover:text-white">
-                <ion-icon name="person-outline" class="h-6 w-6"></ion-icon>
-              </button>
-              <button class="relative text-[#fbad62] hover:text-white">
-                <ion-icon name="heart-outline" class="h-6 w-6"></ion-icon>
-                <span class="absolute -top-2 -right-2 rounded-full bg-red-500 text-white text-xs px-2 py-1">0</span>
-              </button>
-              <button class="relative text-[#fbad62] hover:text-white">
-                <ion-icon name="bag-handle-outline" class="h-6 w-6"></ion-icon>
-                <span class="absolute -top-2 -right-2 rounded-full bg-red-500 text-white text-xs px-2 py-1">0</span>
-              </button>
-            </div>
-            <!-- Search Field for Small device  -->
-            <div class="flex-grow mx-10 my-2 sm:my-0 block sm:hidden">
-              <div class="relative">
-                <input type="search" name="search" class="w-full pl-4 pr-20 py-2 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border rounded-md" placeholder="Enter your product name..." />
-                <!-- Search Button -->
-                <button class="absolute inset-y-0 right-10 px-3 flex items-center">
-                  <ion-icon name="search-outline" class="h-5 w-5 text-gray-500"></ion-icon>
-                </button>
-                <!-- Voice Search Button -->
-                <button class="absolute inset-y-0 right-0 px-3 flex items-center">
-                  <ion-icon name="mic-outline" class="h-5 w-5 text-gray-500"></ion-icon>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
 
         </div>
         <!-- Second nav -->
@@ -371,8 +373,8 @@
             </button>
 
             <button class="btn btn-ghost" onclick="window.location= '../HomePage/InitialPage.php'">
-  <ion-icon name="home-outline" class="text-2xl"></ion-icon>
-</button>
+                <ion-icon name="home-outline" class="text-2xl"></ion-icon>
+            </button>
 
             <button class="btn btn-ghost relative">
                 <ion-icon name="heart-outline" class="text-2xl"></ion-icon>
@@ -387,9 +389,9 @@
 
 
     <div class="mt-5 mb-5 max-w-4xl mx-auto font-[sans-serif] p-6 bg-gray-100 rounded-lg">
-        <form id="signupForm" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
-        <h1 class="text-center font-bold text-black text-xl">Create your ZenithZone Account</h1>    
-        <div class="grid sm:grid-cols-2 gap-8">
+        <form id="signupForm" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST" onsubmit="return checkOTPVerification();">
+            <h1 class="text-center font-bold text-black text-xl">Create your ZenithZone Account</h1>
+            <div class="grid sm:grid-cols-2 gap-8">
                 <div class="mt-8">
                     <label class="text-gray-800 text-xs block mb-2">First Name</label>
                     <div class="relative flex items-center">
@@ -431,17 +433,20 @@
                     <div id="email-error" class="error-message">Please enter a valid email address.</div>
                 </div>
                 <div class="mt-8">
-                    <label class="text-gray-800 text-xs block mb-2">Mobile No.</label>
+                    <label class="text-gray-800 text-sm block mb-2">Mobile No.</label>
                     <div class="relative flex items-center">
                         <input id="number" name="number" type="text" required class="w-full bg-transparent text-sm text-gray-800 border-b border-gray-300 focus:border-blue-500 px-2 py-3 outline-none" placeholder="Enter mobile number" />
-                        <button type="button" class="absolute right-2 top-2/4 transform -translate-y-2/4 bg-blue-500 text-white px-3 py-1 rounded-md text-xs">Send OTP</button>
+                        <button type="button" class="absolute right-2 top-2/4 transform -translate-y-1/2 bg-blue-500 text-white px-3 py-1 rounded-md text-xs" onclick="phoneAuth();">Send OTP</button>
                     </div>
-                    <div id="number-error" class="error-message">Mobile number must be 11 digits.</div>
+                    <div id="number-error" class="error-message text-red-500 text-xs hidden mt-2">Mobile number must be 11 digits.</div>
+                    <div id="errorDisplay" class="hidden text-red-500"></div>
+                    <div id="recaptcha-container"></div>
                 </div>
                 <div class="mt-8">
-                    <label class="text-gray-800 text-xs block mb-2">OTP</label>
+                    <label class="text-gray-800 text-sm block mb-2">OTP</label>
                     <div class="relative flex items-center">
-                        <input id="otp" name="otp" type="text" required class="w-full bg-transparent text-sm text-gray-800 border-b border-gray-300 focus:border-blue-500 px-2 py-3 outline-none" placeholder="Enter OTP" />
+                        <input id="verificationCode" name="otp" type="text" required class="w-full bg-transparent text-sm text-gray-800 border-b border-gray-300 focus:border-blue-500 px-2 py-3 outline-none" placeholder="Enter OTP" />
+                        <button type="button" class="absolute right-2 top-2/4 transform -translate-y-1/2 bg-blue-500 text-white px-3 py-1 rounded-md text-xs" onclick="codeverify();">Verify OTP</button>
                     </div>
                 </div>
                 <div class="mt-8">
@@ -465,12 +470,23 @@
                     <div id="cpassword-error" class="error-message">Passwords do not match.</div>
                 </div>
             </div>
-
+            <input type="hidden" id="otpVerified" name="otpVerified" value="false">
             <div class="flex justify-center mt-12">
-                <button type="submit" name="submit" class="py-3.5 px-7 text-sm font-semibold tracking-wider rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">Sign up</button>
+                <button type="submit" id="submitBtn" name="submit" class="py-3.5 px-7 text-sm font-semibold tracking-wider rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">Sign up</button>
             </div>
         </form>
     </div>
+
+    <!-- Modal Structure -->
+    <div id="messageModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg p-5 shadow text-center">
+            <i id="modalIcon" class="fa-solid fa-circle-check fa-5x"></i>
+            <h3 id="modalTitle" class="text-lg font-bold mt-4">Title Here</h3>
+            <p id="modalMessage" class="mt-2">Message Here</p>
+        </div>
+    </div>
+
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const registrationSuccess = <?php echo json_encode($registration_success); ?>;
@@ -490,6 +506,7 @@
   
   
     -->
+
     <footer class="bg-gray-800 py-6">
         <div class="container mx-auto text-center">
             <img src="../assets/images/payment.png" alt="payment method" class="mx-auto mb-4" />
@@ -500,7 +517,26 @@
     </footer>
 
     <!-- Customer Registration Javascript code  -->
+
+    <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase.js"></script>
+    <script>
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+    apiKey: "AIzaSyCAITtBc2AFXJHvoshc77XKL0xkpP-3ojM",
+    authDomain: "rzenithzone.firebaseapp.com",
+    projectId: "rzenithzone",
+    storageBucket: "rzenithzone.appspot.com",
+    messagingSenderId: "490959314559",
+    appId: "1:490959314559:web:3cac029bd4186800f8e94a",
+    measurementId: "G-V4CKHQ6FDS"
+  };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        firebase.analytics();
+    </script>
     <script src="./ValidateRegistration.js"></script>
+    <script src="./firebase.js"></script>
 
     <!--
     - ionicon link

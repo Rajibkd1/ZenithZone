@@ -39,7 +39,7 @@
   $registration_success = false;
   $upload_error = '';
 
-  if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
+  if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])  && $_POST['otpVerified'] === "true") {
     $first_name = $_POST['fname'];
     $last_name = $_POST['lname'];
     $email = $_POST['email'];
@@ -70,7 +70,8 @@
       }
     } else {
       // File upload handling
-      if ($_FILES['own_picture']['error'] === UPLOAD_ERR_OK && $_FILES['nid_picture']['error'] === UPLOAD_ERR_OK) {
+      if (isset($_FILES['own_picture']) && $_FILES['own_picture']['error'] === UPLOAD_ERR_OK &&
+    isset($_FILES['nid_picture']) && $_FILES['nid_picture']['error'] === UPLOAD_ERR_OK) {
         $artist_picture_extension = pathinfo($_FILES['own_picture']['name'], PATHINFO_EXTENSION);
         $nid_picture_extension = pathinfo($_FILES['nid_picture']['name'], PATHINFO_EXTENSION);
         $artist_picture_newname = "artistpic/" . $mobile_number . "." . $artist_picture_extension;
@@ -135,7 +136,7 @@
   ?>
 
 
-  <header>
+<header>
     <!-- This first nav bar -->
     <div class="relative group">
       <div class="absolute -inset-1 bg-gradient-to-r from-red-600 to-violet-600 rounded-lg blur opacity-25 group-hover:opacity-100 transition duration-1000 group-hover:duration-200">
@@ -146,7 +147,7 @@
           <div class="flex flex-col sm:flex-row justify-between items-center">
             <!-- Logo -->
             <a href="#" class="flex-shrink-0">
-              <img src="../assets/images/logo/ZentihZone.png" alt="ZenithZone logo" class="h-16 sm:h-20" />
+              <img src="../assets/images/logo/ZenithZone.png" alt="ZenithZone logo" class="h-16 sm:h-20" />
             </a>
 
             <!-- Search Field For Large Device -->
@@ -416,10 +417,11 @@
     </div>
   </header>
 
+
   <div class="bg-[url('./RegBG.jpg')] min-h-screen flex items-center justify-center">
     <!-- This Div for form of the registration -->
     <div class="mt-4 mb-5 max-w-4xl mx-auto font-[sans-serif] p-6 bg-gray-100  rounded-lg">
-      <form id="signupForm" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST" enctype="multipart/form-data">
+    <form id="signupForm" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST" enctype="multipart/form-data" onsubmit="return checkOTPVerification();">
         <h1 class="text-center font-bold text-black text-xl">Create your ZenithZone Account</h1>
         <div class="grid sm:grid-cols-2 gap-8">
           <div class="mt-8">
@@ -449,6 +451,23 @@
             </div>
           </div>
           <div class="mt-8">
+            <label class="text-gray-800 text-sm block mb-2">Mobile No.</label>
+            <div class="relative flex items-center">
+              <input id="number" name="number" type="text" required class="w-full bg-transparent text-sm text-gray-800 border-b border-gray-300 focus:border-blue-500 px-2 py-3 outline-none" placeholder="Enter mobile number" />
+              <button type="button" class="absolute right-2 top-2/4 transform -translate-y-1/2 bg-blue-500 text-white px-3 py-1 rounded-md text-xs" onclick="phoneAuth();">Send OTP</button>
+            </div>
+            <div id="number-error" class="error-message text-red-500 text-xs hidden mt-2">Mobile number must be 11 digits.</div>
+            <div id="errorDisplay" class="hidden text-red-500"></div>
+            <div id="recaptcha-container"></div>
+          </div>
+          <div class="mt-8">
+            <label class="text-gray-800 text-sm block mb-2">OTP</label>
+            <div class="relative flex items-center">
+              <input id="verificationCode" name="otp" type="text" required class="w-full bg-transparent text-sm text-gray-800 border-b border-gray-300 focus:border-blue-500 px-2 py-3 outline-none" placeholder="Enter OTP" />
+              <button type="button" class="absolute right-2 top-2/4 transform -translate-y-1/2 bg-blue-500 text-white px-3 py-1 rounded-md text-xs" onclick="codeverify();">Verify OTP</button>
+            </div>
+          </div>
+          <div class="mt-8">
             <label class="text-gray-800 text-xs block mb-2">Email Id</label>
             <div class="relative flex items-center">
               <input id="email" name="email" type="email" required class="w-full bg-transparent text-sm text-gray-800 border-b border-gray-300 focus:border-blue-500 px-2 py-3 outline-none" placeholder="Enter email" />
@@ -464,27 +483,7 @@
                 </g>
               </svg>
             </div>
-            <div id="email-error" class="error-message">
-              Please enter a valid email address.
-            </div>
-          </div>
-          <div class="mt-8">
-            <label class="text-gray-800 text-xs block mb-2">Mobile No.</label>
-            <div class="relative flex items-center">
-              <input id="number" name="number" type="text" required class="w-full bg-transparent text-sm text-gray-800 border-b border-gray-300 focus:border-blue-500 px-2 py-3 outline-none" placeholder="Enter mobile number" />
-              <button type="button" class="absolute right-2 top-2/4 transform -translate-y-2/4 bg-blue-500 text-white px-3 py-1 rounded-md text-xs">
-                Send OTP
-              </button>
-            </div>
-            <div id="number-error" class="error-message">
-              Mobile number must be 11 digits.
-            </div>
-          </div>
-          <div class="mt-8">
-            <label class="text-gray-800 text-xs block mb-2">OTP</label>
-            <div class="relative flex items-center">
-              <input id="otp" name="otp" type="text" required class="w-full bg-transparent text-sm text-gray-800 border-b border-gray-300 focus:border-blue-500 px-2 py-3 outline-none" placeholder="Enter OTP" />
-            </div>
+            <div id="email-error" class="error-message">Please enter a valid email address.</div>
           </div>
           <div class="mt-8">
             <label class="text-gray-800 text-xs block mb-2">Password</label>
@@ -584,16 +583,23 @@
             </div>
           </div>
         </div>
+        <input type="hidden" id="otpVerified" name="otpVerified" value="false">
         <div class="flex justify-center mt-12">
-          <button type="submit" name="submit" class="py-3.5 px-7 text-sm font-semibold tracking-wider rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">
-            Sign up
-          </button>
+          <button type="submit" id="submitBtn" name="submit" class="py-3.5 px-7 text-sm font-semibold tracking-wider rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">Sign up</button>
         </div>
       </form>
     </div>
   </div>
-  </div>
 
+
+  <!-- Modal Structure -->
+  <div id="messageModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div class="bg-white rounded-lg p-5 shadow text-center">
+      <i id="modalIcon" class="fa-solid fa-circle-check fa-5x"></i>
+      <h3 id="modalTitle" class="text-lg font-bold mt-4">Title Here</h3>
+      <p id="modalMessage" class="mt-2">Message Here</p>
+    </div>
+  </div>
 
   <footer class="bg-gray-800 py-6">
     <div class="container mx-auto text-center">
@@ -617,8 +623,26 @@
       }
     });
   </script>
-  <!-- Registration Javascript code  -->
-  <script src="ValidateRegistration.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase.js"></script>
+  <script>
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCAITtBc2AFXJHvoshc77XKL0xkpP-3ojM",
+      authDomain: "rzenithzone.firebaseapp.com",
+      projectId: "rzenithzone",
+      storageBucket: "rzenithzone.appspot.com",
+      messagingSenderId: "490959314559",
+      appId: "1:490959314559:web:3cac029bd4186800f8e94a",
+      measurementId: "G-V4CKHQ6FDS"
+    };
+
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
+  </script>
+  <script src="./ValidateRegistration.js"></script>
+  <script src="./firebase.js"></script>
 
   <!--
     - ionicon link
