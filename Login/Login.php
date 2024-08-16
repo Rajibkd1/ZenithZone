@@ -6,58 +6,70 @@ $dbname = 'ZenithZone'; // Database name
 $username = 'root'; // Database username
 $password = ''; // Database password
 
-// Create connection
-$conn = new mysqli($host, $username, $password, $dbname);
+// Improved error handling with try-catch
+try {
+    // Create connection
+    $conn = new mysqli($host, $username, $password, $dbname);
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+    // Check connection
+    if ($conn->connect_error) {
+        throw new Exception("Connection failed: " . $conn->connect_error);
+    }
 
-$login_error = '';
-$login_success = false;
-$first_name = '';
+    $login_error = '';
+    $login_success = false;
+    $first_name = '';
+    $found = false; // Initialize the variable to track if a user is found
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email_mobile = $_POST['email_mobile'];
-    $password = $_POST['password'];
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $email_mobile = $_POST['email_mobile'];
+        $password = $_POST['password'];
 
-    // Check user credentials across three tables
-    $tables = [
-        ['name' => 'artist_info', 'id_column' => 'artist_id', 'email_column' => 'email', 'password_column' => 'password_hash', 'first_name_column' => 'first_name'],
-        ['name' => 'customer', 'id_column' => 'id', 'email_column' => 'email', 'password_column' => 'password', 'first_name_column' => 'first_name'],
-        ['name' => 'sellersinfo', 'id_column' => 'id', 'email_column' => 'email', 'password_column' => 'password_hash', 'first_name_column' => 'first_name']
-    ];
+        // Check user credentials across three tables
+        $tables = [
+            ['name' => 'artist_info', 'id_column' => 'artist_id', 'email_column' => 'email', 'password_column' => 'password_hash', 'first_name_column' => 'first_name'],
+            ['name' => 'customer_info', 'id_column' => 'customer_id', 'email_column' => 'email', 'password_column' => 'password', 'first_name_column' => 'first_name'],
+            ['name' => 'sellersinfo', 'id_column' => 'id', 'email_column' => 'email', 'password_column' => 'password_hash', 'first_name_column' => 'first_name']
+        ];
 
-    $found = false;
-    foreach ($tables as $table) {
-        $stmt = $conn->prepare("SELECT {$table['id_column']}, {$table['password_column']}, {$table['first_name_column']} FROM {$table['name']} WHERE ({$table['email_column']} = ? OR mobile_number = ?)");
-        $stmt->bind_param("ss", $email_mobile, $email_mobile);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        if ($result->num_rows > 0) {
-            $user = $result->fetch_assoc();
-            if (password_verify($password, $user[$table['password_column']])) {
-                $found = true;
-                $login_success = true;
-                $first_name = $user[$table['first_name_column']];
-                $_SESSION['loggedin'] = true;
-                $_SESSION['email_mobile'] = $email_mobile;
-                $_SESSION['user_type'] = $table['name'];  // Identifying the type of user
-                $_SESSION['first_name'] = $first_name;
-                break;
+        foreach ($tables as $table) {
+            $query = "SELECT {$table['id_column']}, {$table['password_column']}, {$table['first_name_column']} FROM {$table['name']} WHERE {$table['email_column']} = ? OR mobile_number = ?";
+            $stmt = $conn->prepare($query);
+            if (!$stmt) {
+                throw new Exception('MySQL prepare error: ' . $conn->error);
             }
+            $stmt->bind_param("ss", $email_mobile, $email_mobile);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            if ($result->num_rows > 0) {
+                $user = $result->fetch_assoc();
+                if (password_verify($password, $user[$table['password_column']])) {
+                    $found = true;
+                    $login_success = true;
+                    $first_name = $user[$table['first_name_column']];
+                    $_SESSION['loggedin'] = true;
+                    $_SESSION['email_mobile'] = $email_mobile;
+                    $_SESSION['user_type'] = $table['name'];  // Identifying the type of user
+                    $_SESSION['first_name'] = $first_name;
+                    break;
+                }
+            }
+            $stmt->close();
         }
-        $stmt->close();
+
+        if (!$found) {
+            $login_error = "Invalid credentials!";
+        }
     }
 
-    if (!$found) {
-        $login_error = "Invalid credentials!";
-    }
+    $conn->close();
+} catch (Exception $e) {
+    $login_error = $e->getMessage();  // Set login_error to the exception message
 }
 
-$conn->close();
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -141,7 +153,7 @@ $conn->close();
 
             if (loginSuccess) {
                 document.getElementById('successModal').showModal();
-            } else if (loginError) {
+            } else if (loginError !== '') {
                 document.getElementById('errorModal').showModal();
             }
         });
