@@ -137,7 +137,7 @@
 
 
 <?php
-    include "Footer.php";
+    include "header.php";
     ?>
 
   <div class="bg-[url('./RegBG.jpg')] min-h-screen flex items-center justify-center">

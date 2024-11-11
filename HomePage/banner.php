@@ -11,7 +11,7 @@
             <h2 class="text-center text-3xl md:text-5xl">
               See All Creative Art Works
             </h2>
-            <a href="#" class="btn btn-primary mt-4">Explore</a>
+            <a href="../Art/ArtWelcome.php" class="btn btn-primary mt-4">Explore</a>
           </div>
         </div>
         <!-- Item 2 -->

@@ -171,7 +171,7 @@
           </li>
           <li class="dropdown dropdown-hover">
             <div tabindex="0" role="button" class="text-slate-50 font-bold hover:text-indigo-500">
-              Art or Craft
+              <a href="../Art/ArtWelcome.php">Art or Craft</a> 
             </div>
 
           </li>
@@ -250,7 +250,7 @@
             <ion-icon name="menu-outline" class="text-2xl"></ion-icon>
           </div>
           <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-            <li><a href="#">Art and Craft</a></li>
+            <li><a href="../Art/ArtWelcome.php">Art or Craft</a></li>
             <li><a href="#">Second hand Product</a></li>
             <li><a href="#">Electronics</a></li>
             <li><a href="#">Men's Items</a></li>
