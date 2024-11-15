@@ -138,7 +138,7 @@
   ?>
 
   <?php
-  include "header.php";
+  include "../Header_Footer/header.php";
   ?>
 
   <div class="bg-[url('./RegBG.jpg')] min-h-screen flex items-center justify-center">
@@ -325,7 +325,7 @@
   </div>
 
   <?php
-  include "Footer.php";
+  include "../Header_Footer/footer.php";
   ?>
 
   <script>

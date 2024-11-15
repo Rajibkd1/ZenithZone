@@ -1,28 +1,6 @@
-<?php
-include 'DB_Connection.php';
-
-if (isset($_GET['term'])) {
-  $searchTerm = $_GET['term'] ?? '';
-  $query = $conn->prepare("SELECT products FROM autocom WHERE products LIKE ? LIMIT 5");
-  $searchTerm = $searchTerm . '%';
-  $query->bind_param("s", $searchTerm);
-  $query->execute();
-  $result = $query->get_result();
-
-  $suggestions = [];
-  while ($row = $result->fetch_assoc()) {
-    $suggestions[] = $row['products'];
-  }
-
-  echo json_encode($suggestions);
-  $query->close();
-  $conn->close();
-  exit;
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -39,10 +17,10 @@ if (isset($_GET['term'])) {
 
 <body>
   <canvas class="background-canvas" id="backgroundCanvas"></canvas>
-  <?php include 'fixed_header.php'; ?>
+  <?php include '../Header_Footer/fixed_header.php'; ?>
   <main>
     <?php include 'banner.php'; ?>
-    
+
     <?php
     include 'DB_Connection.php';
     if ($conn === null) {
@@ -64,17 +42,19 @@ if (isset($_GET['term'])) {
     if ($result->num_rows > 0) {
       while ($row = $result->fetch_assoc()) {
         echo '<div class="bg-white shadow-lg rounded-lg overflow-hidden relative group hover:border-red-500 hover:border-2 transition duration-300 w-48">
-        <a href="../Products/Product_view.php?product_id=' . $row["Product_id"] . '">
-            <img src="' . $row["Product_image_path"] . '" alt="' . htmlspecialchars($row["Product_name"]) . '" class="w-full h-32 object-cover transition duration-300 ease-in-out">
-        </a>
-        <div class="absolute inset-y-0 right-0 flex flex-col items-center justify-center gap-2 transform translate-x-full transition-transform duration-300 ease-in-out group-hover:translate-x-0 bg-black bg-opacity-0 p-2">
-          <button class="text-blue-500 text-md p-0.5 rounded"><i class="far fa-heart"></i></button>
-          <button class="text-blue-500 text-md p-0.5 rounded"><i class="far fa-eye"></i></button>
-          <button class="text-blue-500 text-md p-0.5 rounded"><i class="fas fa-shopping-bag"></i></button>
-        </div>
-        <div class="p-2">
-          <a href="product_details.php?product_id=' . $row["Product_id"] . '" class="inline-block text-blue-500 hover:text-blue-600 text-sm">' . strtoupper($row["Product_name"]) . '</a>
-          <div class="flex items-center mb-1">';
+              <a href="../Products/Product_view.php?product_id=' . $row["Product_id"] . '">
+                  <img src="' . $row["Product_image_path"] . '" alt="' . htmlspecialchars($row["Product_name"]) . '" class="w-full h-32 object-cover transition duration-300 ease-in-out">
+              </a>
+              <div class="absolute inset-y-0 right-0 flex flex-col items-center justify-center gap-2 transform translate-x-full transition-transform duration-300 ease-in-out group-hover:translate-x-0 bg-black bg-opacity-0 p-2">
+                <button class="text-blue-500 text-md p-0.5 rounded"><i class="far fa-heart"></i></button>
+                <a href="../Products/Product_view.php?product_id=' . $row["Product_id"] . '" class="text-blue-500 text-md p-0.5 rounded inline-block">
+                  <i class="far fa-eye"></i>
+                </a>
+                <button class="text-blue-500 text-md p-0.5 rounded"><i class="fas fa-shopping-bag"></i></button>
+              </div>
+              <div class="p-2">
+                <a href="product_details.php?product_id=' . $row["Product_id"] . '" class="inline-block text-blue-500 hover:text-blue-600 text-sm">' . strtoupper($row["Product_name"]) . '</a>
+                <div class="flex items-center mb-1">';
         for ($i = 0; $i < 5; $i++) {
           if ($i < floor($row["Rating"])) {
             echo '<i class="fas fa-star text-yellow-400"></i>';
@@ -85,16 +65,17 @@ if (isset($_GET['term'])) {
           }
         }
         echo '</div>
-          <div class="flex items-baseline space-x-1 font-bold">
-            <p class="text-sm text-blue-500">$' . $row["New_price"] . '</p>
-            <del class="text-xs text-gray-400">$' . $row["Old_price"] . '</del>
-          </div>
-        </div>
-      </div>';
+                <div class="flex items-baseline space-x-1 font-bold">
+                  <p class="text-sm text-blue-500">$' . $row["New_price"] . '</p>
+                  <del class="text-xs text-gray-400">$' . $row["Old_price"] . '</del>
+                </div>
+              </div>
+            </div>';
       }
     } else {
       echo "<p>No products found</p>";
     }
+
     echo '</div>
         <button id="loadMore" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4  mt-6 mb-6 rounded">
           Show More
@@ -106,23 +87,23 @@ if (isset($_GET['term'])) {
     ?>
   </main>
 
-  <?php include 'footer.php'; ?>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="./auto.js"></script>
-  <script src="./background.js"></script>
+  <?php include '../Header_Footer/footer.php'; ?>
 
   <script>
     let start = <?php echo $start; ?>;
     const limit = <?php echo $limit; ?>;
 
-    document.getElementById("loadMore").addEventListener("click", function () {
+    document.getElementById("loadMore").addEventListener("click", function() {
       start += limit;
 
       $.ajax({
         url: "load_more_products.php",
         type: "GET",
-        data: { start: start, limit: limit },
-        success: function (data) {
+        data: {
+          start: start,
+          limit: limit
+        },
+        success: function(data) {
           if (data) {
             $("#productGrid").append(data);
           } else {
@@ -137,7 +118,10 @@ if (isset($_GET['term'])) {
     });
   </script>
 
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="./background.js"></script>
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 </body>
+
 </html>

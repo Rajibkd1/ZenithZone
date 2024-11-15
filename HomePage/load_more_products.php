@@ -20,15 +20,19 @@ $result = $stmt->get_result();
 if ($result->num_rows > 0) {
   while ($row = $result->fetch_assoc()) {
     echo '<div class="bg-white shadow-lg rounded-lg overflow-hidden relative group hover:border-red-500 hover:border-2 transition duration-300 w-48">
-            <img src="' . $row["Product_image_path"] . '" alt="' . htmlspecialchars($row["Product_name"]) . '" class="w-full h-32 object-cover transition duration-300 ease-in-out">
-            <div class="absolute inset-y-0 right-0 flex flex-col items-center justify-center gap-2 transform translate-x-full transition-transform duration-300 ease-in-out group-hover:translate-x-0 bg-black bg-opacity-0 p-2">
-              <button class="text-blue-500 text-md p-0.5 rounded"><i class="far fa-heart"></i></button>
-              <button class="text-blue-500 text-md p-0.5 rounded"><i class="far fa-eye"></i></button>
-              <button class="text-blue-500 text-md p-0.5 rounded"><i class="fas fa-shopping-bag"></i></button>
-            </div>
-            <div class="p-2">
-              <a href="#" class="inline-block text-blue-500 hover:text-blue-600 text-sm">' . strtoupper($row["Product_name"]) . '</a>
-              <div class="flex items-center mb-1">';
+    <a href="../Products/Product_view.php?product_id=' . $row["Product_id"] . '">
+        <img src="' . $row["Product_image_path"] . '" alt="' . htmlspecialchars($row["Product_name"]) . '" class="w-full h-32 object-cover transition duration-300 ease-in-out">
+    </a>
+    <div class="absolute inset-y-0 right-0 flex flex-col items-center justify-center gap-2 transform translate-x-full transition-transform duration-300 ease-in-out group-hover:translate-x-0 bg-black bg-opacity-0 p-2">
+      <button class="text-blue-500 text-md p-0.5 rounded"><i class="far fa-heart"></i></button>
+      <a href="../Products/Product_view.php?product_id=' . $row["Product_id"] . '" class="text-blue-500 text-md p-0.5 rounded inline-block">
+        <i class="far fa-eye"></i>
+      </a>
+      <button class="text-blue-500 text-md p-0.5 rounded"><i class="fas fa-shopping-bag"></i></button>
+    </div>
+    <div class="p-2">
+      <a href="product_details.php?product_id=' . $row["Product_id"] . '" class="inline-block text-blue-500 hover:text-blue-600 text-sm">' . strtoupper($row["Product_name"]) . '</a>
+      <div class="flex items-center mb-1">';
     for ($i = 0; $i < 5; $i++) {
       if ($i < floor($row["Rating"])) {
         echo '<i class="fas fa-star text-yellow-400"></i>';
@@ -47,9 +51,8 @@ if ($result->num_rows > 0) {
       </div>';
   }
 } else {
-  echo ''; // Return an empty response if no more products
+  echo '';
 }
 
 $stmt->close();
 $conn->close();
-?>

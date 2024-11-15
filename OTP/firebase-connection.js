@@ -1,12 +1,12 @@
 var firebaseConfig = {
-    apiKey: "AIzaSyCAITtBc2AFXJHvoshc77XKL0xkpP-3ojM",
-    authDomain: "rzenithzone.firebaseapp.com",
-    projectId: "rzenithzone",
-    storageBucket: "rzenithzone.appspot.com",
-    messagingSenderId: "490959314559",
-    appId: "1:490959314559:web:3cac029bd4186800f8e94a",
-    measurementId: "G-V4CKHQ6FDS"
-  };
+  apiKey: "AIzaSyDtvy1YRa9jA7eKf7FQ_dtsZ1fxxBPc-bk",
+  authDomain: "zenithzone-24.firebaseapp.com",
+  projectId: "zenithzone-24",
+  storageBucket: "zenithzone-24.firebasestorage.app",
+  messagingSenderId: "672203507403",
+  appId: "1:672203507403:web:217600a001d0596eb4fd4e",
+  measurementId: "G-TKSS20J1MF"
+};
 
 firebase.initializeApp(firebaseConfig);
 firebase.analytics();

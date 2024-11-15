@@ -28,7 +28,8 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-analytics.js"></script>
-    <script src="firebase-config.js"></script>
-    <script src="verification.js"></script>
+    <script src="./firebase-config.js"></script>
+    <script src="./firebase-connection.js"></script>
+    <script src="./verification.js"></script>
 </body>
 </html>
