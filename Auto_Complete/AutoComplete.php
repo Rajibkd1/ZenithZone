@@ -3,7 +3,7 @@ include '../Database_Connection/DB_Connection.php';
 
 if (isset($_GET['term'])) {
     $searchTerm = $_GET['term'] ?? '';
-    $query = $conn->prepare("SELECT products FROM autocom WHERE products LIKE ? LIMIT 5");
+    $query = $conn->prepare("SELECT Product_name FROM product_info WHERE Product_name LIKE ? LIMIT 5");
     $searchTerm = $searchTerm . '%';
     $query->bind_param("s", $searchTerm);
     $query->execute();
@@ -11,7 +11,7 @@ if (isset($_GET['term'])) {
 
     $suggestions = [];
     while ($row = $result->fetch_assoc()) {
-        $suggestions[] = $row['products'];
+        $suggestions[] = $row['Product_name'];
     }
 
     echo json_encode($suggestions);

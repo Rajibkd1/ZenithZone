@@ -90,6 +90,23 @@ if (!$product) {
           </button>
         </div>
       </div>
+      
+        <!-- Action Buttons -->
+        <div class="btn-box flex space-x-4">
+          <button
+            class="wishlist-btn bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-2 rounded-lg hover:from-red-500 hover:to-orange-500 transition duration-300 flex items-center space-x-2 shadow-md">
+            <i class="far fa-heart"></i>
+            <span>Wishlist</span>
+          </button>
+          <button class="cart-btn bg-gradient-to-r from-blue-500 to-blue-700 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-blue-500 transition duration-300 flex items-center space-x-2 shadow-md">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Add to Cart</span>
+          </button>
+          <button class="buy-btn bg-gradient-to-r from-green-500 to-green-700 text-white px-6 py-2 rounded-lg hover:from-green-700 hover:to-green-500 transition duration-300 flex items-center space-x-2 shadow-md">
+            <i class="fas fa-bolt"></i>
+            <span>Buy Now</span>
+          </button>
+        </div>
     </div>
   </div>
   
@@ -109,8 +126,8 @@ if (!$product) {
         </div>
       </div>
     </div>
-</main>
 
+</main>
 
   <script src="./assets/js/script.js"></script>
   <script src="./Product_view.js"></script>
