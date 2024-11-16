@@ -19,6 +19,14 @@
       font-size: 0.875em;
       margin-top: 0.5em;
       display: none;
+
+      .hidden {
+        display: none;
+      }
+
+      .visible {
+        display: block;
+      }
     }
   </style>
 </head>
@@ -116,7 +124,7 @@
     echo '<h3 class="text-lg font-bold mt-4">Registration Successful!</h3>';
     echo '<p class="mt-2 text-green-700">You have successfully registered.</p>';
     echo '<div class="flex justify-center mt-4">';
-    echo '<button onclick="window.location=\'../HomePage/InitialPage.php\';" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Close</button>';
+    echo '<button onclick="window.location=\'../HomePage/InitialPage1.php\';" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Close</button>';
     echo '</div>';
     echo '</div>';
     echo '</dialog>';
@@ -176,18 +184,18 @@
           <div class="mt-8">
             <label class="text-gray-800 text-sm block mb-2">Mobile No.</label>
             <div class="relative flex items-center">
-              <input id="number" name="number" type="text" required class="w-full bg-transparent text-sm text-gray-800 border-b border-gray-300 focus:border-blue-500 px-2 py-3 outline-none" placeholder="Enter mobile number" />
-              <button type="button" class="absolute right-2 top-2/4 transform -translate-y-1/2 bg-blue-500 text-white px-3 py-1 rounded-md text-xs" onclick="phoneAuth();">Send OTP</button>
+              <input id="number" name="number" type="text" required class="w-full bg-transparent text-sm border-b border-gray-300 focus:border-blue-500 px-2 py-3 outline-none" placeholder="Enter mobile number">
+              <button type="button" class="absolute right-2 top-2/4 transform -translate-y-1/2 bg-blue-500 text-white px-3 py-1 rounded-md text-xs" onclick="sendOTP();">Send OTP</button>
             </div>
+            <div id="otpMessage" class="text-red-500 hidden mt-2"></div>
             <div id="number-error" class="error-message text-red-500 text-xs hidden mt-2">Mobile number must be 11 digits.</div>
             <div id="errorDisplay" class="hidden text-red-500"></div>
-            <div id="recaptcha-container"></div>
           </div>
           <div class="mt-8">
             <label class="text-gray-800 text-sm block mb-2">OTP</label>
             <div class="relative flex items-center">
-              <input id="verificationCode" name="otp" type="text" required class="w-full bg-transparent text-sm text-gray-800 border-b border-gray-300 focus:border-blue-500 px-2 py-3 outline-none" placeholder="Enter OTP" />
-              <button type="button" class="absolute right-2 top-2/4 transform -translate-y-1/2 bg-blue-500 text-white px-3 py-1 rounded-md text-xs" onclick="codeverify();">Verify OTP</button>
+              <input id="verificationCode" name="otp" type="text" required class="w-full bg-transparent text-sm border-b border-gray-300 focus:border-blue-500 px-2 py-3 outline-none" placeholder="Enter OTP">
+              <button type="button" class="absolute right-2 top-2/4 transform -translate-y-1/2 bg-blue-500 text-white px-3 py-1 rounded-md text-xs" onclick="verifyOTP();">Verify OTP</button>
             </div>
           </div>
           <div class="mt-8">
@@ -341,32 +349,43 @@
       }
     });
   </script>
-  <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase.js"></script>
-  <script>
-    // Your web app's Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyCAITtBc2AFXJHvoshc77XKL0xkpP-3ojM",
-      authDomain: "rzenithzone.firebaseapp.com",
-      projectId: "rzenithzone",
-      storageBucket: "rzenithzone.appspot.com",
-      messagingSenderId: "490959314559",
-      appId: "1:490959314559:web:3cac029bd4186800f8e94a",
-      measurementId: "G-V4CKHQ6FDS"
-    };
 
-
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    firebase.analytics();
-  </script>
   <script src="./ValidateRegistration.js"></script>
-  <script src="./firebase.js"></script>
+  <script>
+    const registrationSuccess = <?php echo json_encode($registration_success); ?>;
+    const errorMessage = <?php echo json_encode($error_message); ?>;
+  </script>
+  <script src="./OTP.js"></script>
+
+
+
+  <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-lg p-5 shadow text-center">
+      <i class="fa-solid fa-circle-check fa-5x" style="color: #3feeba;"></i>
+      <h3 class="text-lg font-bold mt-4">Title Here</h3>
+      <p class="mt-2">Message Here</p>
+      <button onclick="document.getElementById('successModal').classList.add('hidden')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Close</button>
+    </div>
+  </div>
+
 
   <!--
-    - ionicon link
-  -->
+- ionicon link
+-->
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+
+  <!-- Modal Structure -->
+  <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-lg p-5 shadow text-center">
+      <i class="fa-solid fa-circle-check fa-5x" style="color: #3feeba;"></i>
+      <h3 class="text-lg font-bold mt-4">OTP Verified</h3>
+      <p class="mt-2">Your OTP has been verified successfully.</p>
+      <button onclick="document.getElementById('successModal').style.display = 'none'" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Close</button>
+    </div>
+  </div>
+
 </body>
 
 </html>
