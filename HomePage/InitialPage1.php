@@ -68,6 +68,7 @@
                 <div class="flex items-baseline space-x-1 font-bold">
                   <p class="text-sm text-blue-500">$' . $row["New_price"] . '</p>
                   <del class="text-xs text-gray-400">$' . $row["Old_price"] . '</del>
+                  <p class="text-green-500">-' . round((1 - $row['New_price'] / $row['Old_price']) * 100) . '%</p>
                 </div>
               </div>
             </div>';

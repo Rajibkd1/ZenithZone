@@ -80,7 +80,13 @@ $product = mysqli_fetch_assoc($result);
           ?>
         </div>
         <!-- Price -->
-        <div class="price text-2xl font-semibold mb-4">৳ <?php echo htmlspecialchars(number_format($product['New_price'], 2)); ?></div>
+        <div class="price text-2xl font-semibold mb-4">
+          <p class="font-bold text-red-500">
+            ৳ <?= htmlspecialchars($product['New_price']) ?>
+            <span class="line-through text-gray-500 ml-2">৳ <?= htmlspecialchars($product['Old_price']) ?></span>
+            <span class="text-green-500">-<?= round((1 - $product['New_price'] / $product['Old_price']) * 100) ?>%</span>
+          </p>
+        </div>
 
         <!-- Description -->
         <div class="size mb-4">

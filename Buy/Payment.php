@@ -1,3 +1,15 @@
+<?php
+session_start();
+
+// Check if all expected GET parameters are available
+$userType = isset($_GET['user_type']) ? filter_input(INPUT_GET, 'user_type', FILTER_SANITIZE_STRING) : null;
+$userId = isset($_GET['user_id']) ? filter_input(INPUT_GET, 'user_id', FILTER_SANITIZE_NUMBER_INT) : null;
+$productId = isset($_GET['product_id']) ? filter_input(INPUT_GET, 'product_id', FILTER_SANITIZE_NUMBER_INT) : null;
+$totalAmount = isset($_GET['total_amount']) ? filter_input(INPUT_GET, 'total_amount', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : null;
+$quantity = isset($_GET['quantity']) ? filter_input(INPUT_GET, 'quantity', FILTER_SANITIZE_NUMBER_INT) : null;
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,23 +18,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZenithZone Payment Method</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
-      rel="stylesheet"
-    />
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
     <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@^2.0/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
+        href="https://cdn.jsdelivr.net/npm/tailwindcss@^2.0/dist/tailwind.min.css"
+        rel="stylesheet" />
     <link
-      href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css"
-      rel="stylesheet"
-      type="text/css"
-    />
+        href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css"
+        rel="stylesheet"
+        type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
 </head>
+
 <body class="bg-gray-100">
-    <div class="container mx-auto p-6 bg-white rounded-lg shadow-lg max-w-screen-lg">
+    <?php
+    include "../Header_Footer/fixed_header.php";
+    ?>
+    <div class="container mt-36 mb-4 sm:mt-36 mb-4  mx-auto p-6 bg-white rounded-lg shadow-lg max-w-screen-lg">
         <!-- Header Notification -->
         <div class="bg-orange-500 text-white font-semibold p-3 rounded-t-lg">
             <p>🔔 Collect payment voucher & get extra savings on your purchase!</p>
@@ -58,8 +71,8 @@
 
         <!-- Order Summary Section -->
         <div class="order-summary mt-6 p-4 bg-gray-50 rounded-lg text-right border">
-            <p>Subtotal (1 item and shipping fee included): ৳ 176</p>
-            <p class="text-orange-500 font-bold text-lg">Total Amount: ৳ 176</p>
+            <p>Subtotal (<span><?= htmlspecialchars($quantity); ?></span> item and shipping fee included): ৳ <?= htmlspecialchars(number_format($totalAmount, 2)); ?></p>
+            <p class="text-orange-500 font-bold text-lg">Total Amount: ৳<?= htmlspecialchars(number_format($totalAmount, 2)); ?></p>
         </div>
 
         <!-- Payment Forms -->
@@ -121,9 +134,13 @@
         <div id="cod" class="payment-form mt-6 p-6 bg-white rounded-lg shadow-lg border hidden">
             <h3 class="text-lg font-semibold mb-4 text-gray-700">Cash on Delivery</h3>
             <p class="text-gray-600 mb-4">Proceed with your order and pay cash upon delivery.</p>
-            <button class="w-full mt-5 bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 rounded-lg font-semibold hover:from-orange-600 hover:to-red-600 transition">Confirm Order</button>
+            <button onclick="confirmOrder()" class="w-full mt-5 bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 rounded-lg font-semibold hover:from-orange-600 hover:to-red-600 transition">Confirm Order</button>
         </div>
     </div>
+
+    <?php
+    include "../Header_Footer/footer.php";
+    ?>
 
     <script>
         function showPaymentForm(formId) {
@@ -133,6 +150,19 @@
 
             // Show the selected payment form
             document.getElementById(formId).classList.remove('hidden');
+        }
+
+
+        function confirmOrder() {
+            var userId = <?= json_encode($userId); ?>;
+            var productId = <?= json_encode($productId); ?>;
+            var userType = <?= json_encode($userType); ?>;
+
+            var url = 'confirm_order.php?user_id=' + encodeURIComponent(userId) +
+                '&product_id=' + encodeURIComponent(productId) +
+                '&user_type=' + encodeURIComponent(userType);
+
+            window.location.href = url;
         }
     </script>
 </body>

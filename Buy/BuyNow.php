@@ -81,7 +81,7 @@ if (!$product) {
 
 <body class="font-poppins bg-gray-100 text-gray-800">
   <?php
-  include"../Header_Footer/fixed_header.php";
+  include "../Header_Footer/fixed_header.php";
   ?>
   <div
     class="max-w-5xl  mt-48 sm:mt-36 mx-auto p-4 lg:p-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -165,7 +165,7 @@ if (!$product) {
             disabled />
           <div>
             <p class="font-medium">
-              <Span id="delivery-fee" >৳ 120</Span>- Standard Delivery
+              <Span id="delivery-fee">৳ 120</Span>- Standard Delivery
             </p>
             <p class="text-sm text-gray-500" id="guaranteed-delivery-date">Guaranteed by </p>
           </div>
@@ -216,16 +216,16 @@ if (!$product) {
             Items Total (<?= $quantity ?> Item<?= $quantity > 1 ? 's' : '' ?>): <span id="itemTotal">৳ <?= number_format($itemTotal, 2) ?></span>
           </p>
           <p class="flex justify-between">
-            Delivery Fee: <span id="delivery-fee">৳ 120</span>
+            Delivery Fee: <span id="delivery-fees">৳ 120</span>
           </p>
         </div>
         <hr class="my-2" />
         <p class="flex justify-between font-bold text-lg">
-          Total: <span id="order-summary-total">৳ <?= number_format($itemTotal + 120, 2) ?></span> <!-- Adding fixed delivery fee for example -->
+          Total: <span id="order-summary-total">৳ <?= number_format($itemTotal, 2); ?></span>
         </p>
         <p class="text-xs text-gray-500">VAT included, where applicable</p>
         <button
-          onclick="window.location.href='ProceedToPay.html'"
+          onclick="redirectToPayment()"
           class="w-full bg-orange-500 text-white py-3 rounded-md text-sm font-semibold mt-4 hover:bg-orange-600 transition">
           Proceed to Pay
         </button>
@@ -233,74 +233,80 @@ if (!$product) {
     </div>
   </div>
   <?php
-  include"../Header_Footer/footer.php";
+  include "../Header_Footer/footer.php";
   ?>
-
+  <!-- <script src="./BuyNow.js"></script> -->
   <script>
-    // Toggle dropdown for pick-up points
+    function updateOrderSummary() {
+      var quantityInput = document.getElementById('quantityInput'); // Ensure this input is correctly referenced in your HTML
+      var pricePerItem = <?= $product['New_price']; ?>;
+      var quantity = quantityInput ? parseInt(quantityInput.value) : <?= $quantity ?>;
+      var itemTotal = quantity * pricePerItem;
+      var deliveryFee = parseInt(document.getElementById('delivery-fee').innerText.replace('৳ ', ''));
+      var total = itemTotal + deliveryFee;
+
+      document.getElementById('itemTotal').innerText = `৳ ${itemTotal.toFixed(2)}`;
+      document.getElementById('order-summary-total').innerText = `৳ ${total.toFixed(2)}`;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      updateOrderSummary(); // Initial update on page load
+      document.getElementById('quantityInput').addEventListener('change', updateOrderSummary); // Update on quantity change
+    });
+
+    // Function to handle pickup point selection
+    function selectPickupPoint(point) {
+      document.getElementById("address-type").classList.replace("bg-red-500", "bg-blue-500");
+      document.getElementById("address-icon").className = "fas fa-map-marker-alt mr-2";
+      document.getElementById("address-type").innerHTML = `<i class="fas fa-map-marker-alt mr-2"></i> Pick-up`;
+      const deliveryFee = 40; // Set the new delivery fee for pickup
+      document.getElementById('delivery-fee').innerText = `৳ ${deliveryFee}`;
+      document.getElementById('delivery-fees').innerText = `৳ ${deliveryFee}`;
+      updateOrderSummary(); // Update the order summary to reflect new fee
+    }
+
     function toggleDropdown() {
       document.getElementById("pickup-dropdown").classList.toggle("hidden");
     }
 
-    // Update delivery fee, order summary, and address type when a pick-up point is selected
-    function selectPickupPoint(point) {
-      const itemTotalElement = document.getElementById('itemTotal');
-      const totalElement = document.getElementById('order-summary-total');
-      const deliveryFeeElement = document.getElementById('delivery-fee');
-
-      // Change delivery fee to 40 when a pickup point is selected
-      const deliveryFee = 40;
-      document.querySelectorAll('#delivery-fee').forEach(elem => {
-        elem.innerText = `৳ ${deliveryFee}`;
-      });
-
-      // Update the total calculation
-      let itemTotal = parseFloat(itemTotalElement.innerText.replace('৳ ', ''));
-      let newTotal = itemTotal + deliveryFee;
-      totalElement.innerText = `৳ ${newTotal.toFixed(2)}`;
-
-      // Update address type to indicate a pickup point
-      document.getElementById("address-type").classList.replace("bg-red-500", "bg-blue-500");
-      document.getElementById("address-icon").className = "fas fa-map-marker-alt mr-2";
-      document.getElementById("address-type").innerHTML = `<i class="fas fa-map-marker-alt mr-2"></i> Pick-up`;
-
-      // Close the dropdown
-      document.getElementById("pickup-dropdown").classList.add("hidden");
-    }
-
-    // Update the order summary based on quantity changes or initial load
-    function updateOrderSummary() {
-      var quantityInput = document.getElementById('quantityInput'); // Ensure this input is correctly referenced in your HTML
-      var pricePerItem = <?= $product['New_price']; ?>;
-      var quantity = quantityInput ? parseInt(quantityInput.value) : 1;
-      var itemTotal = quantity * pricePerItem;
-      var deliveryFee = parseInt(document.getElementById("delivery-fee").innerText.replace('৳ ', ''));
-
-      document.getElementById('itemTotal').innerText = `৳ ${itemTotal.toFixed(2)}`;
-      document.getElementById('order-summary-total').innerText = `৳ ${(itemTotal + deliveryFee).toFixed(2)}`;
-    }
-
     document.addEventListener('DOMContentLoaded', function() {
-      updateOrderSummary(); 
-      const quantityInput = document.getElementById('quantityInput');
-      if (quantityInput) {
-        quantityInput.addEventListener('change', updateOrderSummary);
+      const today = new Date();
+      const endDate = new Date();
+      endDate.setDate(today.getDate() + 4);
+
+      function formatDate(date) {
+        const options = {
+          day: '2-digit',
+          month: 'short'
+        };
+        return new Intl.DateTimeFormat('en-US', options).format(date);
       }
+
+      const deliveryDateText = `Guaranteed by ${formatDate(today)} - ${formatDate(endDate)}`;
+      document.getElementById('guaranteed-delivery-date').textContent = deliveryDateText;
     });
-    document.addEventListener('DOMContentLoaded', function() {
-  const today = new Date();
-  const endDate = new Date();
-  endDate.setDate(today.getDate() + 4); 
-  function formatDate(date) {
-    const options = { day: '2-digit', month: 'short' };
-    return new Intl.DateTimeFormat('en-US', options).format(date);
-  }
-
-  const deliveryDateText = `Guaranteed by ${formatDate(today)} - ${formatDate(endDate)}`;
-  document.getElementById('guaranteed-delivery-date').textContent = deliveryDateText;
-});
-
   </script>
+
+  <script>
+    function redirectToPayment() {
+      var userId = <?= json_encode($user_id); ?>; // Get user ID from PHP
+      var productId = <?= json_encode($product_id); ?>; // Get product ID from PHP
+      var totalAmount = document.getElementById('order-summary-total').textContent.replace('৳ ', '').trim(); // Get total from the order summary
+      var quantity = <?= json_encode($quantity); ?>; // Get quantity from PHP
+      var userType = <?= json_encode($user_type); ?>; // Get user type from PHP
+
+      // Construct the URL with query parameters
+      var url = './Payment.php?user_id=' + encodeURIComponent(userId) +
+        '&product_id=' + encodeURIComponent(productId) +
+        '&total_amount=' + encodeURIComponent(totalAmount) +
+        '&quantity=' + encodeURIComponent(quantity) +
+        '&user_type=' + encodeURIComponent(userType);
+
+      // Redirect to the payment page with parameters
+      window.location.href = url;
+    }
+  </script>
+
 
 </body>
 

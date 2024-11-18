@@ -99,8 +99,8 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
     <!-- Fixed navigation bar with interactive animated background -->
     <div class="fixed top-0 left-0 right-0 z-50 group">
       <!-- Animated gradient background with hover effect -->
-      <div class="absolute -inset-1 bg-gradient-to-r from-red-600 to-violet-600 rounded-lg blur opacity-25 transition-opacity duration-1000 group-hover:opacity-100"></div>
-
+      <div class="absolute -inset-1 bg-gradient-to-r from-red-600 to-violet-600 rounded-lg blur opacity-25 group-hover:opacity-100 transition duration-1000 group-hover:duration-200">
+      </div>
       <!-- Navigation content -->
       <div class="relative bg-[#363b41] py-5 w-full">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
