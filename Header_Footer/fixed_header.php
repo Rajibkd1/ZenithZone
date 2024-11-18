@@ -4,65 +4,62 @@ include "../Database_Connection/DB_Connection.php";
 
 // Handle AJAX requests from Login.php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $loggedin = isset($_POST['loggedin']) ? $_POST['loggedin'] : null;
-    $user_type = isset($_POST['user_type']) ? $_POST['user_type'] : null;
-    $user_id = isset($_POST['user_id']) ? $_POST['user_id'] : null;
+  $loggedin = isset($_POST['loggedin']) ? $_POST['loggedin'] : null;
+  $user_type = isset($_POST['user_type']) ? $_POST['user_type'] : null;
+  $user_id = isset($_POST['user_id']) ? $_POST['user_id'] : null;
 
-    // Store received data in the session
-    if ($loggedin !== null) {
-        $_SESSION['loggedin'] = filter_var($loggedin, FILTER_VALIDATE_BOOLEAN);
-    }
-    if ($user_type !== null) {
-        $_SESSION['user_type'] = $user_type;
-    }
-    if ($user_id !== null) {
-        $_SESSION['user_id'] = $user_id;
-    }
+  // Store received data in the session
+  if ($loggedin !== null) {
+    $_SESSION['loggedin'] = filter_var($loggedin, FILTER_VALIDATE_BOOLEAN);
+  }
+  if ($user_type !== null) {
+    $_SESSION['user_type'] = $user_type;
+  }
+  if ($user_id !== null) {
+    $_SESSION['user_id'] = $user_id;
+  }
 
-    // Optional: Respond back to the AJAX request
-    echo json_encode(['status' => 'success', 'message' => 'Data received and stored successfully']);
-    exit(); // Stop further script execution after processing the AJAX request
+  // Optional: Respond back to the AJAX request
+  echo json_encode(['status' => 'success', 'message' => 'Data received and stored successfully']);
+  exit(); // Stop further script execution after processing the AJAX request
 }
 
-function getUserFirstName($conn, $userType, $userId) {
+function getUserFirstName($conn, $userType, $userId)
+{
   $tableName = '';
   $idColumn = '';
   $firstNameColumn = '';
-  
+
 
   switch ($userType) {
-      case 'artist_info':
-          $tableName = 'artist_info';
-          $idColumn = 'artist_id';
-          break;
-      case 'customer_info':
-          $tableName = 'customer_info';
-          $idColumn = 'customer_id';
-          break;
-      case 'seller_info':
-          $tableName = 'sellersinfo';
-          $idColumn = 'seller_id';
-          break;
-      default:
-          return 'Guest'; // Return 'Guest' if no valid user type
+    case 'artist_info':
+      $tableName = 'artist_info';
+      $idColumn = 'artist_id';
+      break;
+    case 'customer_info':
+      $tableName = 'customer_info';
+      $idColumn = 'customer_id';
+      break;
+    case 'seller_info':
+      $tableName = 'sellersinfo';
+      $idColumn = 'seller_id';
+      break;
+    default:
+      return 'Guest'; // Return 'Guest' if no valid user type
   }
 
   $sql = "SELECT first_name FROM {$tableName} WHERE {$idColumn} = ?";
   if ($stmt = $conn->prepare($sql)) {
-      $stmt->bind_param("i", $userId);
-      $stmt->execute();
-      $stmt->bind_result($firstName);
-      if ($stmt->fetch()) {
-          $stmt->close();
-          return $firstName;
-      } else {
-          $stmt->close();
-          return 'User'; // Default name if fetch fails
-      }
-  } else {
-      error_log('MySQL prepare error: ' . $conn->error);
-      return 'Guest'; // Default guest name if prepare fails
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $stmt->bind_result($firstName);
+    if ($stmt->fetch()) {
+      $stmt->close();
+      return $firstName;
+    }
+    $stmt->close();
   }
+  return 'User'; // Return 'User' if no name is found or on error
 }
 
 // Retrieve the logged-in status, user type, and user ID
@@ -73,10 +70,10 @@ $firstName = $loggedInStatus ? getUserFirstName($conn, $userType, $userId) : 'Gu
 
 // Handle logout
 if (isset($_GET['action']) && $_GET['action'] === 'logout') {
-    $_SESSION = [];
-    session_destroy();
-    header("Location: ../Homepage/InitialPage1.php");
-    exit();
+  $_SESSION = [];
+  session_destroy();
+  header("Location: ../Homepage/InitialPage1.php");
+  exit();
 }
 ?>
 

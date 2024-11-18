@@ -122,7 +122,6 @@ try {
         <p class="mt-2">Hi <?php echo htmlspecialchars($first_name); ?>, welcome to ZenithZone.</p>
         <div class="flex justify-center mt-4">
             <!-- Proceed Button with user_type and user_id -->
-            <!-- Proceed Button with logged_in, user_type, and user_id -->
             <button onclick="window.location='../HomePage/Homepage1.php';" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Proceed</button>
 
         </div>
@@ -152,6 +151,7 @@ try {
                 // Send AJAX request to fixed_header.php
                 const xhr = new XMLHttpRequest();
                 xhr.open("POST", "../Header_Footer/fixed_header.php", true);
+                // xhr.open("POST", "../Products/Product_view.php", true);
                 xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
                 // Prepare the data to send
