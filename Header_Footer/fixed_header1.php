@@ -1,87 +1,13 @@
 <?php
-session_start(); // Start the session at the beginning of the script
-include "../Database_Connection/DB_Connection.php";
-
-// Handle AJAX requests from Login.php
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $loggedin = isset($_POST['loggedin']) ? $_POST['loggedin'] : null;
-    $user_type = isset($_POST['user_type']) ? $_POST['user_type'] : null;
-    $user_id = isset($_POST['user_id']) ? $_POST['user_id'] : null;
-
-    // Store received data in the session
-    if ($loggedin !== null) {
-        $_SESSION['loggedin'] = filter_var($loggedin, FILTER_VALIDATE_BOOLEAN);
-    }
-    if ($user_type !== null) {
-        $_SESSION['user_type'] = $user_type;
-    }
-    if ($user_id !== null) {
-        $_SESSION['user_id'] = $user_id;
-    }
-
-    // Optional: Respond back to the AJAX request
-    echo json_encode(['status' => 'success', 'message' => 'Data received and stored successfully']);
-    exit(); // Stop further script execution after processing the AJAX request
+session_start();
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+  header("Location: ../Login/Login.php");
+  exit;
 }
 
-function getUserFirstName($conn, $userType, $userId) {
-  $tableName = '';
-  $idColumn = '';
-  $firstNameColumn = '';
-  
-
-  switch ($userType) {
-      case 'artist_info':
-          $tableName = 'artist_info';
-          $idColumn = 'artist_id';
-          break;
-      case 'customer_info':
-          $tableName = 'customer_info';
-          $idColumn = 'customer_id';
-          break;
-      case 'seller_info':
-          $tableName = 'sellersinfo';
-          $idColumn = 'seller_id';
-          break;
-      default:
-          return 'Guest'; // Return 'Guest' if no valid user type
-  }
-
-  $sql = "SELECT first_name FROM {$tableName} WHERE {$idColumn} = ?";
-  if ($stmt = $conn->prepare($sql)) {
-      $stmt->bind_param("i", $userId);
-      $stmt->execute();
-      $stmt->bind_result($firstName);
-      if ($stmt->fetch()) {
-          $stmt->close();
-          return $firstName;
-      } else {
-          $stmt->close();
-          return 'User'; // Default name if fetch fails
-      }
-  } else {
-      error_log('MySQL prepare error: ' . $conn->error);
-      return 'Guest'; // Default guest name if prepare fails
-  }
-}
-
-// Retrieve the logged-in status, user type, and user ID
-$loggedInStatus = $_SESSION['loggedin'] ?? false;
-$userType = $_SESSION['user_type'] ?? 'Guest';
-$userId = $_SESSION['user_id'] ?? 0;
-$firstName = $loggedInStatus ? getUserFirstName($conn, $userType, $userId) : 'Guest';
-
-// Handle logout
-if (isset($_GET['action']) && $_GET['action'] === 'logout') {
-    $_SESSION = [];
-    session_destroy();
-    header("Location: ../Homepage/InitialPage1.php");
-    exit();
-}
+// Check if the first_name session variable is set and assign it or use 'User' as a default
+$first_name = $_SESSION['first_name'] ?? 'User';
 ?>
-
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -90,16 +16,14 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ZenithZone</title>
-  <link rel="stylesheet" href="../Auto_Complete/AutoComplete.css">
+  <link rel="stylesheet" href="../Auto_Complete/AutoComplete.css"> <!-- Include your CSS here -->
 </head>
 
 <body>
-  <?php
-  include '../Auto_Complete/AutoComplete.php';
-  ?>
+  <?php include '../Auto_Complete/AutoComplete.php'; ?>
+
   <header>
-    <!-- This first nav bar -->
-    <!-- Fixed navigation bar with interactive animated background -->
+    <!-- First navigation bar -->
     <div class="fixed top-0 left-0 right-0 z-50 group">
       <!-- Animated gradient background with hover effect -->
       <div class="absolute -inset-1 bg-gradient-to-r from-red-600 to-violet-600 rounded-lg blur opacity-25 transition-opacity duration-1000 group-hover:opacity-100"></div>
@@ -113,34 +37,32 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
               <img src="../assets/images/logo/ZenithZone.png" alt="ZenithZone logo" class="h-16 sm:h-20" />
             </a>
 
-            <!-- Search Field For Large Device -->
+            <!-- Search Field for Large Devices -->
             <div class="flex-grow mx-10 my-2 sm:my-0 hidden md:block">
-              <div class="relative hidden md:block">
+              <div class="relative">
                 <input type="search" id="searchInput" name="search" class="input-field w-full pl-4 pr-20 py-2 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border rounded-md" placeholder="Enter your product name..." />
                 <!-- Autocomplete Suggestions Box -->
                 <ul id="searchSuggestions" class="autobox absolute z-10 bg-white w-full shadow-lg max-h-60 overflow-y-auto"></ul>
-                <!-- Search Button -->
+                <!-- Search and Voice Buttons -->
                 <button class="absolute inset-y-0 right-10 px-3 flex items-center">
                   <ion-icon name="search-outline" class="h-5 w-5 text-gray-500"></ion-icon>
                 </button>
-                <!-- Voice Search Button -->
                 <button class="absolute inset-y-0 right-0 px-3 flex items-center">
                   <ion-icon name="mic-outline" class="h-5 w-5 text-gray-500"></ion-icon>
                 </button>
               </div>
             </div>
 
-            <!-- User Actions and Authentication -->
+            <!-- User Actions and Authentication Links -->
             <div class="flex items-center space-x-4 mt-2 sm:mt-0">
-              <!-- Authentication Links -->
-              <?php if ($loggedInStatus): ?>
-                <a href="?action=logout" class="text-[#fbad62] hover:text-white transition duration-150 ease-in-out">Logout</a>
-                <a href="#" class="text-[#fbad62] hover:text-white transition duration-150 ease-in-out"><?= $firstName; ?></a>
+              <?php if ($logged_in): ?>
+                <a href="../HomePage/InitialPage1.php" class="text-[#fbad62] hover:text-white transition duration-150 ease-in-out">Logout</a>
+                <a href="#" class="text-[#fbad62] hover:text-white transition duration-150 ease-in-out"><?php echo htmlspecialchars($first_name); ?></a>
               <?php else: ?>
                 <a href="../Login/Login.php" class="text-[#fbad62] hover:text-white transition duration-150 ease-in-out">Login</a>
                 <a href="../Registration/Who.php" class="text-[#fbad62] hover:text-white transition duration-150 ease-in-out">Signup</a>
               <?php endif; ?>
-              <!-- User Actions -->
+              <!-- User Action Buttons -->
               <button class="text-[#fbad62] hover:text-white">
                 <ion-icon name="person-outline" class="h-6 w-6"></ion-icon>
               </button>
@@ -153,24 +75,21 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
                 <span class="absolute -top-2 -right-2 rounded-full bg-red-500 text-white text-xs px-2 py-1">0</span>
               </button>
             </div>
-            <!-- Search Field for Small device  -->
+
+            <!-- Search Field for Small Devices -->
             <div class="flex-grow mx-10 my-2 sm:my-0 block sm:hidden">
               <div class="relative">
                 <input type="search" id="searchInputMobile" name="search" class="input-field w-full pl-4 pr-20 py-2 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border rounded-md" placeholder="Enter your product name..." />
-                <!-- Autocomplete Suggestions Box -->
                 <ul id="searchSuggestionsMobile" class="autobox absolute z-10 bg-white w-full shadow-lg max-h-60 overflow-y-auto"></ul>
-                <!-- Search Button -->
                 <button class="absolute inset-y-0 right-10 px-3 flex items-center">
                   <ion-icon name="search-outline" class="h-5 w-5 text-gray-500"></ion-icon>
                 </button>
-                <!-- Voice Search Button -->
                 <button class="absolute inset-y-0 right-0 px-3 flex items-center">
                   <ion-icon name="mic-outline" class="h-5 w-5 text-gray-500"></ion-icon>
                 </button>
               </div>
             </div>
           </div>
-
         </div>
       </div>
 
@@ -377,10 +296,10 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
           <ion-icon name="grid-outline" class="text-2xl"></ion-icon>
         </button>
       </div>
+    </div>
   </header>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="../Auto_Complete/AutoComplete.js"></script>
-
 </body>
 
 </html>

@@ -33,15 +33,7 @@
 
 <body>
     <?php
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "ZenithZone";
-    $conn = new mysqli($servername, $username, $password, $dbname);
-
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
+    include"../Database_Connection/DB_Connection.php";
 
     $email_error = $number_error = '';
     $registration_success = false;

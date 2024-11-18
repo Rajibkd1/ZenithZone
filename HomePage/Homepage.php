@@ -120,6 +120,7 @@ if (isset($_GET['term'])) {
                                 <ion-icon name="person-outline" class="h-6 w-6"></ion-icon>
                             </button>
                             <a href="#" class="text-[#fbad62] hover:text-white transition duration-150 ease-in-out"><?php echo htmlspecialchars($first_name); ?></a>
+                            <a href="#" class="text-[#fbad62] hover:text-white transition duration-150 ease-in-out"><?php echo htmlspecialchars($first_name); ?></a>
                             <button class="relative text-[#fbad62] hover:text-white">
                                 <ion-icon name="heart-outline" class="h-6 w-6"></ion-icon>
                                 <span class="absolute -top-2 -right-2 rounded-full bg-red-500 text-white text-xs px-2 py-1">0</span>

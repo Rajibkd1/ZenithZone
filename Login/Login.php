@@ -1,17 +1,8 @@
 <?php
-session_start();
-
-$host = 'localhost'; // Host name
-$dbname = 'ZenithZone'; // Database name
-$username = 'root'; // Database username
-$password = ''; // Database password
+include "../Database_Connection/DB_Connection.php";
 
 // Improved error handling with try-catch
 try {
-    // Create connection
-    $conn = new mysqli($host, $username, $password, $dbname);
-
-    // Check connection
     if ($conn->connect_error) {
         throw new Exception("Connection failed: " . $conn->connect_error);
     }
@@ -29,7 +20,7 @@ try {
         $tables = [
             ['name' => 'artist_info', 'id_column' => 'artist_id', 'email_column' => 'email', 'password_column' => 'password_hash', 'first_name_column' => 'first_name'],
             ['name' => 'customer_info', 'id_column' => 'customer_id', 'email_column' => 'email', 'password_column' => 'password', 'first_name_column' => 'first_name'],
-            ['name' => 'sellersinfo', 'id_column' => 'id', 'email_column' => 'email', 'password_column' => 'password_hash', 'first_name_column' => 'first_name']
+            ['name' => 'sellersinfo', 'id_column' => 'seller_id', 'email_column' => 'email', 'password_column' => 'password_hash', 'first_name_column' => 'first_name']
         ];
 
         foreach ($tables as $table) {
@@ -49,6 +40,7 @@ try {
                     $first_name = $user[$table['first_name_column']];
                     $_SESSION['loggedin'] = true;
                     $_SESSION['email_mobile'] = $email_mobile;
+                    $_SESSION['user_id'] = $user[$table['id_column']];
                     $_SESSION['user_type'] = $table['name'];  // Identifying the type of user
                     $_SESSION['first_name'] = $first_name;
                     break;
@@ -129,7 +121,10 @@ try {
         </h3>
         <p class="mt-2">Hi <?php echo htmlspecialchars($first_name); ?>, welcome to ZenithZone.</p>
         <div class="flex justify-center mt-4">
-            <button onclick="window.location='../HomePage/Homepage.php';" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Proceed</button>
+            <!-- Proceed Button with user_type and user_id -->
+            <!-- Proceed Button with logged_in, user_type, and user_id -->
+            <button onclick="window.location='../HomePage/Homepage1.php';" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Proceed</button>
+
         </div>
     </dialog>
 
@@ -153,6 +148,23 @@ try {
 
             if (loginSuccess) {
                 document.getElementById('successModal').showModal();
+
+                // Send AJAX request to fixed_header.php
+                const xhr = new XMLHttpRequest();
+                xhr.open("POST", "../Header_Footer/fixed_header.php", true);
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+                // Prepare the data to send
+                const data = `loggedin=${encodeURIComponent(<?php echo json_encode($_SESSION['loggedin']); ?>)}&user_type=${encodeURIComponent(<?php echo json_encode($_SESSION['user_type']); ?>)}&user_id=${encodeURIComponent(<?php echo json_encode($_SESSION['user_id']); ?>)}`;
+
+                // Send the data
+                xhr.send(data);
+
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                        console.log("Data sent successfully to fixed_header.php");
+                    }
+                };
             } else if (loginError !== '') {
                 document.getElementById('errorModal').showModal();
             }
