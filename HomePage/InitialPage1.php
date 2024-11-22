@@ -22,7 +22,7 @@
     <?php include 'banner.php'; ?>
 
     <?php
-    include 'DB_Connection.php';
+    include '../Database_Connection/DB_Connection.php';
     if ($conn === null) {
       die("Connection failed: Unable to connect to database");
     }

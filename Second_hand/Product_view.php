@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   if ($loggedin !== null) {
     $_SESSION['loggedin'] = filter_var($loggedin, FILTER_VALIDATE_BOOLEAN);
-    header("Location: some_page.php"); 
+    header("Location: ../Login/Login.php"); 
     exit();
   }
 }
@@ -17,7 +17,8 @@ $isLoggedIn = isset($_SESSION['loggedin']) && $_SESSION['loggedin'];
 
 $product_id = isset($_GET['product_id']) ? intval($_GET['product_id']) : 0;
 
-$sql = "SELECT * FROM product_info WHERE Product_id = $product_id";
+// Change to fetch data from the second_hand_product table
+$sql = "SELECT * FROM second_hand_product WHERE Sh_product_id = $product_id";
 $result = mysqli_query($conn, $sql);
 $product = mysqli_fetch_assoc($result);
 
@@ -25,7 +26,6 @@ $product = mysqli_fetch_assoc($result);
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -40,7 +40,6 @@ $product = mysqli_fetch_assoc($result);
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
-
 <body>
   <?php include "../Header_Footer/fixed_header.php"; ?>
   <main class="flex-grow container mx-auto px-4 py-8">
@@ -48,69 +47,33 @@ $product = mysqli_fetch_assoc($result);
       <!-- Product Image -->
       <div class="md:w-1/2 flex flex-col items-center">
         <div class="big-img mb-4">
-          <img id="bigImg" src="<?php echo htmlspecialchars($product['Product_image_path']); ?>" alt="<?php echo htmlspecialchars($product['Product_name']); ?>" style="width: 300px; height: 300px; object-fit: cover;" class="rounded-lg shadow-lg" onclick="toggleImagePreview()" />
-
+          <img id="bigImg" src="<?php echo htmlspecialchars($product['Sh_image_path']); ?>" alt="<?php echo htmlspecialchars($product['Sh_product_name']); ?>" style="width: 300px; height: 300px; object-fit: cover;" class="rounded-lg shadow-lg" onclick="toggleImagePreview()" />
         </div>
       </div>
 
       <!-- Product Details -->
       <div class="md:w-1/2 md:ml-8 mt-8 md:mt-0 flex flex-col items-center md:items-start">
-        <div class="pname text-3xl font-bold mb-2 mt-5"><?php echo htmlspecialchars($product['Product_name']); ?></div>
-        <!-- Rating -->
-        <div class="ratings text-yellow-500 mb-2">
-          <?php
-          $fullStars = floor($product['Rating']);
-          $halfStar = ($product['Rating'] - $fullStars) >= 0.5 ? 1 : 0;
-          $emptyStars = 5 - ($fullStars + $halfStar);
-
-          for ($i = 0; $i < $fullStars; $i++) {
-            echo '<i class="fas fa-star"></i>';
-          }
-          if ($halfStar) {
-            echo '<i class="fas fa-star-half-alt"></i>';
-          }
-          for ($i = 0; $i < $emptyStars; $i++) {
-            echo '<i class="far fa-star"></i>';
-          }
-          ?>
+        <div class="pname text-3xl font-bold mb-2 mt-5"><?php echo htmlspecialchars($product['Sh_product_name']); ?></div>
+        <!-- Description -->
+        <div class="description text-xl mb-2">
+          <p class="font-semibold text-gray-700">Description:</p>
+          <p><?php echo nl2br(htmlspecialchars($product['Sh_Product_description'])); ?></p>
+        </div>
+        <!-- Present Condition -->
+        <div class="condition text-xl mb-4">
+          <p class="font-semibold text-gray-700">Present Condition:</p>
+          <p><?php echo htmlspecialchars($product['Sh_Product_present_condition']); ?></p>
         </div>
         <!-- Price -->
         <div class="price text-2xl font-semibold mb-4">
           <p class="font-bold text-red-500">
-            ৳ <?= htmlspecialchars($product['New_price']) ?>
-            <span class="line-through text-gray-500 ml-2">৳ <?= htmlspecialchars($product['Old_price']) ?></span>
-            <span class="text-green-500">-<?= round((1 - $product['New_price'] / $product['Old_price']) * 100) ?>%</span>
+            ৳ <?= htmlspecialchars($product['Sh_price']) ?>
           </p>
         </div>
-
-        <!-- Description -->
-        <div class="size mb-4">
-          <p class="text-gray-700 font-semibold">Description:</p>
-          <p class="text-gray-700 leading-relaxed"><?php echo nl2br(htmlspecialchars($product['Product_Description'])); ?></p>
-        </div>
-
-        <!-- Quantity Section -->
-        <div class="quantity mb-6 flex flex-col items-center md:flex-row md:items-center">
-          <p class="text-gray-700 font-semibold mr-4">Quantity:</p>
-          <div class="flex items-center space-x-2 bg-gray-100 p-2 rounded-lg shadow-md">
-            <button class="bg-gray-200 text-gray-700 px-3 py-1 rounded-full hover:bg-gray-300 transition duration-200" onclick="updateQuantity('decrement')">
-              <i class="fas fa-minus"></i>
-            </button>
-            <input type="number" id="quantityInput" min="1" max="5" value="1" class="border-none text-center w-12 bg-white text-gray-700 font-semibold rounded-md focus:outline-none" />
-            <button class="bg-gray-200 text-gray-700 px-3 py-1 rounded-full hover:bg-gray-300 transition duration-200" onclick="updateQuantity('increment')">
-              <i class="fas fa-plus"></i>
-            </button>
-          </div>
-        </div>
-
-        <!-- Action Buttons -->
+        <!-- Action Button -->
         <div class="btn-box flex space-x-4">
-          <button
-            class="wishlist-btn bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-2 rounded-lg hover:from-red-500 hover:to-orange-500 transition duration-300 flex items-center space-x-2 shadow-md">
-            <i class="far fa-heart"></i>
-            <span>Wishlist</span>
-          </button>
-          <button class="cart-btn bg-gradient-to-r from-blue-500 to-blue-700 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-blue-500 transition duration-300 flex items-center space-x-2 shadow-md">
+        <button class="cart-btn bg-gradient-to-r from-blue-500 to-blue-700 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-blue-500 transition duration-300 flex items-center space-x-2 shadow-md"
+            onclick="addToCart()">
             <i class="fas fa-shopping-cart"></i>
             <span>Add to Cart</span>
           </button>
@@ -122,28 +85,16 @@ $product = mysqli_fetch_assoc($result);
         </div>
       </div>
     </div>
-
-    <!-- Customer Reviews Section -->
-    <div class="customer-reviews border border-gray-200 rounded-lg p-6 mt-10 shadow-sm">
-      <h6 class="text-lg font-bold mb-6">Customer Reviews</h6>
-      <div class="flex items-start mb-6">
-        <div class="flex-shrink-0">
-          <img src="./img/user-icon.png" alt="User Avatar" class="w-12 h-12 rounded-full shadow-md" />
-        </div>
-        <div class="ml-4">
-          <div class="text-gray-800 font-semibold">Abir Mahmud</div>
-          <div class="text-gray-600 mb-1">
-            Rated <span class="text-yellow-500">★★★★☆</span>
-          </div>
-          <p class="text-gray-700">"Great T-shirt! Fits perfectly and feels very comfortable."</p>
-        </div>
-      </div>
-    </div>
-
   </main>
 
-  <!-- Modal Structure -->
-  <div id="messageModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+   <!-- Full Image View Modal -->
+   <div id="imageModal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50">
+    <img id="modalImg" src="" class="max-w-full max-h-full" alt="Full Size Product Image">
+    <button onclick="hideFullImage()" class="absolute top-0 right-0 text-white text-2xl p-2">&times;</button>
+  </div>
+
+    <!-- Modal Structure -->
+    <div id="messageModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
     <div class="bg-white rounded-lg p-5 shadow text-center">
       <i id="modalIcon" class="fas fa-exclamation-circle fa-5x text-red-500"></i>
       <h3 id="modalTitle" class="text-lg font-bold mt-4">Title Here</h3>
@@ -160,15 +111,13 @@ $product = mysqli_fetch_assoc($result);
   </script>
 
 
-  <script>
+<script>
     var isLoggedIn = <?php echo json_encode($isLoggedIn); ?>;
-
     function redirectToBuyNow() {
-      var quantity = document.getElementById('quantityInput').value;
       var productId = <?= $product_id; ?>;
       if (isLoggedIn) {
         // If logged in, redirect to the buy now page
-        var url = '../Buy/BuyNow.php?product_id=' + productId + '&quantity=' + quantity;
+        var url = './S_BuyNow.php?product_id=' + productId;
         window.location.href = url;
       } else {
         // If not logged in, show the modal
