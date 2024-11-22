@@ -19,11 +19,14 @@
 </head>
 
 <body class="bg-cover bg-center bg-no-repeat" style="background-image: url('./resources/1537617_4683.jpg');">
+<?php
+include"../Header_Footer/fixed_header.php";
+?>
 
-<div class="container mx-auto px-4">
+<div class=" container mx-auto mt-40 px-4">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pt-6">
             <?php
-            include './conn.php'; // Ensure this is correctly pointing to your connection script
+            include '../Database_Connection/DB_Connection.php'; // Ensure this is correctly pointing to your connection script
             ?>
             <?php
             $query = "SELECT * FROM art_gallery";
@@ -56,6 +59,9 @@
             ?>
         </div>
     </div>
+    <?php
+    include"../Header_Footer/footer.php";
+    ?>
 </body>
 
 </html>

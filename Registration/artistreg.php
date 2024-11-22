@@ -25,15 +25,7 @@
 
 <body>
   <?php
-  $servername = "localhost";
-  $username = "root";
-  $password = "";
-  $dbname = "ZenithZone";
-  $conn = new mysqli($servername, $username, $password, $dbname);
-
-  if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-  }
+  include"../Database_Connection/DB_Connection.php";
 
   $email_error = $number_error = $nid_error = '';
   $registration_success = false;
@@ -272,7 +264,6 @@
               <textarea id="address" name="address" required class="w-full bg-transparent text-sm text-gray-800 border-b border-gray-300 focus:border-blue-500 px-2 py-3 outline-none" placeholder="Enter your address"></textarea>
             </div>
           </div>
-
           <div class="mt-8">
             <label class="text-gray-800 text-xs block mb-2">Postal Code</label>
             <div class="relative flex items-center">

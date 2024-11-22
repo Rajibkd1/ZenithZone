@@ -57,7 +57,7 @@ function verifyOTP() {
                 document.getElementById("otpVerified").value = "true";
                 showSuccessModal("OTP Verified", "Your OTP has been verified successfully.");
             } else {
-                isOtpVerified = false; // Ensure flag remains false on failed verification
+                isOtpVerified = false; 
             }
         })
         .catch((error) => {

@@ -1,8 +1,6 @@
 <?php
-// Start the session
-session_start();
 
-include './conn.php'; // Ensure this is correctly pointing to your connection script
+include '../Database_Connection/DB_Connection.php'; // Ensure this is correctly pointing to your connection script
 
 // Get the art ID from the URL query parameter
 $artId = isset($_GET['artId']) ? intval($_GET['artId']) : 0;
@@ -161,8 +159,12 @@ $conn->close();
         });
     </script>
 </head>
+<?php
+include"../Header_Footer/fixed_header.php";
+?>
 
-<body class="bg-gray-100 flex justify-center items-center h-screen">
+<body class="bg-gray-100 flex flex-col justify-center min-h-screen">
+<div class="flex-grow flex flex-col justify-center items-center mt-36 w-full">
 <div id="cardContainer" class="card bg-white shadow-lg rounded-lg p-6 max-w-4xl mx-auto">
     <div class="flex justify-center">
         <img src="<?php echo htmlspecialchars($row['art_img']); ?>" alt="Artwork" class="rounded-lg w-56 h-64 cursor-pointer" id="artImage" onclick="toggleFullscreenImage()">
@@ -202,6 +204,7 @@ $conn->close();
         <?php endif; ?>
     </div>
 </div>
+</div>
 
     <!-- Fullscreen Image Container: Initially Hidden -->
     <div id="fullscreenContainer" class="fullscreen-img-container" style="display: none;" onclick="toggleFullscreenImage()">
@@ -217,22 +220,18 @@ $conn->close();
             const cardContainer = document.getElementById('cardContainer');
 
             if (fullscreenContainer.style.display === 'none') {
-                // Enter fullscreen mode
                 fullscreenImage.src = artImage.src;
                 fullscreenContainer.style.display = 'flex';
                 cardContainer.style.display = 'none';
             } else {
-                // Exit fullscreen mode
                 fullscreenContainer.style.display = 'none';
                 cardContainer.style.display = 'block';
             }
         }
 
         function showBidForm() {
-            // Hide the Place Bid button
             document.getElementById('placeBidButton').style.display = 'none';
 
-            // Show the Bid Form
             document.getElementById('bidForm').style.display = 'block';
         }
 
@@ -242,11 +241,14 @@ $conn->close();
 
             if (bidAmount <= currentBidPrice) {
                 alert("Your bid must be higher than the current bid price of $" + currentBidPrice.toFixed(2));
-                return false; // Prevent form submission
+                return false;
             }
-            return true; // Allow form submission
+            return true; 
         }
     </script>
 </body>
+<?php
+include"../Header_Footer/footer.php";
+?>
 
 </html>

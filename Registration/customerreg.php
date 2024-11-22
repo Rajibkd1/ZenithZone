@@ -20,44 +20,42 @@
             margin-top: 0.5em;
             display: none;
         }
-
-        .hidden {
-            display: none;
-        }
-
-        .visible {
-            display: block;
-        }
     </style>
 </head>
 
 <body>
     <?php
-    include"../Database_Connection/DB_Connection.php";
+    include "../Database_Connection/DB_Connection.php";
 
     $email_error = $number_error = '';
     $registration_success = false;
     $error_message = '';
 
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit']) && $_POST['otpVerified'] === "true") {
-        $first_name = $_POST['fname'];
-        $last_name = $_POST['lname'];
-        $email = $_POST['email'];
-        $mobile_number = $_POST['number'];
+        $first_name = htmlspecialchars($_POST['fname']);
+        $last_name = htmlspecialchars($_POST['lname']);
+        $email = htmlspecialchars($_POST['email']);
+        $mobile_number = htmlspecialchars($_POST['number']);
         $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
 
-        $stmt = $conn->prepare("SELECT email, mobile_number FROM customer_info WHERE email = ? OR mobile_number = ?");
-        $stmt->bind_param("ss", $email, $mobile_number);
+        $stmt = $conn->prepare("
+            SELECT email, mobile_number FROM customer_info WHERE email = ? OR mobile_number = ?
+            UNION
+            SELECT email, mobile_number FROM artist_info WHERE email = ? OR mobile_number = ?
+            UNION
+            SELECT email, mobile_number FROM sellersinfo WHERE email = ? OR mobile_number = ?
+        ");
+        $stmt->bind_param("ssssss", $email, $mobile_number, $email, $mobile_number, $email, $mobile_number);
         $stmt->execute();
         $stmt->bind_result($dbEmail, $dbMobileNumber);
         $stmt->store_result();
 
         if ($stmt->num_rows > 0) {
             while ($stmt->fetch()) {
-                if ($email == $dbEmail) {
+                if ($email === $dbEmail) {
                     $email_error = "Email already registered. Please try another.";
                 }
-                if ($mobile_number == $dbMobileNumber) {
+                if ($mobile_number === $dbMobileNumber) {
                     $number_error = "Mobile number already registered. Please try another.";
                 }
             }
@@ -69,13 +67,10 @@
             }
             $insert->close();
         }
-
         $stmt->close();
     } else {
-        $error_message = "OTP verification failed. Please verify your OTP before submitting the form.";
+        // $error_message = "OTP verification failed. Please verify your OTP before submitting the form.";
     }
-
-    $conn->close();
 
     // Direct PHP-driven modals:
     if ($registration_success) {
@@ -112,7 +107,7 @@
 
 
     <div class="mt-5 mb-5 max-w-4xl mx-auto font-[sans-serif] p-6 bg-gray-100 rounded-lg">
-        <form id="signupForm" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST" onsubmit="return checkOTPVerification();">
+        <form id="signupForm" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST" enctype="multipart/form-data" onsubmit="return checkOTPVerification();">
             <h1 class="text-center font-bold text-black text-xl">Create your ZenithZone Account</h1>
             <div class="grid sm:grid-cols-2 gap-8">
                 <div class="mt-8">
@@ -192,7 +187,7 @@
                     </div>
                     <div id="cpassword-error" class="error-message">Passwords do not match.</div>
                 </div>
-            </div>
+                </div>
             <input type="hidden" id="otpVerified" name="otpVerified" value="false">
             <div class="flex justify-center mt-12">
                 <button type="submit" id="submitBtn" name="submit" class="py-3.5 px-7 text-sm font-semibold tracking-wider rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">Sign up</button>
@@ -224,17 +219,6 @@
         });
     </script>
 
-    <!--
-    - FOOTER
-    -->
-    <?php
-    include "../Header_Footer/footer.php";
-    ?>
-
-    <!-- Customer Registration Javascript code  -->
-
-    <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase.js"></script>
-
     <script src="./ValidateRegistration.js"></script>
     <script>
         const registrationSuccess = <?php echo json_encode($registration_success); ?>;
@@ -255,8 +239,8 @@
 
 
     <!--
-    - ionicon link
-  -->
+- ionicon link
+-->
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
@@ -270,7 +254,6 @@
             <button onclick="document.getElementById('successModal').style.display = 'none'" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Close</button>
         </div>
     </div>
-
 </body>
 
 </html>
