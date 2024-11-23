@@ -1,6 +1,6 @@
 <?php
-session_start();
 include '../Database_Connection/DB_Connection.php';
+session_start();
 
 // Check for necessary session variables and redirect if not found
 if (!isset($_SESSION['user_type']) || !isset($_SESSION['user_id'])) {

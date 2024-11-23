@@ -88,6 +88,11 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ZenithZone</title>
   <link rel="stylesheet" href="../Auto_Complete/AutoComplete.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@^2.0/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
 <body>
@@ -145,10 +150,12 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
                 <ion-icon name="heart-outline" class="h-6 w-6"></ion-icon>
                 <span class="absolute -top-2 -right-2 rounded-full bg-red-500 text-white text-xs px-2 py-1">0</span>
               </button>
-              <button class="relative text-[#fbad62] hover:text-white">
+              <!-- Add to cart -->
+              <button onclick="showCartList()" class="relative text-[#fbad62] hover:text-white">
                 <ion-icon name="bag-handle-outline" class="h-6 w-6"></ion-icon>
                 <span class="absolute -top-2 -right-2 rounded-full bg-red-500 text-white text-xs px-2 py-1">0</span>
               </button>
+
             </div>
             <!-- Search Field for Small device  -->
             <div class="flex-grow mx-10 my-2 sm:my-0 block sm:hidden">
@@ -375,6 +382,25 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
         </button>
       </div>
   </header>
+  <script>
+    function showCartList() {
+      // PHP variables passed to JavaScript
+      var loggedIn = <?php echo json_encode(isset($_SESSION['loggedin']) && $_SESSION['loggedin']); ?>;
+      var userType = <?php echo json_encode($_SESSION['user_type'] ?? ''); ?>;
+      var userId = <?php echo json_encode($_SESSION['user_id'] ?? 0); ?>;
+
+      // Check if logged in and user type is 'customer_info'
+      if (loggedIn && userType === 'customer_info') {
+        // Redirect to Cartlist.php with the user ID
+        window.location.href = '../Cart/Cartlist.php?user_id=' + userId;
+      } else {
+        // Optionally handle the case where user is not logged in or not a customer
+        alert('Please log in as a customer to view your cart.');
+      }
+    }
+  </script>
+ <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+ <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="../Auto_Complete/AutoComplete.js"></script>
 

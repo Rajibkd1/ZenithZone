@@ -1,5 +1,8 @@
 <?php
-session_start();
+
+if (session_status() == PHP_SESSION_NONE) {
+  session_start();
+}
 
 include '../Database_Connection/DB_Connection.php';
 
@@ -8,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   if ($loggedin !== null) {
     $_SESSION['loggedin'] = filter_var($loggedin, FILTER_VALIDATE_BOOLEAN);
-    header("Location: some_page.php");
+    header("Location: ../Login/Login.php");
     exit();
   }
 }
