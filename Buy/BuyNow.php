@@ -18,12 +18,6 @@ $product_id = isset($_GET['product_id']) ? intval($_GET['product_id']) : 0;
 $quantity = isset($_GET['quantity']) ? intval($_GET['quantity']) : 1;
 
 
-
-if (!$product_id) {
-  echo "<p>No product ID specified.</p>";
-  exit;
-}
-
 $product = getProductDetails($conn, $product_id);
 $userDetails = getUserDetails($conn, $user_type, $user_id);
 
@@ -57,10 +51,6 @@ function getUserDetails($mysqli, $userType, $userId)
 }
 $itemTotal = $quantity * $product['New_price'];
 
-if (!$product) {
-  echo '<p>Product not found.</p>';
-  exit;
-}
 ?>
 
 <!DOCTYPE html>

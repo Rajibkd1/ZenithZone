@@ -1,19 +1,22 @@
 <?php
-session_start(); 
+session_start();
 
-include '../Database_Connection/DB_Connection.php';  
+include '../Database_Connection/DB_Connection.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $loggedin = isset($_POST['loggedin']) ? $_POST['loggedin'] : null;
 
   if ($loggedin !== null) {
     $_SESSION['loggedin'] = filter_var($loggedin, FILTER_VALIDATE_BOOLEAN);
-    header("Location: some_page.php"); 
+    header("Location: some_page.php");
     exit();
   }
 }
 
+// Check both logged in and user type
 $isLoggedIn = isset($_SESSION['loggedin']) && $_SESSION['loggedin'];
+$isCustomer = isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'customer_info';
+
 
 $product_id = isset($_GET['product_id']) ? intval($_GET['product_id']) : 0;
 
@@ -110,10 +113,11 @@ $product = mysqli_fetch_assoc($result);
             <i class="far fa-heart"></i>
             <span>Wishlist</span>
           </button>
-          <button class="cart-btn bg-gradient-to-r from-blue-500 to-blue-700 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-blue-500 transition duration-300 flex items-center space-x-2 shadow-md">
+          <button class="cart-btn bg-gradient-to-r from-blue-500 to-blue-700 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-blue-500 transition duration-300 flex items-center space-x-2 shadow-md" onclick="addToCart()">
             <i class="fas fa-shopping-cart"></i>
             <span>Add to Cart</span>
           </button>
+
           <button class="buy-btn bg-gradient-to-r from-green-500 to-green-700 text-white px-6 py-2 rounded-lg hover:from-green-700 hover:to-green-500 transition duration-300 flex items-center space-x-2 shadow-md"
             onclick="redirectToBuyNow()">
             <i class="fas fa-bolt"></i>
@@ -161,18 +165,18 @@ $product = mysqli_fetch_assoc($result);
 
 
   <script>
-    var isLoggedIn = <?php echo json_encode($isLoggedIn); ?>;
+    var isLoggedIn = <?php echo json_encode($isLoggedIn && $isCustomer); ?>;
 
     function redirectToBuyNow() {
       var quantity = document.getElementById('quantityInput').value;
       var productId = <?= $product_id; ?>;
       if (isLoggedIn) {
-        // If logged in, redirect to the buy now page
+        // If logged in and is a customer, redirect to the buy now page
         var url = '../Buy/BuyNow.php?product_id=' + productId + '&quantity=' + quantity;
         window.location.href = url;
       } else {
-        // If not logged in, show the modal
-        showModal('Please Log In', 'You must be logged in to proceed with the purchase.');
+        // If not logged in or not a customer, show the modal
+        showModal('Please Log In', 'You must be logged in as a customer to proceed with the purchase.');
       }
     }
 
@@ -180,6 +184,19 @@ $product = mysqli_fetch_assoc($result);
       document.getElementById('modalTitle').textContent = title;
       document.getElementById('modalMessage').textContent = message;
       document.getElementById('messageModal').classList.remove('hidden'); // Show the modal
+    }
+
+    function addToCart() {
+      var productId = <?= $product_id; ?>;
+      if (isLoggedIn) {
+        // If logged in, redirect to the buy now page
+        var url = '../Cart/add_to_cart.php?product_id=' + productId;
+        window.location.href = url;
+      } else {
+        // If not logged in, show the modal
+        showModal('Please Log In', 'You must be logged in as a customer to add cart');
+      }
+      // Construct the URL with query parameters  
     }
   </script>
   <script src="./assets/js/script.js"></script>
