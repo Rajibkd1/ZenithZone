@@ -1,33 +1,31 @@
 <?php
-
 if (session_status() == PHP_SESSION_NONE) {
-  session_start();
+    session_start();
 }
 
 include '../Database_Connection/DB_Connection.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $loggedin = isset($_POST['loggedin']) ? $_POST['loggedin'] : null;
-
-  if ($loggedin !== null) {
-    $_SESSION['loggedin'] = filter_var($loggedin, FILTER_VALIDATE_BOOLEAN);
-    header("Location: ../Login/Login.php");
-    exit();
-  }
-}
-
-// Check both logged in and user type
-$isLoggedIn = isset($_SESSION['loggedin']) && $_SESSION['loggedin'];
-$isCustomer = isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'customer_info';
-
-
+// Sanitize and validate the product ID
 $product_id = isset($_GET['product_id']) ? intval($_GET['product_id']) : 0;
 
-$sql = "SELECT * FROM product_info WHERE Product_id = $product_id";
-$result = mysqli_query($conn, $sql);
-$product = mysqli_fetch_assoc($result);
+// Fetch product details securely using a prepared statement
+$sql = "SELECT * FROM product_info WHERE Product_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $product_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$product = $result->fetch_assoc();
+$stmt->close();
 
+if (!$product) {
+    die("<h1>Product not found.</h1>");
+}
+
+// Check session for logged-in status and user type
+$isLoggedIn = isset($_SESSION['loggedin']) && $_SESSION['loggedin'];
+$isCustomer = isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'customer_info';
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
