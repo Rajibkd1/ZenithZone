@@ -2,67 +2,72 @@
 session_start(); // Start the session at the beginning of the script
 include "../Database_Connection/DB_Connection.php";
 
+// Sanitize and validate input
+function sanitizeInput($input) {
+    return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
+}
+
 // Handle AJAX requests from Login.php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $loggedin = isset($_POST['loggedin']) ? $_POST['loggedin'] : null;
-  $user_type = isset($_POST['user_type']) ? $_POST['user_type'] : null;
-  $user_id = isset($_POST['user_id']) ? $_POST['user_id'] : null;
+    $loggedin = isset($_POST['loggedin']) ? filter_var($_POST['loggedin'], FILTER_VALIDATE_BOOLEAN) : null;
+    $user_type = isset($_POST['user_type']) ? sanitizeInput($_POST['user_type']) : null;
+    $user_id = isset($_POST['user_id']) ? (int)$_POST['user_id'] : null;
 
-  // Store received data in the session
-  if ($loggedin !== null) {
-    $_SESSION['loggedin'] = filter_var($loggedin, FILTER_VALIDATE_BOOLEAN);
-  }
-  if ($user_type !== null) {
-    $_SESSION['user_type'] = $user_type;
-  }
-  if ($user_id !== null) {
-    $_SESSION['user_id'] = $user_id;
-  }
-
-  // Optional: Respond back to the AJAX request
-  echo json_encode(['status' => 'success', 'message' => 'Data received and stored successfully']);
-  exit(); // Stop further script execution after processing the AJAX request
-}
-
-function getUserFirstName($conn, $userType, $userId)
-{
-  $tableName = '';
-  $idColumn = '';
-  $firstNameColumn = '';
-
-
-  switch ($userType) {
-    case 'artist_info':
-      $tableName = 'artist_info';
-      $idColumn = 'artist_id';
-      break;
-    case 'customer_info':
-      $tableName = 'customer_info';
-      $idColumn = 'customer_id';
-      break;
-    case 'seller_info':
-      $tableName = 'sellersinfo';
-      $idColumn = 'seller_id';
-      break;
-    default:
-      return 'Guest'; // Return 'Guest' if no valid user type
-  }
-
-  $sql = "SELECT first_name FROM {$tableName} WHERE {$idColumn} = ?";
-  if ($stmt = $conn->prepare($sql)) {
-    $stmt->bind_param("i", $userId);
-    $stmt->execute();
-    $stmt->bind_result($firstName);
-    if ($stmt->fetch()) {
-      $stmt->close();
-      return $firstName;
+    // Store received data in the session
+    if ($loggedin !== null) {
+        $_SESSION['loggedin'] = $loggedin;
     }
-    $stmt->close();
-  }
-  return 'User'; // Return 'User' if no name is found or on error
+    if ($user_type !== null) {
+        $_SESSION['user_type'] = $user_type;
+    }
+    if ($user_id !== null) {
+        $_SESSION['user_id'] = $user_id;
+    }
+
+    // Optional: Respond back to the AJAX request
+    echo json_encode(['status' => 'success', 'message' => 'Data received and stored successfully']);
+    exit(); // Stop further script execution after processing the AJAX request
 }
 
-// Retrieve the logged-in status, user type, and user ID
+function getUserFirstName($conn, $userType, $userId) {
+    $tableName = '';
+    $idColumn = '';
+    $firstNameColumn = 'first_name';
+
+    // Determine the table based on user type
+    switch ($userType) {
+        case 'artist_info':
+            $tableName = 'artist_info';
+            $idColumn = 'artist_id';
+            break;
+        case 'customer_info':
+            $tableName = 'customer_info';
+            $idColumn = 'customer_id';
+            break;
+        case 'seller_info':
+            $tableName = 'sellersinfo';
+            $idColumn = 'seller_id';
+            break;
+        default:
+            return 'Guest'; // Return 'Guest' if no valid user type
+    }
+
+    // Prepare and execute the query
+    $sql = "SELECT {$firstNameColumn} FROM {$tableName} WHERE {$idColumn} = ?";
+    if ($stmt = $conn->prepare($sql)) {
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $stmt->bind_result($firstName);
+        if ($stmt->fetch()) {
+            $stmt->close();
+            return $firstName;
+        }
+        $stmt->close();
+    }
+    return 'User'; // Return 'User' if no name is found or on error
+}
+
+// Session validation and user information
 $loggedInStatus = $_SESSION['loggedin'] ?? false;
 $userType = $_SESSION['user_type'] ?? 'Guest';
 $userId = $_SESSION['user_id'] ?? 0;
@@ -70,13 +75,12 @@ $firstName = $loggedInStatus ? getUserFirstName($conn, $userType, $userId) : 'Gu
 
 // Handle logout
 if (isset($_GET['action']) && $_GET['action'] === 'logout') {
-  $_SESSION = [];
-  session_destroy();
-  header("Location: ../Homepage/InitialPage1.php");
-  exit();
+    session_unset();
+    session_destroy();
+    header("Location: ../Homepage/InitialPage1.php");
+    exit();
 }
 ?>
-
 
 
 
@@ -87,7 +91,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ZenithZone</title>
-  <link rel="stylesheet" href="../Auto_Complete/AutoComplete.css">
+  <link rel="stylesheet" href="../Auto_Complete//AutoComplete.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@^2.0/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css">
