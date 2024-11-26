@@ -30,7 +30,8 @@
     $start = 0;
     $limit = 20;
 
-    $sql = "SELECT * FROM product_info LIMIT $start, $limit";
+  $sql = "SELECT * FROM product_info ORDER BY RAND() LIMIT $start, $limit";
+
     $result = $conn->query($sql);
 
     echo '<div class="container mx-auto px-4">
