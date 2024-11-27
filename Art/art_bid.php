@@ -1,6 +1,8 @@
 <?php
-
-include '../Database_Connection/DB_Connection.php'; // Ensure this is correctly pointing to your connection script
+include '../Database_Connection/DB_Connection.php'; 
+session_start();
+$isLoggedIn = isset($_SESSION['loggedin']) && $_SESSION['loggedin'];
+$isCustomer = isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'customer_info';
 
 // Get the art ID from the URL query parameter
 $artId = isset($_GET['artId']) ? intval($_GET['artId']) : 0;
@@ -40,14 +42,11 @@ $hasBiddingEnded = (new DateTime() > new DateTime($bidEndDate));
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['bid_amount'])) {
     $newBid = (float)$_POST['bid_amount'];
 
-    // Ensure the new bid is higher than the current bid or initial price
     if ($newBid > $currentBidPrice && !$hasBiddingEnded) {
-        // Update the previous_bid_price in the database
         $updateQuery = "UPDATE art_gallery SET previous_bid_price = ? WHERE art_id = ?";
         $stmt = $conn->prepare($updateQuery);
         $stmt->bind_param("di", $newBid, $artId);
         if ($stmt->execute()) {
-            // Refresh the current bid price after successful update
             $currentBidPrice = $newBid;
         } else {
             $error = "Error updating bid: " . $conn->error;
@@ -57,19 +56,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['bid_amount'])) {
     }
 }
 
-// If bidding has ended, update the final bid price
 if ($hasBiddingEnded && $row['final_bid_price'] != $currentBidPrice) {
-    // Update final bid price
     $updateQuery = "UPDATE art_gallery SET final_bid_price = previous_bid_price WHERE art_id = ?";
     $stmt = $conn->prepare($updateQuery);
     $stmt->bind_param("i", $artId);
     $stmt->execute();
 
-    // Refresh the current bid price
     $currentBidPrice = $row['previous_bid_price'];
 }
-
-// Close connection
 $conn->close();
 ?>
 
@@ -86,9 +80,11 @@ $conn->close();
         .card {
             transition: transform 0.3s ease-in-out;
         }
+
         .card:hover {
             transform: scale(1.05);
         }
+
         /* Fullscreen image container styles */
         .fullscreen-img-container {
             position: fixed;
@@ -102,6 +98,7 @@ $conn->close();
             background: rgba(0, 0, 0, 0.9);
             z-index: 1000;
         }
+
         /* Fullscreen image styles */
         .fullscreen-img {
             max-width: 90%;
@@ -109,16 +106,20 @@ $conn->close();
             border-radius: 8px;
             object-fit: contain;
         }
+
         /* Timer styles */
         #countdown {
             font-size: 1.5rem;
             font-weight: bold;
-            color: #e53e3e; /* Red color */
-            background-color: #f7fafc; /* Light background color */
+            color: #e53e3e;
+            /* Red color */
+            background-color: #f7fafc;
+            /* Light background color */
             padding: 10px;
             border-radius: 8px;
             display: inline-block;
         }
+
         #countdown-container {
             text-align: center;
             margin-top: 10px;
@@ -140,8 +141,8 @@ $conn->close();
                     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-                    countdownElement.innerHTML = days + "d " + hours + "h "
-                        + minutes + "m " + seconds + "s ";
+                    countdownElement.innerHTML = days + "d " + hours + "h " +
+                        minutes + "m " + seconds + "s ";
                 } else {
                     countdownElement.innerHTML = "Bidding Time is Over";
                     document.getElementById('placeBidButton').style.display = 'none';
@@ -160,57 +161,66 @@ $conn->close();
     </script>
 </head>
 <?php
-include"../Header_Footer/fixed_header.php";
+include "../Header_Footer/fixed_header.php";
 ?>
 
 <body class="bg-gray-100 flex flex-col justify-center min-h-screen">
-<div class="flex-grow flex flex-col justify-center items-center mt-36 w-full">
-<div id="cardContainer" class="card bg-white shadow-lg rounded-lg p-6 max-w-4xl mx-auto">
-    <div class="flex justify-center">
-        <img src="<?php echo htmlspecialchars($row['art_img']); ?>" alt="Artwork" class="rounded-lg w-56 h-64 cursor-pointer" id="artImage" onclick="toggleFullscreenImage()">
-    </div>
-    <h2 class="text-3xl font-bold my-4 text-center"><?php echo htmlspecialchars($row['art_name']); ?></h2>
-    <p class="text-gray-600 text-center"><?php echo htmlspecialchars($row['art_description']); ?></p>
-    <p class="text-lg font-semibold mt-3 text-center">Current Bid: $<?php echo number_format($currentBidPrice, 2); ?></p>
+    <div class="flex-grow flex flex-col justify-center items-center mt-12 w-full">
+        <div id="cardContainer" class="card bg-white shadow-lg rounded-lg p-6 max-w-4xl mx-auto">
+            <div class="flex justify-center">
+                <img src="<?php echo htmlspecialchars($row['art_img']); ?>" alt="Artwork" class="rounded-lg w-56 h-64 cursor-pointer" id="artImage" onclick="toggleFullscreenImage()">
+            </div>
+            <h2 class="text-3xl font-bold my-4 text-center"><?php echo htmlspecialchars($row['art_name']); ?></h2>
+            <p class="text-gray-600 text-center"><?php echo htmlspecialchars($row['art_description']); ?></p>
+            <p class="text-lg font-semibold mt-3 text-center">Current Bid: $<?php echo number_format($currentBidPrice, 2); ?></p>
 
-    <!-- Timer container -->
-    <?php if (!$hasBiddingEnded): ?>
-        <div id="countdown-container" class="text-center">
-            <span>Bidding Ends In: </span>
-            <span id="countdown"></span>
-        </div>
-    <?php else: ?>
-        <div id="countdown-container" class="text-center">
-            <span id="countdown">Bidding Time is Over</span>
-        </div>
-    <?php endif; ?>
-    
-    <!-- Bid Section -->
-    <div id="bid-section" class="flex flex-col items-center mt-4">
-        <?php if (isset($error)): ?>
-            <p class="text-red-500 text-center mb-4"><?php echo $error; ?></p>
-        <?php endif; ?>
+            <!-- Timer container -->
+            <?php if (!$hasBiddingEnded): ?>
+                <div id="countdown-container" class="text-center">
+                    <span>Bidding Ends In: </span>
+                    <span id="countdown"></span>
+                </div>
+            <?php else: ?>
+                <div id="countdown-container" class="text-center">
+                    <span id="countdown">Bidding Time is Over</span>
+                </div>
+            <?php endif; ?>
 
-        <?php if (!$hasBiddingEnded): ?>
-            <button id="placeBidButton" class="btn btn-primary w-full" onclick="showBidForm()">Place Bid</button>
-            
-            <!-- Bid Form: Initially Hidden -->
-            <form id="bidForm" method="POST" action="" style="display: none;" class="w-full mt-2" onsubmit="return validateBid()">
-                <input type="number" id="bidAmount" name="bid_amount" placeholder="Enter your bid" class="input input-bordered w-full mt-2" required>
-                <button type="submit" class="btn btn-success w-full mt-2">Submit Bid</button>
-            </form>
-        <?php else: ?>
-            <p class="text-green-500 text-center">The final bid price is: $<?php echo number_format($currentBidPrice, 2); ?></p>
-        <?php endif; ?>
+            <!-- Bid Section -->
+            <div id="bid-section" class="flex flex-col items-center mt-4">
+                <?php if (isset($error)): ?>
+                    <p class="text-red-500 text-center mb-4"><?php echo $error; ?></p>
+                <?php endif; ?>
+
+                <?php if (!$hasBiddingEnded): ?>
+                    <button id="placeBidButton" class="btn btn-primary w-full" onclick="showBidForm()">Place Bid</button>
+
+                    <!-- Bid Form: Initially Hidden -->
+                    <form id="bidForm" method="POST" action="" style="display: none;" class="w-full mt-2" onsubmit="return validateBid()">
+                        <input type="number" id="bidAmount" name="bid_amount" placeholder="Enter your bid" class="input input-bordered w-full mt-2" required>
+                        <button type="submit" class="btn btn-success w-full mt-2">Submit Bid</button>
+                    </form>
+                <?php else: ?>
+                    <p class="text-green-500 text-center">The final bid price is: $<?php echo number_format($currentBidPrice, 2); ?></p>
+                <?php endif; ?>
+            </div>
+        </div>
     </div>
-</div>
-</div>
 
     <!-- Fullscreen Image Container: Initially Hidden -->
     <div id="fullscreenContainer" class="fullscreen-img-container" style="display: none;" onclick="toggleFullscreenImage()">
         <img id="fullscreenImage" class="fullscreen-img">
     </div>
 
+    <!-- Modal Structure -->
+    <div id="messageModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg p-5 shadow text-center">
+            <i id="modalIcon" class="fas fa-exclamation-circle fa-5x text-red-500"></i>
+            <h3 id="modalTitle" class="text-lg font-bold mt-4">Title Here</h3>
+            <p id="modalMessage" class="mt-2">Message Here</p>
+            <button onclick="hideModal()" class="mt-4 bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600">Close</button>
+        </div>
+    </div>
 
     <script>
         function toggleFullscreenImage() {
@@ -230,9 +240,16 @@ include"../Header_Footer/fixed_header.php";
         }
 
         function showBidForm() {
-            document.getElementById('placeBidButton').style.display = 'none';
+            var isLoggedIn = <?php echo json_encode($isLoggedIn && $isCustomer); ?>;
 
-            document.getElementById('bidForm').style.display = 'block';
+            if (isLoggedIn) {
+
+                document.getElementById('placeBidButton').style.display = 'none';
+
+                document.getElementById('bidForm').style.display = 'block';
+            } else {
+                showModal('Please Log In', 'You must be logged in as a customer to proceed with the purchase.');
+            }
         }
 
         function validateBid() {
@@ -243,12 +260,25 @@ include"../Header_Footer/fixed_header.php";
                 alert("Your bid must be higher than the current bid price of $" + currentBidPrice.toFixed(2));
                 return false;
             }
-            return true; 
+            return true;
         }
+
+        function showModal(title, message) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = message;
+            document.getElementById('messageModal').classList.remove('hidden'); // Show the modal
+        }
+        function hideModal() {
+    // Get the modal element
+    const modal = document.getElementById('messageModal');
+    
+    // Add the 'hidden' class to hide the modal
+    modal.classList.add('hidden');
+}
     </script>
 </body>
 <?php
-include"../Header_Footer/footer.php";
+include "../Header_Footer/footer.php";
 ?>
 
 </html>
