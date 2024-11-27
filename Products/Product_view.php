@@ -1,7 +1,5 @@
 <?php
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
+include "../Header_Footer/fixed_header.php"; 
 
 include '../Database_Connection/DB_Connection.php';
 
@@ -46,7 +44,6 @@ $isCustomer = isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'custo
 </head>
 
 <body>
-  <?php include "../Header_Footer/fixed_header.php"; ?>
   <main class="flex-grow container mx-auto px-4 py-8">
     <div class="flex flex-col mt-48 sm:mt-36 md:flex-row items-center md:items-start text-center md:text-left">
       <!-- Product Image -->

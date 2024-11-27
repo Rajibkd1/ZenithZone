@@ -1,16 +1,13 @@
 <?php
-include '../Database_Connection/DB_Connection.php'; 
 session_start();
+include '../Database_Connection/DB_Connection.php'; // Ensure this is correctly pointing to your connection script
+
 $isLoggedIn = isset($_SESSION['loggedin']) && $_SESSION['loggedin'];
 $isCustomer = isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'customer_info';
 
+
 // Get the art ID from the URL query parameter
 $artId = isset($_GET['artId']) ? intval($_GET['artId']) : 0;
-
-if ($artId === 0) {
-    echo "Invalid art ID!";
-    exit;
-}
 
 // Fetch art details using the art ID
 $query = "SELECT art_name, art_description, art_img, final_bid_price, previous_bid_price, art_init_price, bid_end_date FROM art_gallery WHERE art_id = ?";
@@ -21,9 +18,6 @@ $result = $stmt->get_result();
 
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
-} else {
-    echo "No art found!";
-    exit;
 }
 
 // Determine the current bid price
@@ -42,12 +36,25 @@ $hasBiddingEnded = (new DateTime() > new DateTime($bidEndDate));
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['bid_amount'])) {
     $newBid = (float)$_POST['bid_amount'];
 
+    // Ensure the new bid is higher than the current bid or initial price
     if ($newBid > $currentBidPrice && !$hasBiddingEnded) {
         $updateQuery = "UPDATE art_gallery SET previous_bid_price = ? WHERE art_id = ?";
         $stmt = $conn->prepare($updateQuery);
         $stmt->bind_param("di", $newBid, $artId);
         if ($stmt->execute()) {
-            $currentBidPrice = $newBid;
+            // Insert the new bid into the art_bids table
+            $customerId = $_SESSION['user_id']; // Assuming customer_id is stored in session
+            $insertBidQuery = "INSERT INTO art_bids (art_id, customer_id, bid_amount) VALUES (?, ?, ?)";
+            $insertStmt = $conn->prepare($insertBidQuery);
+            $insertStmt->bind_param("iid", $artId, $customerId, $newBid);
+
+            if ($insertStmt->execute()) {
+                // Refresh the current bid price after successful update
+                $currentBidPrice = $newBid;
+                header("Location: ./art_show_page.php");
+            } else {
+                $error = "Error inserting bid into database: " . $conn->error;
+            }
         } else {
             $error = "Error updating bid: " . $conn->error;
         }
@@ -55,15 +62,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['bid_amount'])) {
         $error = "Your bid must be higher than the current bid price or bidding has ended.";
     }
 }
+// Fetch the list of bidders for this art piece
+$queryBidders = "SELECT ab.bid_amount, c.first_name, c.last_name 
+                 FROM art_bids ab
+                 JOIN customer_info c ON ab.customer_id = c.customer_id
+                 WHERE ab.art_id = ?
+                 ORDER BY ab.bid_time DESC"; // Sorting by bid time (latest first)
+$stmtBidders = $conn->prepare($queryBidders);
+$stmtBidders->bind_param("i", $artId);
+$stmtBidders->execute();
+$biddersResult = $stmtBidders->get_result();
 
+// If bidding has ended, update the final bid price
 if ($hasBiddingEnded && $row['final_bid_price'] != $currentBidPrice) {
+    // Update final bid price
     $updateQuery = "UPDATE art_gallery SET final_bid_price = previous_bid_price WHERE art_id = ?";
     $stmt = $conn->prepare($updateQuery);
     $stmt->bind_param("i", $artId);
     $stmt->execute();
 
+    // Refresh the current bid price
     $currentBidPrice = $row['previous_bid_price'];
 }
+
+// Close connection
 $conn->close();
 ?>
 
@@ -76,56 +98,7 @@ $conn->close();
     <title>ZenithZone</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@latest/dist/full.min.css" rel="stylesheet" type="text/css">
-    <style>
-        .card {
-            transition: transform 0.3s ease-in-out;
-        }
-
-        .card:hover {
-            transform: scale(1.05);
-        }
-
-        /* Fullscreen image container styles */
-        .fullscreen-img-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 1000;
-        }
-
-        /* Fullscreen image styles */
-        .fullscreen-img {
-            max-width: 90%;
-            max-height: 90%;
-            border-radius: 8px;
-            object-fit: contain;
-        }
-
-        /* Timer styles */
-        #countdown {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #e53e3e;
-            /* Red color */
-            background-color: #f7fafc;
-            /* Light background color */
-            padding: 10px;
-            border-radius: 8px;
-            display: inline-block;
-        }
-
-        #countdown-container {
-            text-align: center;
-            margin-top: 10px;
-            font-size: 1.25rem;
-        }
-    </style>
+    <link rel="stylesheet" href="./Art.css">
     <script>
         // Function to calculate and display the countdown
         function startCountdown(endTime) {
@@ -164,9 +137,10 @@ $conn->close();
 include "../Header_Footer/fixed_header.php";
 ?>
 
-<body class="bg-gray-100 flex flex-col justify-center min-h-screen">
-    <div class="flex-grow flex flex-col justify-center items-center mt-12 w-full">
-        <div id="cardContainer" class="card bg-white shadow-lg rounded-lg p-6 max-w-4xl mx-auto">
+<body class="bg-gray-100 flex flex-col min-h-screen">
+    <div class="flex flex-col justify-center sm:flex-row mt-12 mb-12">
+        <!-- Art cart -->
+        <div id="cardContainer" class="card bg-white shadow-lg rounded-lg p-6 max-w-4xl">
             <div class="flex justify-center">
                 <img src="<?php echo htmlspecialchars($row['art_img']); ?>" alt="Artwork" class="rounded-lg w-56 h-64 cursor-pointer" id="artImage" onclick="toggleFullscreenImage()">
             </div>
@@ -202,6 +176,45 @@ include "../Header_Footer/fixed_header.php";
                     </form>
                 <?php else: ?>
                     <p class="text-green-500 text-center">The final bid price is: $<?php echo number_format($currentBidPrice, 2); ?></p>
+                <?php endif; ?>
+            </div>
+        </div>
+        <!-- Bidder list -->
+        <div class="ml-16 mt-16">
+            <h2 class="text-xl font-semibold text-center mb-4">Bidders List</h2>
+
+            <!-- Button to toggle visibility -->
+            <button id="toggleButton" class="px-4 py-2 bg-blue-500 text-white rounded-lg mb-4 hover:bg-blue-700">
+                Show Bidder List
+            </button>
+
+            <!-- The bidders list container, initially hidden -->
+            <div id="biddersList" class="hidden w-46">
+                <!-- Column headers for the bidder list -->
+                <div class="flex justify-between font-semibold text-gray-700 mb-4">
+                    <span class="w-20 text-center">Serial No</span>
+                    <span class="w-24 text-center">Name</span>
+                    <span class="w-20 text-center">Bid Amount</span>
+                </div>
+
+                <?php if ($biddersResult->num_rows > 0): ?>
+                    <div class="overflow-y-auto max-h-96">
+                        <ul class="space-y-4">
+                            <?php
+                            $serialNo = 1;
+                            while ($bidder = $biddersResult->fetch_assoc()) {
+                                echo "<li class='flex justify-between items-center p-4 bg-white shadow rounded-lg hover:bg-gray-100'>
+                                <span class='w-20 text-center'>{$serialNo}</span>
+                                <span class='w-24 text-center'>{$bidder['first_name']} {$bidder['last_name']}</span>
+                                <span class='w-20 text-center font-semibold text-blue-600'>\$" . number_format($bidder['bid_amount'], 2) . "</span>
+                              </li>";
+                                $serialNo++;
+                            }
+                            ?>
+                        </ul>
+                    </div>
+                <?php else: ?>
+                    <p class="text-center text-gray-500">No bids placed yet.</p>
                 <?php endif; ?>
             </div>
         </div>
@@ -268,14 +281,15 @@ include "../Header_Footer/fixed_header.php";
             document.getElementById('modalMessage').textContent = message;
             document.getElementById('messageModal').classList.remove('hidden'); // Show the modal
         }
+
         function hideModal() {
-    // Get the modal element
-    const modal = document.getElementById('messageModal');
-    
-    // Add the 'hidden' class to hide the modal
-    modal.classList.add('hidden');
-}
+            const modal = document.getElementById('messageModal');
+
+            modal.classList.add('hidden');
+        }
     </script>
+    <script src="./art_bid.js"></script>
+
 </body>
 <?php
 include "../Header_Footer/footer.php";

@@ -1,7 +1,6 @@
 <?php
-session_start();
+include "../Header_Footer/fixed_header.php";
 
-// Check if all expected GET parameters are available
 $userType = isset($_GET['user_type']) ? filter_input(INPUT_GET, 'user_type', FILTER_SANITIZE_STRING) : null;
 $userId = isset($_GET['user_id']) ? filter_input(INPUT_GET, 'user_id', FILTER_SANITIZE_NUMBER_INT) : null;
 $productId = isset($_GET['product_id']) ? filter_input(INPUT_GET, 'product_id', FILTER_SANITIZE_NUMBER_INT) : null;
@@ -32,10 +31,8 @@ $quantity = isset($_GET['quantity']) ? filter_input(INPUT_GET, 'quantity', FILTE
 </head>
 
 <body class="bg-gray-100">
-    <?php
-    include "../Header_Footer/fixed_header.php";
-    ?>
-    <div class="container mt-36 mb-4 sm:mt-36 mb-4  mx-auto p-6 bg-white rounded-lg shadow-lg max-w-screen-lg">
+    
+    <div class="container mt-48 mb-4 sm:mt-48 mb-4  mx-auto p-6 bg-white rounded-lg shadow-lg max-w-screen-lg">
         <!-- Header Notification -->
         <div class="bg-orange-500 text-white font-semibold p-3 rounded-t-lg">
             <p>🔔 Collect payment voucher & get extra savings on your purchase!</p>

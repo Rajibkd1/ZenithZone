@@ -408,31 +408,33 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
   </script>
   <script>
     function checkEnter(event) {
-      if (event.key === 'Enter') {
-        handleSearch();
-      }
-    }
+  if (event.key === 'Enter') {  
+    handleSearch();  
+  }
+}
+function handleSearch() {
+  // Get the value from the search input field
+  const searchValue = document.getElementById('searchInput').value;
 
-    function handleSearch() {
-      // Get the value from the search input field
-      const searchValue = document.getElementById('searchInput').value;
+  if (searchValue) {
+    // Construct the URL with the search term as a query parameter
+    var url = '../Auto_Complete/Search.php?search=' + encodeURIComponent(searchValue);
 
-      if (searchValue) {
-        // Construct the URL with the search term as a query parameter
-        var url = '../Auto_Complete/Search.php?search=' + encodeURIComponent(searchValue);
+    // Redirect the user to the Search.php page with the search term
+    window.location.href = url;
+  } else {
+    // If the search value is empty, show a modal to prompt the user to enter a search term
+    showModal('Please Enter a Search Term', 'You must enter a search term to search.');
+  }
+}
 
-        // Redirect the user to the Search.php page with the search term
-        window.location.href = url;
-      } else {
-        // If the search value is empty, show a modal to prompt the user to enter a search term
-        showModal('Please Enter a Search Term', 'You must enter a search term to search.');
-      }
-    }
+// Modal function to show the alert (for demonstration)
+function showModal(title, message) {
+  alert(title + "\n" + message);  // Simple alert for now
+}
 
-    // Modal function to show the alert (for demonstration)
-    function showModal(title, message) {
-      alert(title + "\n" + message); // Simple alert for now
-    }
+
+
   </script>
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>

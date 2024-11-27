@@ -1,6 +1,6 @@
 <?php
 include '../Database_Connection/DB_Connection.php';
-session_start();
+include "../Header_Footer/fixed_header.php";
 
 // Check for necessary session variables and redirect if not found
 if (!isset($_SESSION['user_type']) || !isset($_SESSION['user_id'])) {
@@ -70,9 +70,6 @@ $itemTotal = $quantity * $product['New_price'];
 
 
 <body class="font-poppins bg-gray-100 text-gray-800">
-  <?php
-  include "../Header_Footer/fixed_header.php";
-  ?>
   <div
     class="max-w-5xl  mt-48 sm:mt-36 mx-auto p-4 lg:p-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
     <!-- Left Column (Shipping & Billing and Package Details) -->
