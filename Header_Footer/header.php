@@ -4,14 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>ZenithZone</title>
     <link rel="stylesheet" href="../Auto_Complete/AutoComplete.css">
+    <link rel="icon" href="../assets/images/logo/ZenithZone.png" type="image/x-icon">
+
 </head>
 
 <body>
-<?php
-include'../Auto_Complete/AutoComplete.php';
-?>
+    <?php
+    include '../Auto_Complete/AutoComplete.php';
+    ?>
     <!-- This is header code -->
     <header>
         <!-- This first nav bar -->

@@ -99,6 +99,7 @@ $conn->close();
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@latest/dist/full.min.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="./Art.css">
+    <link rel="icon" href="../assets/images/logo/ZenithZone.png" type="image/x-icon">
     <script>
         // Function to calculate and display the countdown
         function startCountdown(endTime) {

@@ -1,5 +1,5 @@
 <?php
-include "../Header_Footer/fixed_header.php"; 
+include "../Header_Footer/fixed_header.php";
 
 include '../Database_Connection/DB_Connection.php';
 
@@ -16,7 +16,7 @@ $product = $result->fetch_assoc();
 $stmt->close();
 
 if (!$product) {
-    die("<h1>Product not found.</h1>");
+  die("<h1>Product not found.</h1>");
 }
 
 // Check session for logged-in status and user type
@@ -33,8 +33,7 @@ $isCustomer = isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'custo
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ZenithZone</title>
-
-  <link rel="shortcut icon" href="./assets/images/logo/ZentihZone.png" type="image/x-icon" />
+  <link rel="icon" href="../assets/images/logo/ZenithZone.png" type="image/x-icon">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@^2.0/dist/tailwind.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
