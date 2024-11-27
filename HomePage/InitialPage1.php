@@ -54,7 +54,7 @@
                 <button class="text-blue-500 text-md p-0.5 rounded"><i class="fas fa-shopping-bag"></i></button>
               </div>
               <div class="p-2">
-                <a href="product_details.php?product_id=' . $row["Product_id"] . '" class="inline-block text-blue-500 hover:text-blue-600 text-sm">' . strtoupper($row["Product_name"]) . '</a>
+                <a href="../Products/Product_view.php?product_id=' . $row["Product_id"] . '" class="inline-block text-blue-500 hover:text-blue-600 text-sm">' . strtoupper($row["Product_name"]) . '</a>
                 <div class="flex items-center mb-1">';
         for ($i = 0; $i < 5; $i++) {
           if ($i < floor($row["Rating"])) {

@@ -3,68 +3,70 @@ session_start(); // Start the session at the beginning of the script
 include "../Database_Connection/DB_Connection.php";
 
 // Sanitize and validate input
-function sanitizeInput($input) {
-    return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
+function sanitizeInput($input)
+{
+  return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
 }
 
 // Handle AJAX requests from Login.php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $loggedin = isset($_POST['loggedin']) ? filter_var($_POST['loggedin'], FILTER_VALIDATE_BOOLEAN) : null;
-    $user_type = isset($_POST['user_type']) ? sanitizeInput($_POST['user_type']) : null;
-    $user_id = isset($_POST['user_id']) ? (int)$_POST['user_id'] : null;
+  $loggedin = isset($_POST['loggedin']) ? filter_var($_POST['loggedin'], FILTER_VALIDATE_BOOLEAN) : null;
+  $user_type = isset($_POST['user_type']) ? sanitizeInput($_POST['user_type']) : null;
+  $user_id = isset($_POST['user_id']) ? (int)$_POST['user_id'] : null;
 
-    // Store received data in the session
-    if ($loggedin !== null) {
-        $_SESSION['loggedin'] = $loggedin;
-    }
-    if ($user_type !== null) {
-        $_SESSION['user_type'] = $user_type;
-    }
-    if ($user_id !== null) {
-        $_SESSION['user_id'] = $user_id;
-    }
+  // Store received data in the session
+  if ($loggedin !== null) {
+    $_SESSION['loggedin'] = $loggedin;
+  }
+  if ($user_type !== null) {
+    $_SESSION['user_type'] = $user_type;
+  }
+  if ($user_id !== null) {
+    $_SESSION['user_id'] = $user_id;
+  }
 
-    // Optional: Respond back to the AJAX request
-    echo json_encode(['status' => 'success', 'message' => 'Data received and stored successfully']);
-    exit(); // Stop further script execution after processing the AJAX request
+  // Optional: Respond back to the AJAX request
+  echo json_encode(['status' => 'success', 'message' => 'Data received and stored successfully']);
+  exit(); // Stop further script execution after processing the AJAX request
 }
 
-function getUserFirstName($conn, $userType, $userId) {
-    $tableName = '';
-    $idColumn = '';
-    $firstNameColumn = 'first_name';
+function getUserFirstName($conn, $userType, $userId)
+{
+  $tableName = '';
+  $idColumn = '';
+  $firstNameColumn = 'first_name';
 
-    // Determine the table based on user type
-    switch ($userType) {
-        case 'artist_info':
-            $tableName = 'artist_info';
-            $idColumn = 'artist_id';
-            break;
-        case 'customer_info':
-            $tableName = 'customer_info';
-            $idColumn = 'customer_id';
-            break;
-        case 'seller_info':
-            $tableName = 'sellersinfo';
-            $idColumn = 'seller_id';
-            break;
-        default:
-            return 'Guest'; // Return 'Guest' if no valid user type
-    }
+  // Determine the table based on user type
+  switch ($userType) {
+    case 'artist_info':
+      $tableName = 'artist_info';
+      $idColumn = 'artist_id';
+      break;
+    case 'customer_info':
+      $tableName = 'customer_info';
+      $idColumn = 'customer_id';
+      break;
+    case 'seller_info':
+      $tableName = 'sellersinfo';
+      $idColumn = 'seller_id';
+      break;
+    default:
+      return 'Guest'; // Return 'Guest' if no valid user type
+  }
 
-    // Prepare and execute the query
-    $sql = "SELECT {$firstNameColumn} FROM {$tableName} WHERE {$idColumn} = ?";
-    if ($stmt = $conn->prepare($sql)) {
-        $stmt->bind_param("i", $userId);
-        $stmt->execute();
-        $stmt->bind_result($firstName);
-        if ($stmt->fetch()) {
-            $stmt->close();
-            return $firstName;
-        }
-        $stmt->close();
+  // Prepare and execute the query
+  $sql = "SELECT {$firstNameColumn} FROM {$tableName} WHERE {$idColumn} = ?";
+  if ($stmt = $conn->prepare($sql)) {
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $stmt->bind_result($firstName);
+    if ($stmt->fetch()) {
+      $stmt->close();
+      return $firstName;
     }
-    return 'User'; // Return 'User' if no name is found or on error
+    $stmt->close();
+  }
+  return 'User'; // Return 'User' if no name is found or on error
 }
 
 // Session validation and user information
@@ -75,10 +77,10 @@ $firstName = $loggedInStatus ? getUserFirstName($conn, $userType, $userId) : 'Gu
 
 // Handle logout
 if (isset($_GET['action']) && $_GET['action'] === 'logout') {
-    session_unset();
-    session_destroy();
-    header("Location: ../Homepage/InitialPage1.php");
-    exit();
+  session_unset();
+  session_destroy();
+  header("Location: ../Homepage/InitialPage1.php");
+  exit();
 }
 ?>
 
@@ -122,11 +124,11 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
             <!-- Search Field For Large Device -->
             <div class="flex-grow mx-10 my-2 sm:my-0 hidden md:block">
               <div class="relative hidden md:block">
-                <input type="search" id="searchInput" name="search" class="input-field w-full pl-4 pr-20 py-2 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border rounded-md" placeholder="Enter your product name..." />
+                <input type="search" id="searchInput" name="search" class="input-field w-full pl-4 pr-20 py-2 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border rounded-md" placeholder="Enter your product name..." onkeydown="checkEnter(event)" />
                 <!-- Autocomplete Suggestions Box -->
                 <ul id="searchSuggestions" class="autobox absolute z-10 bg-white w-full shadow-lg max-h-60 overflow-y-auto"></ul>
                 <!-- Search Button -->
-                <button class="absolute inset-y-0 right-10 px-3 flex items-center">
+                <button class="absolute inset-y-0 right-10 px-3 flex items-center" onclick="handleSearch()">
                   <ion-icon name="search-outline" class="h-5 w-5 text-gray-500"></ion-icon>
                 </button>
                 <!-- Voice Search Button -->
@@ -135,6 +137,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
                 </button>
               </div>
             </div>
+
 
             <!-- User Actions and Authentication -->
             <div class="flex items-center space-x-4 mt-2 sm:mt-0">
@@ -168,7 +171,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
                 <!-- Autocomplete Suggestions Box -->
                 <ul id="searchSuggestionsMobile" class="autobox absolute z-10 bg-white w-full shadow-lg max-h-60 overflow-y-auto"></ul>
                 <!-- Search Button -->
-                <button class="absolute inset-y-0 right-10 px-3 flex items-center">
+                <button class="absolute inset-y-0 right-10 px-3 flex items-center" onclick="handleSearch()">
                   <ion-icon name="search-outline" class="h-5 w-5 text-gray-500"></ion-icon>
                 </button>
                 <!-- Voice Search Button -->
@@ -403,8 +406,36 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
       }
     }
   </script>
- <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
- <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+  <script>
+    function checkEnter(event) {
+      if (event.key === 'Enter') {
+        handleSearch();
+      }
+    }
+
+    function handleSearch() {
+      // Get the value from the search input field
+      const searchValue = document.getElementById('searchInput').value;
+
+      if (searchValue) {
+        // Construct the URL with the search term as a query parameter
+        var url = '../Auto_Complete/Search.php?search=' + encodeURIComponent(searchValue);
+
+        // Redirect the user to the Search.php page with the search term
+        window.location.href = url;
+      } else {
+        // If the search value is empty, show a modal to prompt the user to enter a search term
+        showModal('Please Enter a Search Term', 'You must enter a search term to search.');
+      }
+    }
+
+    // Modal function to show the alert (for demonstration)
+    function showModal(title, message) {
+      alert(title + "\n" + message); // Simple alert for now
+    }
+  </script>
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="../Auto_Complete/AutoComplete.js"></script>
 
