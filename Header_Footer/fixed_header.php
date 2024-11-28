@@ -154,14 +154,14 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
               <button class="text-[#fbad62] hover:text-white">
                 <ion-icon name="person-outline" class="h-6 w-6"></ion-icon>
               </button>
-              <button class="relative text-[#fbad62] hover:text-white">
+              <button onclick="showWishList()" class="relative text-[#fbad62] hover:text-white">
                 <ion-icon name="heart-outline" class="h-6 w-6"></ion-icon>
-                <span class="absolute -top-2 -right-2 rounded-full bg-red-500 text-white text-xs px-2 py-1">0</span>
+                <!-- <span class="absolute -top-2 -right-2 rounded-full bg-red-500 text-white text-xs px-2 py-1">0</span> -->
               </button>
               <!-- Add to cart -->
               <button onclick="showCartList()" class="relative text-[#fbad62] hover:text-white">
                 <ion-icon name="bag-handle-outline" class="h-6 w-6"></ion-icon>
-                <span class="absolute -top-2 -right-2 rounded-full bg-red-500 text-white text-xs px-2 py-1">0</span>
+                <!-- <span class="absolute -top-2 -right-2 rounded-full bg-red-500 text-white text-xs px-2 py-1">0</span> -->
               </button>
 
             </div>
@@ -406,6 +406,22 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
         alert('Please log in as a customer to view your cart.');
       }
     }
+    function showWishList() {
+      // PHP variables passed to JavaScript
+      var loggedIn = <?php echo json_encode(isset($_SESSION['loggedin']) && $_SESSION['loggedin']); ?>;
+      var userType = <?php echo json_encode($_SESSION['user_type'] ?? ''); ?>;
+      var userId = <?php echo json_encode($_SESSION['user_id'] ?? 0); ?>;
+
+      // Check if logged in and user type is 'customer_info'
+      if (loggedIn && userType === 'customer_info') {
+        // Redirect to Cartlist.php with the user ID
+        window.location.href = '../Wishlist/Wishlist.php?user_id=' + userId;
+      } else {
+        // Optionally handle the case where user is not logged in or not a customer
+        alert('Please log in as a customer to view your cart.');
+      }
+    }
+
   </script>
   <script>
     function checkEnter(event) {

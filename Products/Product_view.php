@@ -106,7 +106,7 @@ $isCustomer = isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'custo
         <!-- Action Buttons -->
         <div class="btn-box flex space-x-4">
           <button
-            class="wishlist-btn bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-2 rounded-lg hover:from-red-500 hover:to-orange-500 transition duration-300 flex items-center space-x-2 shadow-md">
+            class="wishlist-btn bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-2 rounded-lg hover:from-red-500 hover:to-orange-500 transition duration-300 flex items-center space-x-2 shadow-md" onclick="addToWishlist()">
             <i class="far fa-heart"></i>
             <span>Wishlist</span>
           </button>
@@ -192,6 +192,18 @@ $isCustomer = isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'custo
       } else {
         // If not logged in, show the modal
         showModal('Please Log In', 'You must be logged in as a customer to add cart');
+      }
+      // Construct the URL with query parameters  
+    }
+    function addToWishlist() {
+      var productId = <?= $product_id; ?>;
+      if (isLoggedIn) {
+        // If logged in, redirect to the buy now page
+        var url = '../Wishlist/add_to_wishlist.php?product_id=' + productId;
+        window.location.href = url;
+      } else {
+        // If not logged in, show the modal
+        showModal('Please Log In', 'You must be logged in as a customer to add Wishlist');
       }
       // Construct the URL with query parameters  
     }
