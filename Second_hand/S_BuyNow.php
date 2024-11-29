@@ -53,14 +53,8 @@ function getProductDetails($conn, $product_id)
   return null; 
 }
 
-
-if (!$product) {
-  echo '<p>Second-hand product not found.</p>';
-  exit;
-}
-
-$itemTotal = $product['Sh_price']; // Total price, as there's no quantity multiplication
-$quantity = 1; // Default quantity
+$itemTotal = $product['Sh_price']; 
+$quantity = 1; 
 
 ?>
 
