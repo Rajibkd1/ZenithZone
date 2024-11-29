@@ -7,7 +7,7 @@ include 'DB_Connection.php';
 $start = isset($_GET['start']) ? (int)$_GET['start'] : 0;
 $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 20;
 
-$sql = "SELECT * FROM product_info LIMIT ?, ?";
+$sql = "SELECT * FROM product_info ORDER BY RAND() LIMIT ?, ?";
 $stmt = $conn->prepare($sql);
 if (!$stmt) {
   die("Error preparing SQL statement: " . $conn->error);

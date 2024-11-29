@@ -1,5 +1,5 @@
 <?php
-session_start(); 
+session_start();
 include "../Database_Connection/DB_Connection.php";
 
 // Sanitize and validate input
@@ -118,7 +118,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="flex flex-col sm:flex-row justify-between items-center">
             <!-- Logo -->
-            <a href="../HomePage/InitialPage1.php" class="flex-shrink-0">
+            <a href="<?php echo isset($_SESSION['loggedin']) && $_SESSION['loggedin'] ? '../HomePage/Personalized_products.php' : '../HomePage/InitialPage1.php'; ?>" class="flex-shrink-0">
               <img src="../assets/images/logo/ZenithZone.png" alt="ZenithZone logo" class="h-16 sm:h-20" />
             </a>
 
@@ -191,7 +191,9 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
         <div class="container mx-auto px-4 py-3">
           <ul class="flex flex-wrap justify-center items-center gap-6 lg:gap-8 xl:gap-10">
             <li>
-              <a href="../HomePage/InitialPage1.php" class="text-slate-50 font-bold hover:text-indigo-500">Home</a>
+              <a href="<?php echo isset($_SESSION['loggedin']) && $_SESSION['loggedin'] ? '../HomePage/Personalized_products.php' : '../HomePage/InitialPage1.php'; ?>" class="text-slate-50 font-bold hover:text-indigo-500">
+                Home
+              </a>
             </li>
             <li class="dropdown dropdown-hover">
               <div tabindex="0" role="button" class="text-slate-50 font-bold hover:text-indigo-500">
@@ -406,6 +408,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
         alert('Please log in as a customer to view your cart.');
       }
     }
+
     function showWishList() {
       // PHP variables passed to JavaScript
       var loggedIn = <?php echo json_encode(isset($_SESSION['loggedin']) && $_SESSION['loggedin']); ?>;
@@ -421,34 +424,34 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
         alert('Please log in as a customer to view your cart.');
       }
     }
-
   </script>
   <script>
     function checkEnter(event) {
-  if (event.key === 'Enter') {  
-    handleSearch();  
-  }
-}
-function handleSearch() {
-  // Get the value from the search input field
-  const searchValue = document.getElementById('searchInput').value;
+      if (event.key === 'Enter') {
+        handleSearch();
+      }
+    }
 
-  if (searchValue) {
-    // Construct the URL with the search term as a query parameter
-    var url = '../Auto_Complete/Search.php?search=' + encodeURIComponent(searchValue);
+    function handleSearch() {
+      // Get the value from the search input field
+      const searchValue = document.getElementById('searchInput').value;
 
-    // Redirect the user to the Search.php page with the search term
-    window.location.href = url;
-  } else {
-    // If the search value is empty, show a modal to prompt the user to enter a search term
-    showModal('Please Enter a Search Term', 'You must enter a search term to search.');
-  }
-}
+      if (searchValue) {
+        // Construct the URL with the search term as a query parameter
+        var url = '../Auto_Complete/Search.php?search=' + encodeURIComponent(searchValue);
 
-// Modal function to show the alert (for demonstration)
-function showModal(title, message) {
-  alert(title + "\n" + message);  // Simple alert for now
-}
+        // Redirect the user to the Search.php page with the search term
+        window.location.href = url;
+      } else {
+        // If the search value is empty, show a modal to prompt the user to enter a search term
+        showModal('Please Enter a Search Term', 'You must enter a search term to search.');
+      }
+    }
+
+    // Modal function to show the alert (for demonstration)
+    function showModal(title, message) {
+      alert(title + "\n" + message); // Simple alert for now
+    }
   </script>
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>

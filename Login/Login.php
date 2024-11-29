@@ -1,4 +1,5 @@
 <?php
+session_start(); 
 include "../Database_Connection/DB_Connection.php";
 
 // Improved error handling with try-catch
@@ -6,11 +7,11 @@ try {
     if ($conn->connect_error) {
         throw new Exception("Connection failed: " . $conn->connect_error);
     }
-
     $login_error = '';
     $login_success = false;
     $first_name = '';
-    $found = false; // Initialize the variable to track if a user is found
+    $found = false;
+    $gender = '';
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $email_mobile = $_POST['email_mobile'];
@@ -18,13 +19,13 @@ try {
 
         // Check user credentials across three tables
         $tables = [
-            ['name' => 'artist_info', 'id_column' => 'artist_id', 'email_column' => 'email', 'password_column' => 'password_hash', 'first_name_column' => 'first_name'],
-            ['name' => 'customer_info', 'id_column' => 'customer_id', 'email_column' => 'email', 'password_column' => 'password', 'first_name_column' => 'first_name'],
-            ['name' => 'sellersinfo', 'id_column' => 'seller_id', 'email_column' => 'email', 'password_column' => 'password_hash', 'first_name_column' => 'first_name']
+            ['name' => 'artist_info', 'id_column' => 'artist_id', 'email_column' => 'email', 'password_column' => 'password_hash', 'first_name_column' => 'first_name', 'gender_column' => 'gender'],
+            ['name' => 'customer_info', 'id_column' => 'customer_id', 'email_column' => 'email', 'password_column' => 'password', 'first_name_column' => 'first_name', 'gender_column' => 'gender'],
+            ['name' => 'sellersinfo', 'id_column' => 'seller_id', 'email_column' => 'email', 'password_column' => 'password_hash', 'first_name_column' => 'first_name', 'gender_column' => 'gender']
         ];
 
         foreach ($tables as $table) {
-            $query = "SELECT {$table['id_column']}, {$table['password_column']}, {$table['first_name_column']} FROM {$table['name']} WHERE {$table['email_column']} = ? OR mobile_number = ?";
+            $query = "SELECT {$table['id_column']}, {$table['password_column']}, {$table['first_name_column']}, {$table['gender_column']} FROM {$table['name']} WHERE {$table['email_column']} = ? OR mobile_number = ?";
             $stmt = $conn->prepare($query);
             if (!$stmt) {
                 throw new Exception('MySQL prepare error: ' . $conn->error);
@@ -38,11 +39,14 @@ try {
                     $found = true;
                     $login_success = true;
                     $first_name = $user[$table['first_name_column']];
+                    $gender = $user[$table['gender_column']];  // Set gender here
                     $_SESSION['loggedin'] = true;
                     $_SESSION['email_mobile'] = $email_mobile;
                     $_SESSION['user_id'] = $user[$table['id_column']];
-                    $_SESSION['user_type'] = $table['name'];  // Identifying the type of user
+                    $_SESSION['user_type'] = $table['name'];
                     $_SESSION['first_name'] = $first_name;
+                    $_SESSION['gender'] = $gender;  // Store gender in session
+
                     break;
                 }
             }
@@ -121,10 +125,9 @@ try {
         </h3>
         <p class="mt-2">Hi <?php echo htmlspecialchars($first_name); ?>, welcome to ZenithZone.</p>
         <div class="flex justify-center mt-4">
-            <!-- Proceed Button with user_type and user_id -->
-            <button onclick="window.location='../HomePage/Homepage1.php';" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Proceed</button>
-
-        </div>
+    <!-- Proceed Button with user_type, user_id, and gender from session -->
+    <button onclick="window.location='../HomePage/Personalized_products.php?gender=<?php echo $_SESSION['gender']; ?>';" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Proceed</button>
+</div>
     </dialog>
 
     <!-- Error Modal -->
