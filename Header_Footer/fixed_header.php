@@ -1,5 +1,5 @@
 <?php
-session_start(); // Start the session at the beginning of the script
+session_start(); 
 include "../Database_Connection/DB_Connection.php";
 
 // Sanitize and validate input
@@ -94,7 +94,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ZenithZone</title>
   <link rel="icon" href="../assets/images/logo/ZenithZone.png" type="image/x-icon">
-  <link rel="stylesheet" href="../Auto_Complete//AutoComplete.css">
+  <link rel="stylesheet" href="../Auto_Complete/AutoComplete.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@^2.0/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css">
@@ -371,18 +371,18 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
           </div>
         </div>
 
-        <button class="btn btn-ghost relative">
+        <button onclick="showCartList()" class="btn btn-ghost relative">
           <ion-icon name="bag-handle-outline" class="text-2xl"></ion-icon>
-          <span class="badge badge-sm badge-error absolute -top-1 -right-1">0</span>
+          <!-- <span class="badge badge-sm badge-error absolute -top-1 -right-1">0</span> -->
         </button>
 
         <button class="btn btn-ghost" onclick="window.location.href = '../HomePage/InitialPage1.php'">
           <ion-icon name="home-outline" class="text-2xl"></ion-icon>
         </button>
 
-        <button class="btn btn-ghost relative">
+        <button onclick="showWishList()" class="btn btn-ghost relative">
           <ion-icon name="heart-outline" class="text-2xl"></ion-icon>
-          <span class="badge badge-sm badge-error absolute -top-1 -right-1">0</span>
+          <!-- <span class="badge badge-sm badge-error absolute -top-1 -right-1">0</span> -->
         </button>
 
         <button class="btn btn-ghost" data-mobile-menu-open-btn>
@@ -449,9 +449,6 @@ function handleSearch() {
 function showModal(title, message) {
   alert(title + "\n" + message);  // Simple alert for now
 }
-
-
-
   </script>
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>

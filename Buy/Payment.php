@@ -155,11 +155,13 @@ $quantity = isset($_GET['quantity']) ? filter_input(INPUT_GET, 'quantity', FILTE
         function confirmOrder() {
             var userId = <?= json_encode($userId); ?>;
             var productId = <?= json_encode($productId); ?>;
-            var userType = <?= json_encode($userType); ?>;
+            var quantity = <?= json_encode($quantity); ?>;
+            var totalAmount = <?= json_encode($totalAmount); ?>;
 
             var url = 'confirm_order.php?user_id=' + encodeURIComponent(userId) +
                 '&product_id=' + encodeURIComponent(productId) +
-                '&user_type=' + encodeURIComponent(userType);
+                '&quantity=' + encodeURIComponent(quantity)+
+                '&total_amount=' + encodeURIComponent(totalAmount);
 
             window.location.href = url;
         }

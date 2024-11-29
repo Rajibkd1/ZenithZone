@@ -1,13 +1,6 @@
 <?php
 session_start();
-include '../Database_Connection/DB_Connection.php';
-
-// Check if necessary session variables are set and redirect if not found
-if (!isset($_SESSION['user_type']) || !isset($_SESSION['user_id'])) {
-  echo "<p>User not logged in. Redirecting to login page...</p>";
-  header("Refresh:2; url=../Login/Login.php");
-  exit();
-}
+include_once"../Database_Connection/DB_Connection.php";
 
 // Extract user type and ID from session
 $user_type = $_SESSION['user_type'];
@@ -16,10 +9,9 @@ $user_id = $_SESSION['user_id'];
 // Fetch second-hand product ID from the URL parameter
 $product_id = isset($_GET['product_id']) ? intval($_GET['product_id']) : 0;
 
-if (!$product_id) {
-  echo "<p>No product ID specified.</p>";
-  exit;
-}
+$userDetails = getUserDetails($conn, $user_type, $user_id);
+$product = getProductDetails($conn, $product_id);
+
 
 // Retrieve user details
 function getUserDetails($mysqli, $userType, $userId)
@@ -45,7 +37,6 @@ function getUserDetails($mysqli, $userType, $userId)
   return null; // Return null if user not found
 }
 
-$userDetails = getUserDetails($conn, $user_type, $user_id);
 
 // Function to fetch second-hand product details
 function getProductDetails($conn, $product_id)
@@ -59,10 +50,9 @@ function getProductDetails($conn, $product_id)
     return $product;
   }
   $stmt->close();
-  return null; // Return null if no product is found
+  return null; 
 }
 
-$product = getProductDetails($conn, $product_id);
 
 if (!$product) {
   echo '<p>Second-hand product not found.</p>';
@@ -81,7 +71,8 @@ $quantity = 1; // Default quantity
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Product Details - <?= htmlspecialchars($product['Sh_product_name']); ?></title>
+  <title>ZenithZone</title>
+  <link rel="icon" href="../assets/images/logo/ZenithZone.png" type="image/x-icon">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@^2.0/dist/tailwind.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />

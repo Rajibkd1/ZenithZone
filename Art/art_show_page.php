@@ -28,9 +28,6 @@
     <div class=" container mx-auto mt-40 px-4">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pt-6">
             <?php
-            include '../Database_Connection/DB_Connection.php'; // Ensure this is correctly pointing to your connection script
-            ?>
-            <?php
             $query = "SELECT * FROM art_gallery";
             $result = $conn->query($query);
 

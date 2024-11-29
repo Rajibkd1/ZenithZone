@@ -1,7 +1,7 @@
     <!--
       - BANNER
     -->
-    <div id="default-carousel" class="relative w-full overflow-hidden mt-48" data-carousel="slide">
+    <div id="default-carousel" class="relative w-full overflow-hidden mt-48 sm:mt-48" data-carousel="slide">
       <!-- Carousel wrapper -->
       <div class="relative h-56 overflow-hidden rounded-lg md:h-96">
         <!-- Item 1 -->

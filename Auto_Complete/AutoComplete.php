@@ -1,6 +1,7 @@
 <?php
 include '../Database_Connection/DB_Connection.php';
 
+
 if (isset($_GET['term'])) {
     $searchTerm = $_GET['term'] ?? '';
     $searchTerm = $searchTerm . '%';
@@ -22,7 +23,7 @@ if (isset($_GET['term'])) {
 
     echo json_encode($suggestions);
     $query->close();
-    $conn->close();
+    // $conn->close();
     exit;
 }
 ?>

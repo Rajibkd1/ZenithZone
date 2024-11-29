@@ -1,21 +1,22 @@
 <?php
-session_start(); 
-
-include '../Database_Connection/DB_Connection.php';  
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $loggedin = isset($_POST['loggedin']) ? $_POST['loggedin'] : null;
-
-  if ($loggedin !== null) {
-    $_SESSION['loggedin'] = filter_var($loggedin, FILTER_VALIDATE_BOOLEAN);
-    header("Location: ../Login/Login.php"); 
-    exit();
-  }
-}
+// session_start(); 
+include "../Header_Footer/fixed_header.php";
 
 $isLoggedIn = isset($_SESSION['loggedin']) && $_SESSION['loggedin'];
 
 $product_id = isset($_GET['product_id']) ? intval($_GET['product_id']) : 0;
+include '../Database_Connection/DB_Connection.php';  
+
+// if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+//   $loggedin = isset($_POST['loggedin']) ? $_POST['loggedin'] : null;
+
+//   if ($loggedin !== null) {
+//     $_SESSION['loggedin'] = filter_var($loggedin, FILTER_VALIDATE_BOOLEAN);
+//     header("Location: ../Login/Login.php"); 
+//     exit();
+//   }
+// }
+
 
 // Change to fetch data from the second_hand_product table
 $sql = "SELECT * FROM second_hand_product WHERE Sh_product_id = $product_id";
@@ -31,8 +32,7 @@ $product = mysqli_fetch_assoc($result);
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ZenithZone</title>
-
-  <link rel="shortcut icon" href="./assets/images/logo/ZentihZone.png" type="image/x-icon" />
+  <link rel="icon" href="../assets/images/logo/ZenithZone.png" type="image/x-icon">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@^2.0/dist/tailwind.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
@@ -41,7 +41,6 @@ $product = mysqli_fetch_assoc($result);
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
-  <?php include "../Header_Footer/fixed_header.php"; ?>
   <main class="flex-grow container mx-auto px-4 py-8">
     <div class="flex flex-col mt-48 sm:mt-36 md:flex-row items-center md:items-start text-center md:text-left">
       <!-- Product Image -->

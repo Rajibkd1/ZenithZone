@@ -19,10 +19,9 @@
   <canvas class="background-canvas" id="backgroundCanvas"></canvas>
   <?php include '../Header_Footer/fixed_header.php'; ?>
   <main>
-    <?php include 'banner.php'; ?>
+    <?php include './banner.php'; ?>
 
     <?php
-    include '../Database_Connection/DB_Connection.php';
     if ($conn === null) {
       die("Connection failed: Unable to connect to database");
     }

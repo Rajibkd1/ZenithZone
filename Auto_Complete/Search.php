@@ -16,7 +16,6 @@
 <body>
     <?php
     include_once "../Header_Footer/fixed_header.php";
-    include_once "../Database_Connection/DB_Connection.php";
 
     // Define a utility function for sanitizing input
     if (!function_exists('sanitizeInput')) {
@@ -129,7 +128,7 @@
 
     $stmt->close();
     $stmtProducts->close();
-    $conn->close();
+    // $conn->close();
     ?>
 </body>
 

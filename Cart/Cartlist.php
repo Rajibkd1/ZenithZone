@@ -1,6 +1,5 @@
 <?php
-// Include the database connection file
-include "../Database_Connection/DB_Connection.php";
+include "../Header_Footer/fixed_header.php";
 
 $products = [];
 $errorMsg = ''; // Variable to hold error messages
@@ -67,9 +66,6 @@ if (isset($_GET['user_id']) && !empty($_GET['user_id'])) {
 }
     </style>
 </head>
-<?php
-include "../Header_Footer/fixed_header.php";
-?>
 
 <body class="bg-gray-50 mt-36 font-sans">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

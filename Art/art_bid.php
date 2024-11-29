@@ -1,7 +1,7 @@
 <?php
-session_start();
-include '../Database_Connection/DB_Connection.php'; // Ensure this is correctly pointing to your connection script
+include "../Header_Footer/fixed_header.php";
 
+// Ensure this is correctly pointing to your connection script
 $isLoggedIn = isset($_SESSION['loggedin']) && $_SESSION['loggedin'];
 $isCustomer = isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'customer_info';
 
@@ -62,6 +62,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['bid_amount'])) {
         $error = "Your bid must be higher than the current bid price or bidding has ended.";
     }
 }
+// If the bidding has ended, set the final bid price
+if ($hasBiddingEnded) {
+    $finalBidPrice = $currentBidPrice;
+
+    // Update the final bid price in the database
+    $updateQuery = "UPDATE art_gallery SET final_bid_price = ? WHERE art_id = ?";
+    $stmt = $conn->prepare($updateQuery);
+    $stmt->bind_param("di", $finalBidPrice, $artId);
+    $stmt->execute();
+
+    // echo "<p>Bidding has ended. The final bid price is $".number_format($finalBidPrice, 2).".</p>";
+}
 // Fetch the list of bidders for this art piece
 $queryBidders = "SELECT ab.bid_amount, c.first_name, c.last_name 
                  FROM art_bids ab
@@ -72,18 +84,6 @@ $stmtBidders = $conn->prepare($queryBidders);
 $stmtBidders->bind_param("i", $artId);
 $stmtBidders->execute();
 $biddersResult = $stmtBidders->get_result();
-
-// If bidding has ended, update the final bid price
-if ($hasBiddingEnded && $row['final_bid_price'] != $currentBidPrice) {
-    // Update final bid price
-    $updateQuery = "UPDATE art_gallery SET final_bid_price = previous_bid_price WHERE art_id = ?";
-    $stmt = $conn->prepare($updateQuery);
-    $stmt->bind_param("i", $artId);
-    $stmt->execute();
-
-    // Refresh the current bid price
-    $currentBidPrice = $row['previous_bid_price'];
-}
 
 // Close connection
 $conn->close();
@@ -134,9 +134,6 @@ $conn->close();
         });
     </script>
 </head>
-<?php
-include "../Header_Footer/fixed_header.php";
-?>
 
 <body class="bg-gray-100 flex flex-col min-h-screen">
     <div class="flex flex-col justify-center sm:flex-row mt-12 mb-12">

@@ -1,5 +1,5 @@
 <?php
-session_start();
+// session_start();
 require "../Database_Connection/DB_Connection.php";
 
 if (!$conn instanceof mysqli) {
