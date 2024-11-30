@@ -145,7 +145,8 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
               <!-- Authentication Links -->
               <?php if ($loggedInStatus): ?>
                 <a href="?action=logout" class="text-[#fbad62] hover:text-white transition duration-150 ease-in-out">Logout</a>
-                <a href="#" class="text-[#fbad62] hover:text-white transition duration-150 ease-in-out"><?= $firstName; ?></a>
+                <a href="../Customer_dashboard/Customers_dashboard.php?= $userId; ?>&user_type=<?= $userType; ?>" class="text-[#fbad62] hover:text-white transition duration-150 ease-in-out"><?= $firstName; ?></a>
+
               <?php else: ?>
                 <a href="../Login/Login.php" class="text-[#fbad62] hover:text-white transition duration-150 ease-in-out">Login</a>
                 <a href="../Registration/Who.php" class="text-[#fbad62] hover:text-white transition duration-150 ease-in-out">Signup</a>

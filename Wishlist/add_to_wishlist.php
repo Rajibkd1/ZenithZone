@@ -1,5 +1,5 @@
 <?php
-// session_start();
+session_start();
 require "../Database_Connection/DB_Connection.php";
 
 if (!$conn instanceof mysqli) {
@@ -17,7 +17,7 @@ $userId = $_SESSION['user_id'];
 $product_id = isset($_GET['product_id']) ? intval($_GET['product_id']) : 0;
 
 if ($userType !== 'customer_info') {
-    $_SESSION['message'] = "Access denied. Only customers can add products to the cart.";
+    $_SESSION['message'] = "Access denied. Only customers can add products to the Wishlist.";
     exit;
 }
 
@@ -48,15 +48,15 @@ try {
         $stmt = $conn->prepare("INSERT INTO wishlist_items (wishlist_id, product_id) VALUES (?, ?)");
         $stmt->bind_param("ii", $cartId, $product_id);
         $stmt->execute();
-        $_SESSION['message'] = "Product successfully added to your cart.";
+        $_SESSION['message'] = "Product successfully added to your Wishlist.";
     } else {
-        $_SESSION['message'] = "Product already exists in your cart.";
+        $_SESSION['message'] = "Product already exists in your Wishlist.";
     }
 
     $conn->commit();
 } catch (Exception $e) {
     $conn->rollback();
-    $_SESSION['message'] = "Error adding product to cart: " . $e->getMessage();
+    $_SESSION['message'] = "Error adding product to Wishlist: " . $e->getMessage();
 } finally {
     $conn->autocommit(TRUE);
 }
@@ -83,7 +83,7 @@ try {
     <!-- Modal HTML -->
     <div id="messageModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
         <div class="bg-white rounded-lg p-5 shadow text-center">
-         <i class="fa-solid fa-circle-check fa-5x" style="color: #3feeba;"></i>
+            <i class="fa-solid fa-circle-check fa-5x" style="color: #3feeba;"></i>
             <h3 class="text-lg font-bold mt-4">Notice</h3>
             <p id="modalMessage" class="mt-2"><?php echo $_SESSION['message'] ?? 'No message'; ?></p>
             <button onclick="hideModal()" class="mt-4 bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600">Close</button>

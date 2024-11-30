@@ -140,6 +140,7 @@ $quantity = isset($_GET['quantity']) ? filter_input(INPUT_GET, 'quantity', FILTE
     <?php
     include "../Header_Footer/footer.php";
     ?>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
         function showPaymentForm(formId) {
@@ -151,21 +152,78 @@ $quantity = isset($_GET['quantity']) ? filter_input(INPUT_GET, 'quantity', FILTE
             document.getElementById(formId).classList.remove('hidden');
         }
 
-
         function confirmOrder() {
+            // Disable the confirm button to prevent multiple clicks
+            var confirmButton = document.querySelector("button");
+            confirmButton.disabled = true;
+
+            // Get the parameters from the page
             var userId = <?= json_encode($userId); ?>;
             var productId = <?= json_encode($productId); ?>;
             var quantity = <?= json_encode($quantity); ?>;
             var totalAmount = <?= json_encode($totalAmount); ?>;
 
-            var url = 'confirm_order.php?user_id=' + encodeURIComponent(userId) +
-                '&product_id=' + encodeURIComponent(productId) +
-                '&quantity=' + encodeURIComponent(quantity)+
-                '&total_amount=' + encodeURIComponent(totalAmount);
+            // Create an object with the order details
+            var orderData = {
+                user_id: userId,
+                product_id: productId,
+                quantity: quantity,
+                total_amount: totalAmount
+            };
 
-            window.location.href = url;
+            // Send AJAX request to 'confirm_order.php'
+            $.ajax({
+                url: 'confirm_order.php', // URL to your PHP script for processing the order
+                method: 'GET', // Use GET method (or POST if needed)
+                data: orderData, // Send the order data
+                success: function(response) {
+                    // Assuming response contains a message (you can structure the response accordingly)
+                    // You can change this message based on the response structure
+                    var message = "Order Confirmed!"; // Default message if no message is returned from server
+
+                    // If the server sends a message, use it
+                    if (response.message) {
+                        message = response.message;
+                    }
+
+                    // Update the modal message
+                    $('#modalMessage').text(message);
+
+                    // Show the modal
+                    $('#messageModal').fadeIn(); // Show the modal with fade-in effect
+                },
+                error: function(xhr, status, error) {
+                    // Handle error
+                    alert('There was an error processing your order. Please try again.');
+                    confirmButton.disabled = false; // Re-enable button if error occurs
+                }
+            });
         }
     </script>
+
+    <!-- Modal HTML -->
+    <div id="messageModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" style="display:none;">
+        <div class="bg-white rounded-lg p-5 shadow text-center">
+            <!-- Success Icon -->
+            <i class="fa-solid fa-circle-check fa-5x" style="color: #3feeba;"></i>
+            <!-- Success Message -->
+            <p id="modalMessage" class="mt-4 text-xl font-semibold"></p> <!-- Message will be dynamically set here -->
+            <!-- Close Button -->
+            <button onclick="hideModal()" class="mt-4 bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600">Close</button>
+        </div>
+    </div>
+
+
+    <script>
+        function hideModal() {
+            // Hide the modal
+            document.getElementById('messageModal').style.display = 'none';
+            // Redirect to the parent page (you can customize the URL)
+            // window.location.href = document.referrer;
+        }
+    </script>
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 </body>
 
 </html>

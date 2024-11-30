@@ -1,19 +1,19 @@
 <?php
+session_start();
 // Include the database connection file
 include "../Database_Connection/DB_Connection.php";
 
 $products = [];
 $errorMsg = ''; // Variable to hold error messages
 
+$userId = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
 
-// Check if 'user_id' is passed as a parameter
-if (isset($_GET['user_id']) && !empty($_GET['user_id'])) {
-    $customer_id = intval($_GET['user_id']);  // Convert user ID to integer to ensure safety
+if ($userId) { // Check if the user is logged in
 
     // Prepare and execute the query to fetch the user's cart
     $cartQuery = "SELECT cart_id FROM carts WHERE customer_id = ?";
     if ($stmt = $conn->prepare($cartQuery)) {
-        $stmt->bind_param("i", $customer_id);
+        $stmt->bind_param("i", $userId);  // Bind the user ID to the query
         $stmt->execute();
         $result = $stmt->get_result();
 
@@ -60,16 +60,18 @@ if (isset($_GET['user_id']) && !empty($_GET['user_id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@^2.0/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         #orderSummary {
-    height: 300px;
-    overflow-y: auto;
-}
+            height: 300px;
+            overflow-y: auto;
+        }
     </style>
 </head>
-<?php
-include "../Header_Footer/fixed_header.php";
-?>
 
 <body class="bg-gray-50 mt-36 font-sans">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -193,135 +195,114 @@ HTML;
                 class="hidden fixed inset-0 bg-black bg-opacity-50"></div>
         </div>
     </div>
-    <?php
-    include"../Header_Footer/footer.php";
-    ?>
+
+    <!-- Place this script right before the closing </body> tag -->
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const selectAllCheckbox = document.getElementById("selectAll");
-            const productCheckboxes =
-                document.querySelectorAll(".product-checkbox");
-            const subtotalElement = document.getElementById("subtotal");
-            const totalElement = document.getElementById("total");
-            const shippingElement = document.getElementById("shipping");
+        const selectAllCheckbox = document.getElementById("selectAll");
+        const productCheckboxes = document.querySelectorAll(".product-checkbox");
+        const quantityInputs = document.querySelectorAll(".quantity-input");
+        const subtotalElement = document.getElementById("subtotal");
+        const totalElement = document.getElementById("total");
+        const shippingElement = document.getElementById("shipping");
 
-            selectAllCheckbox.addEventListener("change", function() {
-                productCheckboxes.forEach((checkbox) => {
-                    checkbox.checked = this.checked;
-                });
-                updateOrderSummary();
-            });
-
+        // Select all checkbox behavior
+        selectAllCheckbox.addEventListener("change", function() {
             productCheckboxes.forEach((checkbox) => {
-                checkbox.addEventListener("change", updateOrderSummary);
+                checkbox.checked = this.checked;
             });
-
-            document
-                .querySelectorAll(".quantity-increase, .quantity-decrease")
-                .forEach((button) => {
-                    button.addEventListener("click", function() {
-                        const input = this.parentNode.querySelector(".quantity-input");
-                        let currentValue = parseInt(input.value);
-                        const isIncrement = this.classList.contains("quantity-increase");
-                        if (isIncrement && currentValue < 99) {
-                            input.value = currentValue + 1;
-                        } else if (!isIncrement && currentValue > 1) {
-                            input.value = currentValue - 1;
-                        }
-                        updateOrderSummary();
-                    });
-                });
-
-            document.querySelectorAll("button.text-red-500").forEach((button) => {
-                button.addEventListener("click", function() {
-                    this.closest(".py-4.flex").remove();
-                    updateOrderSummary();
-                });
-            });
-
-            function updateOrderSummary() {
-                let subtotal = 0;
-                document.querySelectorAll(".py-4.flex").forEach((product) => {
-                    const checkbox = product.querySelector(".product-checkbox");
-                    if (checkbox.checked) {
-                        const price = parseFloat(
-                            product
-                            .querySelector(".product-price")
-                            .textContent.replace("৳", "")
-                        );
-                        const quantity = parseInt(
-                            product.querySelector(".quantity-input").value
-                        );
-                        subtotal += price * quantity;
-                    }
-                });
-
-                const shipping = subtotal > 0 ? 50 : 0;
-                const total = subtotal + shipping;
-
-                subtotalElement.textContent = subtotal;
-                shippingElement.textContent = shipping;
-                totalElement.textContent = total;
-            }
+            updateOrderSummary(); // Update summary when all checkboxes are toggled
         });
-        document
-            .getElementById("viewDetails")
-            .addEventListener("click", function() {
-                const orderSummary = document.getElementById("orderSummary");
-                const modalBackdrop = document.getElementById("modalBackdrop");
 
-                // Toggle the visibility of the order summary and backdrop
-                if (orderSummary.classList.contains("hidden")) {
-                    orderSummary.classList.remove("hidden");
-                    orderSummary.classList.add(
-                        "fixed",
-                        "inset-0",
-                        "z-50",
-                        "overflow-y-auto"
-                    );
-                    modalBackdrop.classList.remove("hidden");
-                } else {
-                    orderSummary.classList.add("hidden");
-                    orderSummary.classList.remove(
-                        "fixed",
-                        "inset-0",
-                        "z-50",
-                        "overflow-y-auto"
-                    );
-                    modalBackdrop.classList.add("hidden");
+        // Add change event listener to individual product checkboxes
+        productCheckboxes.forEach((checkbox) => {
+            checkbox.addEventListener("change", updateOrderSummary);
+        });
+
+        // Increase and Decrease button logic
+        document.querySelectorAll(".quantity-increase, .quantity-decrease").forEach((button) => {
+            button.addEventListener("click", function() {
+                const input = this.closest(".py-4").querySelector(".quantity-input"); // Find the input field in the current product row
+                let currentValue = parseInt(input.value);
+                const isIncrement = this.classList.contains("quantity-increase");
+
+                // Increment or decrement the value
+                if (isIncrement && currentValue < 99) {
+                    input.value = currentValue + 1;
+                } else if (!isIncrement && currentValue > 1) {
+                    input.value = currentValue - 1;
+                }
+
+                updateOrderSummary(); // Update the order summary after changing the quantity
+            });
+        });
+
+        // Remove cart item
+        document.querySelectorAll("button.text-red-500").forEach((button) => {
+            button.addEventListener("click", function() {
+                this.closest(".py-4").remove(); // Remove the product row
+                updateOrderSummary(); // Update the order summary after removal
+            });
+        });
+
+        // Update order summary based on selected items and quantities
+        function updateOrderSummary() {
+            let subtotal = 0;
+            let hasSelectedItems = false;
+
+            document.querySelectorAll(".py-4.flex").forEach((product) => {
+                const checkbox = product.querySelector(".product-checkbox");
+                if (checkbox.checked) {
+                    hasSelectedItems = true; // Flag to check if any item is selected
+                    const price = parseFloat(product.querySelector(".product-price").textContent.replace("৳", ""));
+                    const quantity = parseInt(product.querySelector(".quantity-input").value);
+                    subtotal += price * quantity; // Add price * quantity to subtotal
                 }
             });
 
-        // Add listener to the modal backdrop to close the modal when clicked
-        modalBackdrop.addEventListener("click", function() {
-            document.getElementById("orderSummary").classList.add("hidden");
-            modalBackdrop.classList.add("hidden");
-        });
-    </script>
-    <script>
-function deleteCartItem(cartItemId) {
-    fetch('../Cart/delete_cart_item.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: 'cart_item_id=' + cartItemId
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'success') {
-            alert('Item deleted successfully!');
-            location.reload(); // Reload the page to reflect the deletion
-        } else {
-            alert('Error deleting item: ' + data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-}
+            const shipping = hasSelectedItems ? 50 : 0; // Set shipping fee if there are selected items
+            const total = subtotal + shipping; // Total = subtotal + shipping
 
-</script>
+            // Update the DOM elements with calculated values
+            subtotalElement.textContent = subtotal.toFixed(2);
+            shippingElement.textContent = shipping;
+            totalElement.textContent = total.toFixed(2);
+        }
+
+        // Initialize order summary on page load
+        updateOrderSummary();
+
+        // Add listener to the modal backdrop to close the modal when clicked
+        const modalBackdrop = document.getElementById("modalBackdrop");
+        if (modalBackdrop) {
+            modalBackdrop.addEventListener("click", function() {
+                document.getElementById("orderSummary").classList.add("hidden");
+                modalBackdrop.classList.add("hidden");
+            });
+        }
+
+        function deleteCartItem(cartItemId) {
+            fetch('./delete_cart_item.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'cart_item_id=' + cartItemId // Send the cart_item_id
+                })
+                .then(response => response.json()) // Parse the JSON response
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert('Item deleted successfully!');
+                        location.reload(); // Reload the page to reflect the deletion
+                    } else {
+                        alert('Error deleting item: ' + data.message); // Display error message
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error); // Log any fetch errors
+                });
+        }
+    </script>
+
 
 </body>
 
