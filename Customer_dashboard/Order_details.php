@@ -37,7 +37,7 @@ if ($orderItemId) {
     // Handle the order cancellation
     if (isset($_POST['cancel_order'])) {
         $updateQuery = "UPDATE order_items SET status = 'Canceled' WHERE order_item_id = ?";
-        
+
         if ($updateStmt = $conn->prepare($updateQuery)) {
             $updateStmt->bind_param("i", $orderItemId);
             if ($updateStmt->execute()) {
@@ -70,7 +70,7 @@ if ($orderItemId) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
-<body class="bg-gray-50 font-sans py-12">
+<body class="bg-gray-50 font-sans">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Order details -->
         <?php

@@ -72,6 +72,7 @@ if ($userId) { // Check if the user is logged in
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         .order-container {
             max-height: 500px;
@@ -80,12 +81,12 @@ if ($userId) { // Check if the user is logged in
     </style>
 </head>
 
-<body class="bg-gray-50 mt-36 font-sans">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<body class="bg-gray-50 font-sans">
+    <div class="max-w-7xl mx-auto">
         <div class="flex flex-col lg:flex-row gap-8">
             <!-- Order List -->
             <div class="flex-1 bg-white rounded-xl shadow-lg p-4">
-                <h2 class="text-2xl font-bold mb-6">Your Order List</h2>
+                <h2 class="text-2xl font-bold mb-6 text-center">Your Order List</h2>
 
                 <?php
                 if (!empty($orders)) {
@@ -139,8 +140,8 @@ if ($userId) { // Check if the user is logged in
                         <div class="flex justify-center items-center">
                             <span class="text-xl font-bold {$statusClass}">Status: {$status}</span>
                         </div>
-
-                        <a href="./Order_details.php?order_item_id={$item['order_item_id']}" class="btn btn-sm btn-info">View Details</a>
+<!-- View Details Button triggers AJAX -->
+<button class="btn btn-sm btn-info view-details" data-order-item-id="{$item['order_item_id']}">View Details</button>
                     </div>
 HTML;
                             }
@@ -162,6 +163,38 @@ HTML;
 
         </div>
     </div>
+    <!-- Add an area to display order details -->
+    <div id="orderDetails" class="mt-8 p-4 bg-white rounded-xl shadow-lg">
+        <!-- Order details will be loaded here by AJAX -->
+    </div>
+    <script>
+        // AJAX for "View Details" button
+        $(document).ready(function() {
+            $('.view-details').click(function() {
+                var orderItemId = $(this).data('order-item-id'); // Get the order item ID
+
+                // Check if the orderItemId is being correctly retrieved
+                console.log('Order Item ID:', orderItemId);
+
+                $.ajax({
+                    url: './Order_details.php', // The file that contains the order details
+                    type: 'GET',
+                    data: {
+                        order_item_id: orderItemId
+                    },
+                    success: function(response) {
+                        console.log('Response:', response); // Check the response data
+                        // Insert the response (the order details) into the orderDetails div
+                        $('#content').html(response);
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('AJAX Error:', status, error); // Log AJAX error if any
+                        alert('Error loading order details');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

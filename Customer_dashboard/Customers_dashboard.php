@@ -50,6 +50,12 @@ include "../Database_Connection/DB_Connection.php";
                         <span class="ml-4">My Wishlist</span>
                     </a>
                 </li>
+                <li class="py-4 pl-10 sidebar-button" id="my-orders-btn">
+                    <a href="javascript:void(0);" class="text-white text-lg flex items-center">
+                        <i class="fas fa-box"></i> <!-- Icon for My Orders -->
+                        <span class="ml-4">My Orders</span>
+                    </a>
+                </li>
                 <li class="py-4 pl-10 sidebar-button" id="home-btn">
                     <a href="javascript:void(0);" class="text-white text-lg flex items-center">
                         <i class="fas fa-home"></i>
@@ -62,7 +68,7 @@ include "../Database_Connection/DB_Connection.php";
     </div>
 
     <!-- Content Area -->
-    <div class="content p-10" id="content">
+    <div class="content p-4" id="content">
         <!-- Default content or message can be shown here initially -->
         <?php
         echo "Welcome to your dashboard!";
@@ -80,9 +86,13 @@ include "../Database_Connection/DB_Connection.php";
             $('#my-cart-btn').click(function() {
                 loadContent('Cart.php');
             });
-            // When edit-profile button is clicked
+            // When wish list button is clicked
             $('#my-wishlist-btn').click(function() {
                 loadContent('Wishlist.php');
+            });
+            // When my order button is clicked
+            $('#my-orders-btn').click(function() {
+                loadContent('Orderlist.php');
             });
 
             // When home button is clicked
