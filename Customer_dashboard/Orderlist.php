@@ -9,26 +9,17 @@ $errorMsg = ''; // Variable to hold error messages
 $userId = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
 if ($userId) { // Check if the user is logged in
 
-    // Prepare and execute the query to fetch the user's orders from the orders table
     $ordersQuery = "SELECT order_id FROM orders WHERE customer_id = ?";
     if ($stmt = $conn->prepare($ordersQuery)) {
         $stmt->bind_param("i", $userId);  // Bind the user ID to the query
         $stmt->execute();
         $result = $stmt->get_result();
-
         if ($result->num_rows > 0) {
-            // Debugging line: print out the number of orders fetched
-            // echo "Orders found: " . $result->num_rows . "<br>";
-
             // Fetch all orders for this user
             while ($order = $result->fetch_assoc()) {
                 $orderId = $order['order_id'];
-
-                // Debugging line: print out the order details
-                // echo "Order ID: {$order['order_id']}<br>";
-
                 // Fetch the items for each order from the order_items table
-                $itemsQuery = "SELECT oi.order_item_id, pi.Product_name, pi.Product_image_path, oi.quantity, oi.order_amount
+                $itemsQuery = "SELECT oi.order_item_id, pi.Product_name, pi.Product_image_path, oi.quantity, oi.order_amount, oi.status
                                FROM order_items oi
                                JOIN product_info pi ON oi.product_id = pi.Product_id
                                WHERE oi.order_id = ?";
@@ -36,15 +27,9 @@ if ($userId) { // Check if the user is logged in
                     $itemsStmt->bind_param("i", $orderId);
                     $itemsStmt->execute();
                     $itemsResult = $itemsStmt->get_result();
-
                     $orderItems = [];
                     if ($itemsResult->num_rows > 0) {
-                        // Debugging line: print out the number of items fetched
-                        // echo "Items for Order #{$order['order_id']}: " . $itemsResult->num_rows . "<br>";
-
                         while ($item = $itemsResult->fetch_assoc()) {
-                            // Debugging line: print out the fetched item details
-                            // echo "Item: " . $item['Product_name'] . "<br>";
                             $orderItems[] = $item;  // Store each item in the order
                         }
                     } else {
@@ -113,22 +98,50 @@ if ($userId) { // Check if the user is logged in
                         if (!empty($items)) {
                             echo "<div class='mt-4'>";
                             foreach ($items as $item) {
-                                echo <<<HTML
-                                    <div class="flex items-center justify-between py-4 border-b">
-                                        <div class="flex items-center space-x-6">
-                                            <a href="../Products/Product_view.php?product_id={$item['order_item_id']}">
-                                                <img src="{$item['Product_image_path']}" alt="{$item['Product_name']}" class="w-16 h-16 object-cover rounded-md shadow-sm"/>
-                                            </a>
+                                $status = htmlspecialchars($item['status']);  // Safely output the status
 
-                                            <div class="flex flex-col">
-                                                <a href="../Products/Product_view.php?product_id={$item['order_item_id']}">
-                                                    <span class="text-lg font-medium text-gray-900">{$item['Product_name']}</span>
-                                                </a>
-                                                <span class="text-sm text-gray-500">Quantity: {$item['quantity']}</span>
-                                                <span class="text-lg text-orange-500">৳{$item['order_amount']}</span>
-                                            </div>
-                                        </div>
-                                    </div>
+                                // Determine the color class for the status
+                                switch ($status) {
+                                    case 'Canceled':
+                                        $statusClass = 'text-red-600';
+                                        break;
+                                    case 'Pending':
+                                        $statusClass = 'text-blue-600';
+                                        break;
+                                    case 'Complete':
+                                        $statusClass = 'text-green-600';
+                                        break;
+                                    case 'Shipping':
+                                        $statusClass = 'text-yellow-500';
+                                        break;
+                                    default:
+                                        $statusClass = 'text-gray-600';
+                                        break;
+                                }
+
+                                echo <<<HTML
+                    <div class="flex items-center justify-between py-4 border-b">
+                        <div class="flex items-center space-x-6">
+                            <a href="../Products/Product_view.php?product_id={$item['order_item_id']}">
+                                <img src="{$item['Product_image_path']}" alt="{$item['Product_name']}" class="w-16 h-16 object-cover rounded-md shadow-sm"/>
+                            </a>
+
+                            <div class="flex flex-col">
+                                <a href="../Products/Product_view.php?product_id={$item['order_item_id']}">
+                                    <span class="text-lg font-medium text-gray-900">{$item['Product_name']}</span>
+                                </a>
+                                <span class="text-sm text-gray-500">Quantity: {$item['quantity']}</span>
+                                <span class="text-lg text-orange-500">৳{$item['order_amount']}</span>
+                            </div>
+                        </div>
+
+                        <!-- Status centered in the middle -->
+                        <div class="flex justify-center items-center">
+                            <span class="text-xl font-bold {$statusClass}">Status: {$status}</span>
+                        </div>
+
+                        <a href="./Order_details.php?order_item_id={$item['order_item_id']}" class="btn btn-sm btn-info">View Details</a>
+                    </div>
 HTML;
                             }
                             echo "</div>";
@@ -143,6 +156,7 @@ HTML;
                     echo "<p>$errorMsg</p>";
                 }
                 ?>
+
 
             </div>
 
