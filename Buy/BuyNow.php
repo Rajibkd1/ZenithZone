@@ -182,14 +182,16 @@ $itemTotal = $quantity * $product['New_price'];
 
     <!-- Right Column (Promotion and Order Summary) -->
     <div class="space-y-6">
-      <!-- Promotion Section -->
+      <!-- Coupon Section -->
       <div class="bg-white rounded-lg p-6 shadow-sm">
         <h2 class="text-lg font-semibold text-gray-800 mb-4">Coupon code</h2>
         <input
           type="text"
+          id="coupon-code"
           placeholder="Enter Coupon Code"
           class="w-full border border-gray-300 rounded-md p-3 text-sm mb-3" />
         <button
+          id="apply-coupon"
           class="w-full bg-blue-500 text-white py-2 rounded-md text-sm font-semibold hover:bg-blue-600 transition">
           Apply
         </button>
@@ -220,11 +222,97 @@ $itemTotal = $quantity * $product['New_price'];
       </div>
     </div>
   </div>
+  <!-- Modal HTML -->
+  <div id="messageModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" style="display:none;">
+    <div class="bg-white rounded-lg p-5 shadow text-center">
+      <!-- Success Icon -->
+      <i class="fa-solid fa-circle-check fa-5x" style="color: #3feeba;"></i>
+      <!-- Success Message -->
+      <p id="modalMessage" class="mt-4 text-xl font-semibold"></p> <!-- Message will be dynamically set here -->
+      <!-- Close Button -->
+      <button onclick="hideModal()" class="mt-4 bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600">Close</button>
+    </div>
+  </div>
   <?php
   include "../Header_Footer/footer.php";
   ?>
   <!-- <script src="./BuyNow.js"></script> -->
   <script>
+    document.getElementById('apply-coupon').addEventListener('click', function() {
+      var couponCode = document.getElementById('coupon-code').value.trim();
+      if (couponCode) {
+        applyCoupon(couponCode);
+      } else {
+        showModal('Please enter a coupon code.');
+      }
+    });
+
+    function applyCoupon(couponCode) {
+      // Get the order total from the order summary
+      var orderSummaryTotal = document.getElementById('order-summary-total').textContent.replace('৳ ', '').trim();
+
+      // Send the coupon code and order total to the server using AJAX
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'apply_coupon.php', true);
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          var response = JSON.parse(xhr.responseText);
+          if (response.success) {
+            var discountRate = response.discountRate;
+
+            // Calculate the discount amount using the discount rate
+            var itemTotal = parseFloat(document.getElementById('itemTotal').textContent.replace('৳ ', '').trim());
+            var deliveryFee = parseFloat(document.getElementById('delivery-fees').textContent.replace('৳ ', '').trim());
+            var totalAmount = itemTotal + deliveryFee;
+
+            var discountAmount = (discountRate / 100) * totalAmount;
+
+            // New item total after applying the discount
+            var newItemTotal = itemTotal - discountAmount;
+            var newTotalAmount = newItemTotal + deliveryFee;
+
+            // Update the order summary directly
+            document.getElementById('itemTotal').textContent = '৳ ' + newItemTotal.toFixed(2);
+            document.getElementById('order-summary-total').textContent = '৳ ' + newTotalAmount.toFixed(2);
+
+            // Show modal with the success message
+            showModal('Coupon applied! You saved ৳ ' + discountAmount.toFixed(2));
+          } else {
+            showModal('Invalid or expired coupon code.');
+          }
+        }
+      };
+
+      xhr.send('coupon_code=' + encodeURIComponent(couponCode) + '&order_total=' + encodeURIComponent(orderSummaryTotal));
+    }
+
+    // Function to show the modal with a message
+    function showModal(message) {
+      document.getElementById('modalMessage').textContent = message;
+      document.getElementById('messageModal').style.display = 'flex';
+    }
+
+    // Function to hide the modal
+    function hideModal() {
+      document.getElementById('messageModal').style.display = 'none';
+    }
+
+
+    // Function to show the modal with a message
+    function showModal(message) {
+      document.getElementById('modalMessage').textContent = message;
+      document.getElementById('messageModal').style.display = 'flex';
+    }
+
+    // Function to hide the modal
+    function hideModal() {
+      document.getElementById('messageModal').style.display = 'none';
+    }
+
+
+    // This function will still be used to update the order summary based on quantity changes
     function updateOrderSummary() {
       var quantityInput = document.getElementById('quantityInput'); // Ensure this input is correctly referenced in your HTML
       var pricePerItem = <?= $product['New_price']; ?>;

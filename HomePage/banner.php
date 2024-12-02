@@ -1,6 +1,24 @@
     <!--
       - BANNER
     -->
+    <style>
+      @keyframes glowing {
+        0% {
+          text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff, 0 0 15px #ff00ff, 0 0 20px #ff00ff, 0 0 25px #ff00ff, 0 0 30px #ff00ff, 0 0 35px #ff00ff;
+        }
+
+        100% {
+          text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff, 0 0 40px #ff00ff, 0 0 50px #ff00ff, 0 0 60px #ff00ff, 0 0 70px #ff00ff;
+        }
+      }
+
+      .glowing-text {
+        color: #fff;
+        /* White text */
+        text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff, 0 0 15px #ff00ff, 0 0 20px #ff00ff, 0 0 25px #ff00ff, 0 0 30px #ff00ff, 0 0 35px #ff00ff;
+        animation: glowing 1.5s infinite alternate;
+      }
+    </style>
     <div id="default-carousel" class="relative w-full overflow-hidden mt-48 sm:mt-48" data-carousel="slide">
       <!-- Carousel wrapper -->
       <div class="relative h-56 overflow-hidden rounded-lg md:h-96">
@@ -8,7 +26,7 @@
         <div class="carousel-item absolute w-full h-full transition-transform duration-700 ease-in-out" data-carousel-item>
           <img src="../assets/images/Art.jpg" class="block w-full h-full object-cover" alt="Art and Craft" />
           <div class="absolute bottom-5 left-1/2 transform -translate-x-1/2 flex flex-col items-center text-white">
-            <h2 class="text-center text-3xl md:text-5xl">
+            <h2 class="text-center text-3xl md:text-5xl glowing-text">
               See All Creative Art Works
             </h2>
             <a href="../Art/ArtWelcome.php" class="btn btn-primary mt-4">Explore</a>
@@ -18,7 +36,7 @@
         <div class="carousel-item absolute w-full h-full transition-transform duration-700 ease-in-out" data-carousel-item>
           <img src="../assets/images/OldMobile.jpg" class="block w-full h-full object-cover" alt="Second Hand Products" />
           <div class="absolute bottom-5 left-1/2 transform -translate-x-1/2 flex flex-col items-center text-white">
-            <h2 class="text-center text-3xl md:text-5xl">
+            <h2 class="text-center text-3xl md:text-5xl glowing-text">
               See Second Hand Products
             </h2>
             <a href="#" class="btn btn-primary mt-4">Explore</a>
@@ -28,7 +46,7 @@
         <div class="carousel-item absolute w-full h-full transition-transform duration-700 ease-in-out" data-carousel-item>
           <img src="../assets/images/banner-3.jpg" class="block w-full h-full object-cover" alt="New Arrival Products" />
           <div class="absolute bottom-5 left-1/2 transform -translate-x-1/2 flex flex-col items-center text-white">
-            <h2 class="text-center text-3xl md:text-5xl">
+            <h2 class="text-center text-3xl md:text-5xl glowing-text">
               See New Arrival Products
             </h2>
             <a href="#" class="btn btn-primary mt-4">Explore</a>
