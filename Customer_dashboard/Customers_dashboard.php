@@ -8,7 +8,8 @@ include "../Database_Connection/DB_Connection.php";
 
 <head>
     <meta charset="utf-8" />
-    <title>Dynamic Dashboard</title>
+    <title>ZenithZone</title>
+    <link rel="icon" href="../assets/images/logo/ZenithZone.png" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery for AJAX -->
@@ -28,14 +29,26 @@ include "../Database_Connection/DB_Connection.php";
 
         <!-- Sidebar -->
         <nav id="sidebar" class="fixed bg-gray-700 h-full w-64 left-[-270px] transition-all duration-300">
-            <div class="flex justify-center text-white text-3xl font-semibold py-5 bg-gradient-to-r from-blue-600 to-indigo-700">
-                ZenithZone
+            <div class="flex justify-center items-center text-white text-3xl font-semibold py-5 bg-gradient-to-r from-blue-600 to-indigo-700">
+                <!-- Link with Image and Text -->
+                <a href="<?php echo isset($_SESSION['loggedin']) && $_SESSION['loggedin'] ? '../HomePage/Personalized_products.php' : '../HomePage/InitialPage1.php'; ?>" class="flex items-center space-x-3">
+                    <!-- Image -->
+                    <img src="../assets/images/logo/ZenithZone.png" alt="ZenithZone logo" class="h-16 sm:h-20" />
+                    <!-- Text with custom font -->
+                    <span class="font-poppins text-4xl sm:text-2xl">ZenithZone</span>
+                </a>
             </div>
             <ul class="list-items">
                 <li class="py-4 pl-10 sidebar-button" id="profile-btn">
                     <a href="javascript:void(0);" class="text-white text-lg flex items-center">
                         <i class="fas fa-user-circle"></i>
                         <span class="ml-4">Profile</span>
+                    </a>
+                </li>
+                <li class="py-4 pl-10 sidebar-button" id="wallet-btn">
+                    <a href="javascript:void(0);" class="text-white text-lg flex items-center">
+                        <i class="fas fa-wallet"></i> <!-- Wallet icon -->
+                        <span class="ml-4">My Wallet</span>
                     </a>
                 </li>
                 <li class="py-4 pl-10 sidebar-button" id="my-cart-btn">
@@ -56,10 +69,10 @@ include "../Database_Connection/DB_Connection.php";
                         <span class="ml-4">My Orders</span>
                     </a>
                 </li>
-                <li class="py-4 pl-10 sidebar-button" id="home-btn">
-                    <a href="javascript:void(0);" class="text-white text-lg flex items-center">
-                        <i class="fas fa-home"></i>
-                        <span class="ml-4">Home</span>
+                <li class="py-4 pl-10 sidebar-button" id="logout-btn">
+                    <a href="logout.php" class="text-white text-lg flex items-center">
+                        <i class="fas fa-sign-out-alt"></i> <!-- Logout icon -->
+                        <span class="ml-4">Logout</span>
                     </a>
                 </li>
                 <!-- Add more menu items as needed -->
@@ -81,6 +94,10 @@ include "../Database_Connection/DB_Connection.php";
             $('#profile-btn').click(function() {
                 loadContent('profile.php');
             });
+            // When profile button is clicked
+            $('#wallet-btn').click(function() {
+                loadContent('customer_wallet.php');
+            });
 
             // When edit-profile button is clicked
             $('#my-cart-btn').click(function() {
@@ -96,8 +113,8 @@ include "../Database_Connection/DB_Connection.php";
             });
 
             // When home button is clicked
-            $('#home-btn').click(function() {
-                loadContent('../HomePage/Personalized_products.php');
+            $('#logout-btn').click(function() {
+                loadContent('logout.php');
             });
 
             // Function to load content via AJAX

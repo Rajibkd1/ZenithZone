@@ -6,6 +6,7 @@ include "../Database_Connection/DB_Connection.php";
 $orderItemId = isset($_GET['order_item_id']) ? $_GET['order_item_id'] : null;
 $errorMsg = ''; // Variable to hold error messages
 $successMsg = ''; // Variable to hold success messages
+$orderDetails = null; // Variable to hold the order details
 
 // If order_item_id is provided
 if ($orderItemId) {
@@ -15,7 +16,7 @@ if ($orderItemId) {
     FROM order_items oi
     JOIN product_info pi ON oi.product_id = pi.Product_id
     WHERE oi.order_item_id = ?
-";
+    ";
 
     if ($stmt = $conn->prepare($orderDetailsQuery)) {
         $stmt->bind_param("i", $orderItemId); // Bind the order_item_id to the query
@@ -31,24 +32,16 @@ if ($orderItemId) {
 
         $stmt->close();
     } else {
-        echo "Error preparing the query: " . $conn->error;
+        $errorMsg = "Error preparing the query: " . $conn->error;
     }
 
-    // Handle the order cancellation
-    if (isset($_POST['cancel_order'])) {
-        $updateQuery = "UPDATE order_items SET status = 'Canceled' WHERE order_item_id = ?";
+    // Check for any success or error messages passed via the URL
+    if (isset($_GET['successMsg']) && !empty($_GET['successMsg'])) {
+        $successMsg = urldecode($_GET['successMsg']);
+    }
 
-        if ($updateStmt = $conn->prepare($updateQuery)) {
-            $updateStmt->bind_param("i", $orderItemId);
-            if ($updateStmt->execute()) {
-                $successMsg = "Your order has been canceled successfully.";
-            } else {
-                $errorMsg = "Error updating the order status.";
-            }
-            $updateStmt->close();
-        } else {
-            $errorMsg = "Error preparing the cancel query: " . $conn->error;
-        }
+    if (isset($_GET['errorMsg']) && !empty($_GET['errorMsg'])) {
+        $errorMsg = urldecode($_GET['errorMsg']);
     }
 } else {
     $errorMsg = "No order item ID provided.";
@@ -114,22 +107,29 @@ if ($orderItemId) {
                     <span class='text-sm text-gray-500'>Order Date: " . date("F j, Y", strtotime($orderDetails['order_date'])) . "</span>
                 </div>
                 
-                <!-- Cancel Order Button -->
-                <form method='POST' action='' class='mt-6 text-center'>
-                    <button type='submit' name='cancel_order' class='btn btn-sm btn-danger' " . ($orderDetails['status'] == 'Canceled' ? 'disabled' : '') . ">
-                        " . ($orderDetails['status'] == 'Canceled' ? 'Order Canceled' : 'Cancel Order') . "
+                <!-- Cancel Order Button (only visible if status is 'Pending') -->
+                <form method='POST' action='cancel_order.php?order_item_id={$orderItemId}' class='mt-6 text-center'>
+                    <button type='submit' name='cancel_order' class='btn btn-sm btn-danger' 
+                        " . ($orderDetails['status'] !== 'Pending' ? 'disabled' : '') . ">
+                        " . ($orderDetails['status'] === 'Pending' ? 'Cancel Order' : 'Cannot Cancel') . "
                     </button>
                 </form>
                 
                 <div class='mt-4 text-center'>
-                    <a href='javascript:history.back()' class='btn btn-sm btn-secondary'>Go Back</a>
+                    <a href='Customers_dashboard.php' class='btn btn-sm btn-secondary'>Go Back</a>
                 </div>
             </div>";
         } else {
             echo "<p class='text-center text-red-500'>$errorMsg</p>";
         }
-        ?>
 
+        // Display Success or Error Messages
+        if (!empty($successMsg)) {
+            echo "<div class='alert alert-success text-center text-green-600'>$successMsg</div>";
+        } elseif (!empty($errorMsg)) {
+            echo "<div class='alert alert-danger text-center text-red-600'>$errorMsg</div>";
+        }
+        ?>
     </div>
 
     <!-- Modal HTML -->

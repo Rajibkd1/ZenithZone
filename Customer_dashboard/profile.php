@@ -101,7 +101,6 @@ if ($userId) {
                 <input id="nid" name="nid" type="text" value="<?= htmlspecialchars($customer['nid_number']) ?>"
                     class="w-full bg-gray-50 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400" readonly />
             </div>
-
             <!-- Edit Profile Button -->
             <div class="mt-8 text-center">
                 <button type="button" id="editProfileButton" class="bg-blue-500 text-white py-2 px-6 rounded">Edit Profile</button>
@@ -114,12 +113,10 @@ if ($userId) {
      <script>
         $(document).ready(function() {
             $('#editProfileButton').click(function() {
-                // Using AJAX to load the 'edit_profile.php' page inside the current page
                 $.ajax({
                     url: 'edit_profile.php',  // The file that contains the edit form
                     type: 'GET',
                     success: function(response) {
-                        // Insert the response (the edit form) into the content area of the dashboard
                         $('#content').html(response);  // Assuming there is a div with id 'content' in your dashboard to display content
                     },
                     error: function() {
