@@ -145,7 +145,19 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
               <!-- Authentication Links -->
               <?php if ($loggedInStatus): ?>
                 <a href="?action=logout" class="text-[#fbad62] hover:text-white transition duration-150 ease-in-out">Logout</a>
-                <a href="../Customer_dashboard/Customers_dashboard.php?= $userId; ?>&user_type=<?= $userType; ?>" class="text-[#fbad62] hover:text-white transition duration-150 ease-in-out"><?= $firstName; ?></a>
+                <a href="<?php
+                          if ($userType === 'customer_info') {
+                            echo '../Customer_dashboard/Customers_dashboard.php?userId=' . $userId;
+                          } elseif ($userType === 'artist_info') {
+                            echo '../Artist_dashboard/Artist_dashboard.php?userId=' . $userId;
+                          } elseif ($userType === 'sellersinfo') {
+                            echo '../Seller_dashboard/Seller_dashboard.php?userId=' . $userId;
+                          } else {
+                            echo '../Customer_dashboard/Customers_dashboard.php?userId=' . $userId . '&user_type=' . $userType;
+                          }
+                          ?>" class="text-[#fbad62] hover:text-white transition duration-150 ease-in-out"><?= $firstName; ?></a>
+
+
 
               <?php else: ?>
                 <a href="../Login/Login.php" class="text-[#fbad62] hover:text-white transition duration-150 ease-in-out">Login</a>
