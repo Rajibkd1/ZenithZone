@@ -5,7 +5,6 @@ include "../Header_Footer/fixed_header.php";
 $isLoggedIn = isset($_SESSION['loggedin']) && $_SESSION['loggedin'];
 $isCustomer = isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'customer_info';
 
-
 // Get the art ID from the URL query parameter
 $artId = isset($_GET['artId']) ? intval($_GET['artId']) : 0;
 
@@ -31,6 +30,47 @@ $bidEndDate = $row['bid_end_date'];
 
 // Check if bidding has ended
 $hasBiddingEnded = (new DateTime() > new DateTime($bidEndDate));
+
+// Fetch the highest bidder after the bidding has ended
+$winner = null;
+
+
+if ($hasBiddingEnded) {
+    // Fetch the highest bidder's details
+    $winnerQuery = "SELECT c.customer_id, c.first_name, c.last_name, ab.bid_amount
+                    FROM art_bids ab
+                    JOIN customer_info c ON ab.customer_id = c.customer_id
+                    WHERE ab.art_id = ?
+                    ORDER BY ab.bid_amount DESC
+                    LIMIT 1";
+    $stmtWinner = $conn->prepare($winnerQuery);
+    $stmtWinner->bind_param("i", $artId);
+    $stmtWinner->execute();
+    $winnerResult = $stmtWinner->get_result();
+
+    if ($winnerResult->num_rows > 0) {
+        $winner = $winnerResult->fetch_assoc();
+        $winnerCustomerId = $winner['customer_id'];
+        $finalBidPrice = $winner['bid_amount'];
+        $finalBidAmount = $winner['bid_amount'];
+
+        // Update the art_gallery table with the winner's customer_id and final bid amount
+        $updateQuery = "UPDATE art_gallery
+                        SET winner_customer_id = ?, final_bid_price = ?, bid_status = 'closed'
+                        WHERE art_id = ?";
+        $stmtUpdate = $conn->prepare($updateQuery);
+        $stmtUpdate->bind_param("dii", $winnerCustomerId, $finalBidAmount, $artId);
+
+        if ($stmtUpdate->execute()) {
+            // Successfully updated the art gallery table
+            echo "Bidding has ended. The winner has been recorded.";
+        } else {
+            echo "Error updating the art gallery table: " . $conn->error;
+        }
+    } else {
+        echo "No bids placed on this item.";
+    }
+}
 
 // Handle bid submission
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['bid_amount'])) {
@@ -62,18 +102,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['bid_amount'])) {
         $error = "Your bid must be higher than the current bid price or bidding has ended.";
     }
 }
-// If the bidding has ended, set the final bid price
-if ($hasBiddingEnded) {
-    $finalBidPrice = $currentBidPrice;
 
-    // Update the final bid price in the database
-    $updateQuery = "UPDATE art_gallery SET final_bid_price = ? WHERE art_id = ?";
-    $stmt = $conn->prepare($updateQuery);
-    $stmt->bind_param("di", $finalBidPrice, $artId);
-    $stmt->execute();
-
-    // echo "<p>Bidding has ended. The final bid price is $".number_format($finalBidPrice, 2).".</p>";
-}
 // Fetch the list of bidders for this art piece
 $queryBidders = "SELECT ab.bid_amount, c.first_name, c.last_name 
                  FROM art_bids ab
@@ -88,6 +117,7 @@ $biddersResult = $stmtBidders->get_result();
 // Close connection
 $conn->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -136,7 +166,7 @@ $conn->close();
 </head>
 
 <body class="bg-gray-100 flex flex-col min-h-screen">
-    <div class="flex flex-col justify-center sm:flex-row mt-12 mb-12">
+    <div class="flex flex-col justify-center sm:flex-row mt-48 mb-12">
         <!-- Art cart -->
         <div id="cardContainer" class="card bg-white shadow-lg rounded-lg p-6 max-w-4xl">
             <div class="flex justify-center">
@@ -173,7 +203,18 @@ $conn->close();
                         <button type="submit" class="btn btn-success w-full mt-2">Submit Bid</button>
                     </form>
                 <?php else: ?>
-                    <p class="text-green-500 text-center">The final bid price is: $<?php echo number_format($currentBidPrice, 2); ?></p>
+                    <p class="text-green-500 text-center">The final bid price is: $<?php echo number_format($finalBidPrice, 2); ?></p>
+                    <p class="text-center mt-4 p-2 font-bold text-2xl text-green-500">
+                        <span class="text-glow">Winner: <?php echo $winner['first_name'] . ' ' . $winner['last_name']; ?></span>
+                    </p>
+
+                    <style>
+                        .text-glow {
+                            @apply text-yellow-500;
+                            text-shadow: 0 0 10px rgba(255, 255, 0, 0.8), 0 0 20px rgba(255, 255, 0, 0.8), 0 0 30px rgba(255, 255, 0, 0.8);
+                        }
+                    </style>
+
                 <?php endif; ?>
             </div>
         </div>
