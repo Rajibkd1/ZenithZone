@@ -107,8 +107,8 @@
             }
             echo '</div>
                 <div class="flex items-baseline space-x-1 font-bold">
-                  <p class="text-sm text-blue-500">$' . number_format($newPrice, 2) . '</p>
-                  <del class="text-xs text-gray-400">$' . number_format($oldPrice, 2) . '</del>
+                  <p class="text-sm text-blue-500">৳' . number_format($newPrice, 2) . '</p>
+                  <del class="text-xs text-gray-400">৳' . number_format($oldPrice, 2) . '</del>
                   <p class="text-green-500">-' . round((1 - $newPrice / $oldPrice) * 100) . '%</p>
                 </div>
               </div>

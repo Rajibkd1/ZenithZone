@@ -126,18 +126,22 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
             <div class="flex-grow mx-10 my-2 sm:my-0 hidden md:block">
               <div class="relative hidden md:block">
                 <input type="search" id="searchInput" name="search" class="input-field w-full pl-4 pr-20 py-2 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border rounded-md" placeholder="Enter your product name..." onkeydown="checkEnter(event)" />
+
                 <!-- Autocomplete Suggestions Box -->
                 <ul id="searchSuggestions" class="autobox absolute z-10 bg-white w-full shadow-lg max-h-60 overflow-y-auto"></ul>
+
                 <!-- Search Button -->
                 <button class="absolute inset-y-0 right-10 px-3 flex items-center" onclick="handleSearch()">
                   <ion-icon name="search-outline" class="h-5 w-5 text-gray-500"></ion-icon>
                 </button>
+
                 <!-- Voice Search Button -->
-                <button class="absolute inset-y-0 right-0 px-3 flex items-center">
+                <button id="voiceSearchButton" class="absolute inset-y-0 right-0 px-3 flex items-center">
                   <ion-icon name="mic-outline" class="h-5 w-5 text-gray-500"></ion-icon>
                 </button>
               </div>
             </div>
+
 
 
             <!-- User Actions and Authentication -->
@@ -181,15 +185,14 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
             <!-- Search Field for Small device  -->
             <div class="flex-grow mx-10 my-2 sm:my-0 block sm:hidden">
               <div class="relative">
-                <input type="search" id="searchInputMobile" name="search" class="input-field w-full pl-4 pr-20 py-2 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border rounded-md" placeholder="Enter your product name..." />
-                <!-- Autocomplete Suggestions Box -->
+                <input type="search" id="searchInput" name="search" class="input-field w-full pl-4 pr-20 py-2 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border rounded-md" placeholder="Enter your product name..." onkeydown="checkEnter(event)" /> <!-- Autocomplete Suggestions Box -->
                 <ul id="searchSuggestionsMobile" class="autobox absolute z-10 bg-white w-full shadow-lg max-h-60 overflow-y-auto"></ul>
                 <!-- Search Button -->
                 <button class="absolute inset-y-0 right-10 px-3 flex items-center" onclick="handleSearch()">
                   <ion-icon name="search-outline" class="h-5 w-5 text-gray-500"></ion-icon>
                 </button>
                 <!-- Voice Search Button -->
-                <button class="absolute inset-y-0 right-0 px-3 flex items-center">
+                <button id="voiceSearchButton" class="absolute inset-y-0 right-0 px-3 flex items-center">
                   <ion-icon name="mic-outline" class="h-5 w-5 text-gray-500"></ion-icon>
                 </button>
               </div>
@@ -405,6 +408,76 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
         </button>
       </div>
   </header>
+  <!-- This is for voice Search -->
+  <script>
+    // Select DOM elements
+    const searchInput = document.getElementById('searchInput');
+    const voiceSearchButton = document.getElementById('voiceSearchButton');
+
+    // Voice search functionality using the Web Speech API
+    voiceSearchButton.addEventListener('click', () => {
+      const recognition = new(window.SpeechRecognition || window.webkitSpeechRecognition)();
+
+      recognition.lang = 'en-US'; // Language set to English (US)
+      recognition.interimResults = false; // Only the final result is considered
+      recognition.continuous = false; // Stop after one result
+
+      recognition.start();
+
+      // Event fired when speech recognition starts
+      recognition.onstart = () => {
+        console.log('Voice recognition started...');
+      };
+
+      // Event fired when a result is detected
+      recognition.onresult = (event) => {
+        const spokenQuery = event.results[0][0].transcript; // Get the spoken query
+        console.log('Recognized speech:', spokenQuery);
+
+        // Update the search input with the recognized speech
+        searchInput.value = spokenQuery;
+
+        // Perform the search with the spoken input
+        handleSearch();
+      };
+
+      // Handle errors in speech recognition
+      recognition.onerror = (event) => {
+        console.error('Voice recognition error:', event.error);
+        alert('Voice recognition error: ' + event.error);
+      };
+
+      // Event fired when speech recognition ends
+      recognition.onend = () => {
+        console.log('Voice recognition ended.');
+      };
+    });
+
+    // Handle search (this can be your existing search logic)
+    function handleSearch() {
+      const query = searchInput.value.trim();
+
+      if (query === "") {
+        alert("Please enter a search term or speak into the microphone.");
+        return;
+      }
+
+      // Trigger search (for demonstration purposes, logging the query)
+      console.log("Searching for:", query);
+
+      // Fetch results (you can adapt this part to integrate with your backend)
+      fetch(`search.php?query=${encodeURIComponent(query)}`)
+        .then((response) => response.text())
+        .then((html) => {
+          // Handle the search result
+          console.log('Search results:', html);
+          // You can replace or update your search results section here
+        })
+        .catch((error) => {
+          console.error('Error fetching search results:', error);
+        });
+    }
+  </script>
   <script>
     function showCartList() {
       // PHP variables passed to JavaScript
