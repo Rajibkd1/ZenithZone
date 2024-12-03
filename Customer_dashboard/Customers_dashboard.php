@@ -69,6 +69,13 @@ include "../Database_Connection/DB_Connection.php";
                         <span class="ml-4">My Orders</span>
                     </a>
                 </li>
+                <li class="py-4 pl-10 sidebar-button" id="my-reviews-btn">
+                    <a href="javascript:void(0);" class="text-white text-lg flex items-center">
+                        <i class="fas fa-star"></i> <!-- Icon for Reviews -->
+                        <span class="ml-4">My Reviews</span>
+                    </a>
+                </li>
+
                 <li class="py-4 pl-10 sidebar-button" id="logout-btn">
                     <a href="logout.php" class="text-white text-lg flex items-center">
                         <i class="fas fa-sign-out-alt"></i> <!-- Logout icon -->
@@ -110,6 +117,10 @@ include "../Database_Connection/DB_Connection.php";
             // When my order button is clicked
             $('#my-orders-btn').click(function() {
                 loadContent('Orderlist.php');
+            });
+            // When my review button is clicked
+            $('#my-reviews-btn').click(function() {
+                loadContent('CompleteOrder.php');
             });
 
             // When home button is clicked

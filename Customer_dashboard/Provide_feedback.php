@@ -54,35 +54,6 @@ if ($orderItemId) {
     } else {
         $errorMsg = "Error preparing order query: " . $conn->error;
     }
-
-    // Handle form submission
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        $reviewDescription = isset($_POST['review_description']) ? $_POST['review_description'] : '';
-        $rating = isset($_POST['rating']) ? $_POST['rating'] : 0;
-
-        // Validate the input
-        if (empty($reviewDescription) || $rating == 0) {
-            $errorMsg = "Please provide a review description and a rating.";
-        } else {
-            // Insert the review into the review table
-            $insertQuery = "INSERT INTO review (customer_id, product_id, review_description, rating)
-                            VALUES (?, ?, ?, ?)";
-            
-            if ($insertStmt = $conn->prepare($insertQuery)) {
-                $insertStmt->bind_param("iisi", $customerId, $productId, $reviewDescription, $rating);
-                if ($insertStmt->execute()) {
-                    $successMsg = "Thank you for your feedback!";
-                } else {
-                    $errorMsg = "Error submitting the review: " . $conn->error;
-                }
-                $insertStmt->close();
-            } else {
-                $errorMsg = "Error preparing insert query: " . $conn->error;
-            }
-        }
-    }
-} else {
-    $errorMsg = "Invalid order item ID.";
 }
 ?>
 
@@ -96,6 +67,7 @@ if ($orderItemId) {
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@^2.0/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body class="bg-gray-50 font-sans">
 
@@ -116,7 +88,8 @@ if ($orderItemId) {
             <img src="<?php echo htmlspecialchars($productImage); ?>" alt="<?php echo htmlspecialchars($productName); ?>" class="w-40 h-40 object-cover rounded-md">
         </div>
         <div class="md:w-3/4 mt-4 md:mt-0">
-            <form method="POST">
+            <form id="review-form">
+                <input type="hidden" name="order_item_id" value="<?php echo htmlspecialchars($orderItemId); ?>">
                 <div class="mb-4">
                     <label for="review_description" class="block text-lg font-semibold">Write your review:</label>
                     <textarea id="review_description" name="review_description" class="w-full p-4 border rounded-md" rows="4" placeholder="Write your review here..."></textarea>
@@ -140,6 +113,36 @@ if ($orderItemId) {
         </div>
     </div>
 </div>
+
+<script>
+$(document).ready(function() {
+    $('#review-form').submit(function(e) {
+        e.preventDefault();
+
+        // Serialize form data
+        var formData = $(this).serialize();
+
+        $.ajax({
+            url: 'ReviewSubmit.php',
+            type: 'POST',
+            data: formData,
+            dataType: 'json',
+            success: function(response) {
+                if (response.status === 'success') {
+                    alert(response.message);
+                    // Optionally, clear the form
+                    $('#review-form')[0].reset();
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function() {
+                alert("Error submitting review.");
+            }
+        });
+    });
+});
+</script>
 
 </body>
 </html>
