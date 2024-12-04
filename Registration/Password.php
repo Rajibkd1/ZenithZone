@@ -1,164 +1,76 @@
-<?php
-session_start();
-include('../Database_Connection/DB_Connection.php'); // Include your DB connection file
-
-// Function to send OTP to the mobile number (Simulated for this example)
-function checkOTPVerification() {
-    // Check if the OTP has been verified
-    if (!isOtpVerified) {
-        alert('Please verify your OTP before submitting the form.');
-        return false; // Prevent form submission
-    }
-    return true; // Allow form submission
-}
-
-function sendOTP() {
-    const number = document.getElementById("number").value;
-    if (number.length === 11) {
-        fetch("./OTP.php", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
-                body: new URLSearchParams({
-                    send_otp: true,
-                    phone_number: number,
-                }),
-            })
-            .then((response) => response.json())
-            .then((data) => {
-                const messageDiv = document.getElementById("otpMessage");
-                messageDiv.classList.remove("hidden");
-                messageDiv.textContent = data.message;
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-                alert("Failed to send OTP. Please try again.");
-            });
-    } else {
-        alert("Please enter a valid mobile number.");
-    }
-}
-
-function verifyOTP() {
-    const enteredOTP = document.getElementById("verificationCode").value;
-    fetch("./OTP.php", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: new URLSearchParams({
-                verify_otp: true,
-                otp: enteredOTP,
-            }),
-        })
-        .then((response) => response.json())
-        .then((data) => {
-            alert(data.message);
-            if (data.status === "success") {
-                isOtpVerified = true; // Set OTP verification flag to true
-                document.getElementById("otpVerified").value = "true";
-                showSuccessModal("OTP Verified", "Your OTP has been verified successfully.");
-            } else {
-                isOtpVerified = false; 
-            }
-        })
-        .catch((error) => {
-            console.error("Error:", error);
-            alert("Failed to verify OTP. Please try again.");
-            isOtpVerified = false;
-        });
-}
-
-function showSuccessModal(title, message) {
-    const modal = document.getElementById("successModal");
-    modal.querySelector("h3").textContent = title;
-    modal.querySelector("p").textContent = message;
-    modal.classList.remove("hidden");
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    if (typeof registrationSuccess !== 'undefined' && registrationSuccess) {
-        showSuccessModal("Registration Successful!", "You have successfully registered.");
-    } else if (typeof errorMessage !== 'undefined' && errorMessage) {
-        alert(errorMessage);
-    }
-});
-
-// Step 1: Mobile Number Form
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['mobileNumber'])) {
-    $mobileNumber = $_POST['mobileNumber'];
-
-    // Check if the mobile number exists in the database
-    $query = "SELECT * FROM users WHERE mobile_number = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("s", $mobileNumber);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        // Send OTP
-        sendOTP($mobileNumber);
-        echo '<form method="POST" action="resetPassword.php">
-                <input type="text" name="otp" placeholder="Enter OTP" required>
-                <input type="submit" value="Verify OTP">
-              </form>';
-    } else {
-        echo "Mobile number not found in the database.";
-    }
-}
-
-// Step 2: OTP Verification
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['otp'])) {
-    $otp = $_POST['otp'];
-
-    // Verify OTP
-    if ($otp == $_SESSION['otp']) {
-        echo '<form method="POST" action="resetPassword.php">
-                <input type="password" name="newPassword" placeholder="New Password" required>
-                <input type="password" name="confirmPassword" placeholder="Confirm Password" required>
-                <input type="submit" value="Submit New Password">
-              </form>';
-    } else {
-        echo "Invalid OTP.";
-    }
-}
-
-// Step 3: New Password Submission
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['newPassword'])) {
-    $newPassword = $_POST['newPassword'];
-    $confirmPassword = $_POST['confirmPassword'];
-
-    // Check if passwords match
-    if ($newPassword === $confirmPassword) {
-        $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT); // Secure password hashing
-
-        // Update password in the database
-        $query = "UPDATE users SET password = ? WHERE mobile_number = ?";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("ss", $hashedPassword, $_SESSION['mobileNumber']);
-        $stmt->execute();
-
-        echo "Your password has been successfully updated!";
-        session_destroy(); // Destroy session to prevent resubmission
-    } else {
-        echo "Passwords do not match.";
-    }
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Password Reset</title>
+    <title>ZenithZone - OTP Verification</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@^2.0/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <link rel="icon" href="../assets/images/logo/ZenithZone.png" type="image/x-icon">
 </head>
-<body>
-    <h2>Reset Your Password</h2>
-    <form method="POST" action="resetPassword.php">
-        <input type="text" name="mobileNumber" placeholder="Enter your Mobile Number" required>
-        <input type="submit" value="Next">
-    </form>
+
+<body class="bg-gray-50 font-poppins">
+
+    <div class="flex justify-center items-center min-h-screen bg-gray-100">
+        <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
+            <h2 class="text-3xl font-semibold text-center text-gray-800 mb-6">ZenithZone - OTP Verification</h2>
+
+            <form id="mobile-otp-form" action="/submit" method="POST" onsubmit="return checkOTPVerification();">
+                <!-- Mobile Number Section -->
+                <div class="mb-4">
+                    <label for="number" class="block text-gray-700 font-medium">Mobile Number:</label>
+                    <input type="text" id="number" name="mobileNumber" placeholder="Enter your mobile number"
+                        class="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        required />
+                </div>
+
+                <!-- OTP Section -->
+                <div class="mb-4">
+                    <button type="button" id="sendOtpButton"
+                        class="w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg focus:outline-none hover:bg-indigo-700"
+                        onclick="sendOTP()">Send OTP</button>
+                    <p id="otpMessage" class="text-green-500 mt-2 hidden text-center"></p>
+                </div>
+
+                <!-- OTP Verification Section -->
+                <div class="mb-4">
+                    <label for="verificationCode" class="block text-gray-700 font-medium">Enter OTP:</label>
+                    <input type="text" id="verificationCode" name="verificationCode" placeholder="Enter OTP"
+                        class="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                    <button type="button"
+                        class="w-full py-3 mt-3 bg-indigo-600 text-white font-semibold rounded-lg focus:outline-none hover:bg-indigo-700"
+                        onclick="verifyOTP()">Verify OTP</button>
+                </div>
+
+                <!-- Hidden field to indicate OTP verification -->
+                <input type="hidden" name="otpVerified" id="otpVerified" value="false" />
+
+                <!-- Submit Button -->
+                <div class="mt-6">
+                    <button type="submit" id="submitBtn"
+                        class="w-full py-3 bg-gray-400 text-white font-semibold rounded-lg focus:outline-none cursor-not-allowed"
+                        disabled>Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+            <h3 class="text-2xl font-semibold text-gray-800"></h3>
+            <p class="text-gray-600 mt-4"></p>
+            <button class="mt-6 py-2 px-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700"
+                onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="OTP1.js"></script>
 </body>
+
 </html>
