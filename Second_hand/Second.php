@@ -47,7 +47,7 @@
     $limit = 20;
 
     // Change to fetch data from second_hand_product table
-    $sql = "SELECT * FROM second_hand_product LIMIT $start, $limit";
+    $sql = "SELECT * FROM second_hand_product WHERE approval_status = 'approved' AND Sh_product_status = 'Available' LIMIT $start, $limit";
     $result = $conn->query($sql);
 
     echo '<div class="container mx-auto px-4">

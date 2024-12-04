@@ -39,44 +39,25 @@ include "../Database_Connection/DB_Connection.php";
                 </a>
             </div>
             <ul class="list-items">
+                <li class="py-4 pl-10 sidebar-button" id="profile-btn">
+                    <a href="javascript:void(0);" class="text-white text-lg flex items-center">
+                        <i class="fas fa-user-circle"></i>
+                        <span class="ml-4">Profile</span>
+                    </a>
+                </li>
                 <li class="py-4 pl-10 sidebar-button" id="add-product-btn">
-                    <a href="javascript:void(0);" class="text-white text-lg flex items-center">
-                        <i class="fas fa-box-open"></i>
-                        <span class="ml-4">Add Products</span>
-                    </a>
-                </li>
-                <li class="py-4 pl-10 sidebar-button" id="add-coupon-btn">
-                    <a href="javascript:void(0);" class="text-white text-lg flex items-center">
-                        <i class="fas fa-plus-circle"></i> <!-- Add Coupon icon -->
-                        <span class="ml-4">Add Coupon</span>
-                    </a>
-                </li>
-                <li class="py-4 pl-10 sidebar-button" id="view-coupons-btn">
-                    <a href="javascript:void(0);" class="text-white text-lg flex items-center">
-                        <i class="fas fa-eye"></i> <!-- View Coupons icon -->
-                        <span class="ml-4">View Coupons</span>
-                    </a>
-                </li>
-                <li class="py-4 pl-10 sidebar-button" id="manage-orders-btn">
-                    <a href="javascript:void(0);" class="text-white text-lg flex items-center">
-                        <i class="fas fa-box"></i> <!-- Manage Orders icon -->
-                        <span class="ml-4">Manage Orders</span>
-                    </a>
-                </li>
-                <li class="py-4 pl-10 sidebar-button" id="art-manage-btn">
-                    <a href="javascript:void(0);" class="text-white text-lg flex items-center">
-                        <i class="fas fa-paint-brush"></i> <!-- Icon for Art Management -->
-                        <span class="ml-4">Manage Art</span>
-                    </a>
-                </li>
-                <li class="py-4 pl-10 sidebar-button" id="second-hand-manage-btn">
-                    <a href="javascript:void(0);" class="text-white text-lg flex items-center">
-                        <i class="fas fa-box-open"></i> <!-- Icon for Second Hand Products Management -->
-                        <span class="ml-4">Manage Second Hand Products</span>
-                    </a>
-                </li>
+    <a href="javascript:void(0);" class="text-white text-lg flex items-center">
+        <i class="fas fa-plus-circle"></i> <!-- Icon for add product -->
+        <span class="ml-4">Add Product</span>
+    </a>
+</li>
 
-
+                <li class="py-4 pl-10 sidebar-button" id="wallet-btn">
+                    <a href="javascript:void(0);" class="text-white text-lg flex items-center">
+                        <i class="fas fa-wallet"></i> <!-- Wallet icon -->
+                        <span class="ml-4">My Wallet</span>
+                    </a>
+                </li>
                 <li class="py-4 pl-10 sidebar-button" id="logout-btn">
                     <a href="logout.php" class="text-white text-lg flex items-center">
                         <i class="fas fa-sign-out-alt"></i> <!-- Logout icon -->
@@ -99,27 +80,17 @@ include "../Database_Connection/DB_Connection.php";
     <script>
         $(document).ready(function() {
             // When profile button is clicked
+            $('#profile-btn').click(function() {
+                loadContent('profile.php');
+            });
+            // When profile button is clicked
             $('#add-product-btn').click(function() {
-                loadContent('add_products.php');
+                loadContent('add_product.php');
             });
-            // When Add Coupon is clicked
-            $('#add-coupon-btn').click(function() {
-                loadContent('Coupon.php');
+            // When profile button is clicked
+            $('#wallet-btn').click(function() {
+                loadContent('Artist_wallet.php');
             });
-
-            // When view Coupon button is clicked
-            $('#view-coupons-btn').click(function() {
-                loadContent('Coupon_view.php');
-            });
-            // When wish list button is clicked
-            $('#manage-orders-btn').click(function() {
-                loadContent('OrderManage.php');
-            });
-            // When my order button is clicked
-            $('#second-hand-manage-btn').click(function() {
-                loadContent('ManageSecondHand.php');
-            });
-
             // When home button is clicked
             $('#logout-btn').click(function() {
                 loadContent('logout.php');

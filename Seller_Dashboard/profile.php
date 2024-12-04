@@ -13,15 +13,15 @@
     <?php
     session_start(); // Start the session to access session variables
     
-    // Get artist_id from session
-    $artist_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+    // Get seller_id from session
+    $seller_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
     // Database connection
-    if ($artist_id) {
+    if ($seller_id) {
       // Database connection
       include "../Database_Connection/DB_Connection.php";
   
-      // Fetch artist data
-      $sql = "SELECT * FROM artist_info WHERE artist_id = $artist_id";
+      // Fetch seller data
+      $sql = "SELECT * FROM sellersinfo WHERE seller_id = $seller_id";
       $result = $conn->query($sql);
   
       if ($result->num_rows > 0) {
@@ -34,9 +34,8 @@
         <!-- Center the profile picture -->
         <div class="flex justify-center mt-32 mb-6">
                 <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-blue-500">
-                <img src="../Registration/<?= htmlspecialchars($row['artist_picture'] ?? '/path/to/default-avatar.png') ?>" 
+                <img src="../Registration/<?= htmlspecialchars($row['seller_picture'] ?? '/path/to/default-avatar.png') ?>" 
      alt="Profile Picture" class="w-full h-full object-cover">
-
                 </div>
             </div>
       </div>
@@ -86,6 +85,7 @@
                  readonly />
         </div>
 
+  
         <!-- Date of Birth -->
         <div>
           <label for="date_of_birth" class="text-gray-800 text-sm block mb-2">Date of Birth</label>
@@ -112,7 +112,7 @@
       </form>
     <?php
     } else {
-        echo "<p class='text-red-500'>No artist information found!</p>";
+        echo "<p class='text-red-500'>No seller information found!</p>";
     }
     $conn->close();
     ?>

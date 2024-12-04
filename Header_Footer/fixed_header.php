@@ -46,7 +46,7 @@ function getUserFirstName($conn, $userType, $userId)
       $tableName = 'customer_info';
       $idColumn = 'customer_id';
       break;
-    case 'seller_info':
+    case 'sellersinfo':
       $tableName = 'sellersinfo';
       $idColumn = 'seller_id';
       break;

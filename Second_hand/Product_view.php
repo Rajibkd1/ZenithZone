@@ -7,17 +7,6 @@ $isLoggedIn = isset($_SESSION['loggedin']) && $_SESSION['loggedin'];
 $product_id = isset($_GET['product_id']) ? intval($_GET['product_id']) : 0;
 include '../Database_Connection/DB_Connection.php';  
 
-// if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-//   $loggedin = isset($_POST['loggedin']) ? $_POST['loggedin'] : null;
-
-//   if ($loggedin !== null) {
-//     $_SESSION['loggedin'] = filter_var($loggedin, FILTER_VALIDATE_BOOLEAN);
-//     header("Location: ../Login/Login.php"); 
-//     exit();
-//   }
-// }
-
-
 // Change to fetch data from the second_hand_product table
 $sql = "SELECT * FROM second_hand_product WHERE Sh_product_id = $product_id";
 $result = mysqli_query($conn, $sql);
