@@ -115,7 +115,11 @@ include "../Database_Connection/DB_Connection.php";
             $('#manage-orders-btn').click(function() {
                 loadContent('OrderManage.php');
             });
-            // When my order button is clicked
+            // When manage Art button is clicked
+            $('#art-manage-btn').click(function() {
+                loadContent('ManageArt.php');
+            });
+            // When manage second hand button is clicked
             $('#second-hand-manage-btn').click(function() {
                 loadContent('ManageSecondHand.php');
             });
