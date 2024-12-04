@@ -1,5 +1,5 @@
 <?php
-session_start(); 
+session_start();
 include "../Database_Connection/DB_Connection.php";
 
 // Improved error handling with try-catch
@@ -17,6 +17,12 @@ try {
         $email_mobile = $_POST['email_mobile'];
         $password = $_POST['password'];
 
+        // Check if the credentials are 0000 for admin
+        if ($email_mobile === '0000' && $password === '0000') {
+            // Redirect to Admin Dashboard
+            header("Location: ../Admin/Admin_dashboard.php");
+            exit(); // Stop further script execution
+        }
         // Check user credentials across three tables
         $tables = [
             ['name' => 'artist_info', 'id_column' => 'artist_id', 'email_column' => 'email', 'password_column' => 'password_hash', 'first_name_column' => 'first_name', 'gender_column' => 'gender'],
@@ -109,11 +115,12 @@ try {
                 <button type="submit" class="btn">Login</button>
             </div>
             <div class="flex justify-between items-center mb-4">
-                <a href="#" class="text-teal-400 hover:underline">Forgot your password?</a>
+            <a href="#" class="text-white text-sm font-bold hover:underline text-stroke">Forgot your password?</a>
             </div>
             <p class="text-white text-center">
                 Don't have an account?
-                <a href="../Registration/Who.php" class="text-teal-400 hover:underline text-blue-400">Sign up now</a>
+                <a href="../Registration/Who.php" class="text-teal-400 hover:underline text-blue-400 font-bold">Sign up now</a>
+
             </p>
         </form>
     </div>
@@ -125,9 +132,9 @@ try {
         </h3>
         <p class="mt-2">Hi <?php echo htmlspecialchars($first_name); ?>, welcome to ZenithZone.</p>
         <div class="flex justify-center mt-4">
-    <!-- Proceed Button with user_type, user_id, and gender from session -->
-    <button onclick="window.location='../HomePage/Personalized_products.php?gender=<?php echo $_SESSION['gender']; ?>';" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Proceed</button>
-</div>
+            <!-- Proceed Button with user_type, user_id, and gender from session -->
+            <button onclick="window.location='../HomePage/Personalized_products.php?gender=<?php echo $_SESSION['gender']; ?>';" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Proceed</button>
+        </div>
     </dialog>
 
     <!-- Error Modal -->
@@ -135,11 +142,12 @@ try {
         <h3 class="text-lg font-bold flex justify-center items-center gap-2">
             <i class="fa-solid fa-circle-xmark" style="color: #ff4b0f;"></i> Login Error
         </h3>
-        <p>Invalid login credentials. Please try again.</p>
+        <p id="errorText"></p>
         <div class="flex justify-center mt-4">
-            <button onclick="this.parentNode.parentNode.close();" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Close</button>
+            <button onclick="this.parentNode.parentNode.close();" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Close</button>
         </div>
     </dialog>
+
 
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script src="./LoginScript.js"></script>
@@ -147,7 +155,14 @@ try {
         document.addEventListener('DOMContentLoaded', function() {
             const loginSuccess = <?php echo json_encode($login_success); ?>;
             const loginError = <?php echo json_encode($login_error); ?>;
-
+            if (loginError) {
+                document.getElementById('errorText').innerText = loginError;
+                const errorModal = document.getElementById('errorModal');
+                console.log(errorModal); // Log to check if the modal is selected correctly
+                if (errorModal) {
+                    errorModal.showModal();
+                }
+            }
             if (loginSuccess) {
                 document.getElementById('successModal').showModal();
 
@@ -168,8 +183,6 @@ try {
                         console.log("Data sent successfully to fixed_header.php");
                     }
                 };
-            } else if (loginError !== '') {
-                document.getElementById('errorModal').showModal();
             }
         });
     </script>
