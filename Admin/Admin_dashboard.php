@@ -75,8 +75,18 @@ include "../Database_Connection/DB_Connection.php";
                         <span class="ml-4">Manage Second Hand Products</span>
                     </a>
                 </li>
-
-
+                <li class="py-4 pl-10 sidebar-button" id="pay-seller-btn">
+                    <a href="javascript:void(0);" class="text-white text-lg flex items-center">
+                        <i class="fas fa-hand-holding-usd"></i> <!-- Icon for Pay Seller -->
+                        <span class="ml-4">Pay Seller</span>
+                    </a>
+                </li>
+                <li class="py-4 pl-10 sidebar-button" id="pay-artist-btn">
+                    <a href="javascript:void(0);" class="text-white text-lg flex items-center">
+                        <i class="fas fa-paint-brush"></i> <!-- Icon for Pay Artist -->
+                        <span class="ml-4">Pay Artist</span>
+                    </a>
+                </li>
                 <li class="py-4 pl-10 sidebar-button" id="logout-btn">
                     <a href="logout.php" class="text-white text-lg flex items-center">
                         <i class="fas fa-sign-out-alt"></i> <!-- Logout icon -->

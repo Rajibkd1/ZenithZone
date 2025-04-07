@@ -89,7 +89,7 @@ include "../Database_Connection/DB_Connection.php";
             });
             // When profile button is clicked
             $('#wallet-btn').click(function() {
-                loadContent('Artist_wallet.php');
+                loadContent('Seller_wallet.php');
             });
             // When home button is clicked
             $('#logout-btn').click(function() {

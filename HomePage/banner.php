@@ -39,12 +39,12 @@
             <h2 class="text-center text-3xl md:text-5xl glowing-text">
               See Second Hand Products
             </h2>
-            <a href="#" class="btn btn-primary mt-4">Explore</a>
+            <a href="../Second_hand/Second.php" class="btn btn-primary mt-4">Explore</a>
           </div>
         </div>
         <!-- Item 3 -->
         <div class="carousel-item absolute w-full h-full transition-transform duration-700 ease-in-out" data-carousel-item>
-          <img src="../assets/images/banner-3.jpg" class="block w-full h-full object-cover" alt="New Arrival Products" />
+          <img src="../assets/images/newProduct.jpg" class="block w-full h-full object-cover" alt="New Arrival Products" />
           <div class="absolute bottom-5 left-1/2 transform -translate-x-1/2 flex flex-col items-center text-white">
             <h2 class="text-center text-3xl md:text-5xl glowing-text">
               See New Arrival Products

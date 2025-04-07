@@ -63,12 +63,19 @@ include "../Database_Connection/DB_Connection.php";
                         <span class="ml-4">My Wishlist</span>
                     </a>
                 </li>
+                <li class="py-4 pl-10 sidebar-button" id="my-arts-btn">
+                    <a href="javascript:void(0);" class="text-white text-lg flex items-center">
+                        <i class="fas fa-paint-brush"></i> <!-- Icon for My Arts -->
+                        <span class="ml-4">My Arts</span>
+                    </a>
+                </li>
                 <li class="py-4 pl-10 sidebar-button" id="my-orders-btn">
                     <a href="javascript:void(0);" class="text-white text-lg flex items-center">
                         <i class="fas fa-box"></i> <!-- Icon for My Orders -->
                         <span class="ml-4">My Orders</span>
                     </a>
                 </li>
+
                 <li class="py-4 pl-10 sidebar-button" id="my-reviews-btn">
                     <a href="javascript:void(0);" class="text-white text-lg flex items-center">
                         <i class="fas fa-star"></i> <!-- Icon for Reviews -->
@@ -121,6 +128,10 @@ include "../Database_Connection/DB_Connection.php";
             // When my review button is clicked
             $('#my-reviews-btn').click(function() {
                 loadContent('CompleteOrder.php');
+            });
+            // When my review button is clicked
+            $('#my-arts-btn').click(function() {
+                loadContent('myArtList.php');
             });
 
             // When home button is clicked

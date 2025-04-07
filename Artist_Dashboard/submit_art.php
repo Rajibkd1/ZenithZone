@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // File upload handling
     if (isset($_FILES['art_img']) && $_FILES['art_img']['error'] === UPLOAD_ERR_OK) {
         $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
-        $max_size = 2 * 1024 * 1024; // 2MB
+        $max_size = 6 * 1024 * 1024; // 2MB
 
         // Validate file type
         if (!in_array($_FILES['art_img']['type'], $allowed_types)) {
@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             );
 
             if ($stmt->execute()) {
-                header("Location: add_art.php?status=success");
+                header("Location: Artist_dashboard.php");
                 exit;
             } else {
                 $error_message = "Error adding art: " . $stmt->error;

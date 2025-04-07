@@ -115,7 +115,7 @@ try {
                 <button type="submit" class="btn">Login</button>
             </div>
             <div class="flex justify-between items-center mb-4">
-            <a href="#" class="text-white text-sm font-bold hover:underline text-stroke">Forgot your password?</a>
+            <a href="Password.php" class="text-white text-sm font-bold hover:underline text-stroke">Forgot your password?</a>
             </div>
             <p class="text-white text-center">
                 Don't have an account?
